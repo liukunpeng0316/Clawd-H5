@@ -1,0 +1,224 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-15 -25 45 45" width="500" height="500">
+  <defs>
+    <style>
+      /* Gentle satisfied sway */
+      .body-sway {
+        transform-origin: 7.5px 15px;
+        animation: sway 2.5s infinite ease-in-out;
+      }
+
+      /* Right arm + sign: swing from right side to top */
+      .arm-r-swing {
+        transform-origin: 14px 10px;
+        animation: arm-swing-up 3s infinite ease-in-out;
+      }
+
+      .sign-shine {
+        animation: shine-pulse 3s infinite ease-in-out;
+      }
+
+      /* Normal eyes: visible first 1s, blink, then hidden */
+      .eyes-normal {
+        transform-box: fill-box;
+        transform-origin: 50% 50%;
+        animation: eyes-normal-vis 3s infinite;
+      }
+
+      /* Happy eyes: hidden first 1s, blink, then visible */
+      .eyes-happy {
+        transform-box: fill-box;
+        transform-origin: 50% 50%;
+        animation: eyes-happy-vis 3s infinite;
+      }
+
+      /* Eye position drift */
+      .eyes-drift {
+        animation: eye-drift 3s infinite ease-in-out;
+      }
+
+      /* Shadow */
+      .shadow-sway {
+        transform-box: fill-box;
+        transform-origin: 50% 50%;
+        animation: shadow-breathe 2.5s infinite ease-in-out;
+      }
+
+      /* --- Keyframes --- */
+
+      @keyframes sway {
+        0%, 100% { transform: scale(1, 1) translate(0, 0); }
+        50%      { transform: scale(1.02, 0.98) translate(0, 0.5px); }
+      }
+
+      /* Swing: start at right side (0deg) → rotate up to top (-90deg) */
+      /*
+        Sign local position: (19, 10), to the RIGHT of pivot (14, 10).
+        rotate(-180deg) → sign at (9, 10) = body center = HIDDEN behind torso
+        rotate(-90deg)  → sign at (14, 5)  = above body = VISIBLE
+      */
+      /*
+        CCW 270deg sweep to reach top:
+        Start: rotate(180deg) → sign at (9,10) = behind torso (hidden)
+        Path:  180 → 90(down) → 0(right) → -90(top) = 270deg CCW
+        End:   rotate(-90deg) → sign at (14,5) = above head (visible)
+      */
+      /* Sign starts swinging at 35% (synced with eye switch) */
+      @keyframes arm-swing-up {
+        0%, 33%  { transform: rotate(180deg); }        /* Behind body */
+        45%      { transform: rotate(-95deg); }        /* CCW sweep, overshoot */
+        48%      { transform: rotate(-83deg); }        /* Bounce */
+        52%      { transform: rotate(-90deg); }        /* Settle at top */
+        93%      { transform: rotate(-90deg); }        /* Hold */
+        93.01%   { transform: rotate(180deg); }        /* Instant cut to behind */
+        100%     { transform: rotate(180deg); }        /* Stay behind */
+      }
+
+      @keyframes shine-pulse {
+        0%, 52%  { opacity: 0; }
+        62%      { opacity: 0.6; }
+        72%      { opacity: 0; }
+        82%      { opacity: 0.6; }
+        90%, 100% { opacity: 0; }
+      }
+
+      /*
+        Eye switch timeline (3s cycle, 1s = 33%):
+        0-31%:   normal eyes visible, happy hidden
+        31-35%:  BOTH hidden = blink transition
+        35-93%:  happy eyes visible, normal hidden
+        93-95%:  BOTH hidden = blink back
+        95-100%: normal eyes visible (reset)
+      */
+      /*
+        Blink timeline (3s cycle):
+        0-29%:   normal eyes, full open
+        29-31%:  normal eyes squeeze shut (scaleY → 0)
+        31-33%:  both hidden (eyes closed gap)
+        33-35%:  happy eyes open up (scaleY 0 → 1)
+        35-91%:  happy eyes full open
+        91-93%:  happy eyes squeeze shut
+        93-95%:  both hidden
+        95-97%:  normal eyes open up
+        97-100%: normal eyes full open
+      */
+      @keyframes eyes-normal-vis {
+        0%       { opacity: 1; transform: scaleY(1); }
+        29%      { opacity: 1; transform: scaleY(1); }
+        31%      { opacity: 1; transform: scaleY(0.05); }   /* Squeeze shut */
+        31.01%   { opacity: 0; transform: scaleY(0.05); }   /* Hide */
+        95%      { opacity: 0; transform: scaleY(0.05); }
+        95.01%   { opacity: 1; transform: scaleY(0.05); }   /* Reappear closed */
+        97%      { opacity: 1; transform: scaleY(1); }      /* Open up */
+        100%     { opacity: 1; transform: scaleY(1); }
+      }
+
+      @keyframes eyes-happy-vis {
+        0%       { opacity: 0; transform: scaleY(0.05); }
+        33%      { opacity: 0; transform: scaleY(0.05); }
+        33.01%   { opacity: 1; transform: scaleY(0.05); }   /* Appear closed */
+        35%      { opacity: 1; transform: scaleY(1); }      /* Open up */
+        91%      { opacity: 1; transform: scaleY(1); }
+        93%      { opacity: 1; transform: scaleY(0.05); }   /* Squeeze shut */
+        93.01%   { opacity: 0; transform: scaleY(0.05); }   /* Hide */
+        100%     { opacity: 0; transform: scaleY(0.05); }
+      }
+
+      /*
+        Eye drift: look around naturally, then glance up at sign
+        0-20%:   center (neutral)
+        20-29%:  look right slightly
+        29-35%:  blink transition (eyes closed, drift doesn't matter)
+        35-50%:  look up at sign
+        50-70%:  center (admiring)
+        70-91%:  look left slightly
+        91-100%: back to center
+      */
+      @keyframes eye-drift {
+        0%, 15%  { transform: translate(0, 0); }
+        20%, 28% { transform: translate(1px, 0); }       /* Glance right */
+        33%      { transform: translate(0, 0); }          /* Center during blink */
+        40%      { transform: translate(0, -0.6px); }     /* Glance up */
+        50%      { transform: translate(0, 0.3px); }      /* Settle down */
+        58%      { transform: translate(0, -0.4px); }     /* Slight up again */
+        65%, 100% { transform: translate(0, 0); }          /* Center till reset */
+      }
+
+      @keyframes shadow-breathe {
+        0%, 100% { transform: scale(1); opacity: 0.5; }
+        50%      { transform: scale(1.02); opacity: 0.5; }
+      }
+    </style>
+  </defs>
+
+  <!-- Ground Shadow -->
+  <rect class="shadow-sway" x="3" y="15" width="9" height="1" fill="#000000" opacity="0.5"/>
+
+  <!-- Body group -->
+  <g class="body-sway">
+
+    <!-- === Layer 1: Legs === -->
+    <g fill="#DE886D">
+      <rect x="3" y="13" width="1" height="2"/>
+      <rect x="5" y="13" width="1" height="2"/>
+      <rect x="9" y="13" width="1" height="2"/>
+      <rect x="11" y="13" width="1" height="2"/>
+    </g>
+
+    <!-- === Layer 2: Right arm + sign (BEHIND body, drawn before torso) === -->
+    <!--
+      Drawn early = bottom layer = behind torso.
+      At 0deg: sign is at side, hidden behind body.
+      At -90deg: sign swings up above head, visible.
+    -->
+    <!--
+      Pivot: (14, 10). Sign at local (19, 10) = 5px to the RIGHT.
+      rotate(-180deg): sign → (9, 10) = behind torso (hidden)
+      rotate(-90deg):  sign → (14, 5) = above body (visible!)
+    -->
+    <g class="arm-r-swing">
+      <!--
+        Sign moved further right (local x=21) = larger rotation radius.
+        At rotate(-90deg) around (14,10):
+        dx=7, dy=0 → new (14, 3) = higher above head
+      -->
+      <!-- Handle: horizontal stick from arm to sign -->
+      <rect x="15" y="9.5" width="5.5" height="1" fill="#795548" rx="0.2"/>
+
+      <!-- Round sign -->
+      <circle cx="21" cy="10" r="2.5" fill="#43A047"/>
+      <circle cx="21" cy="10" r="2" fill="#4CAF50"/>
+      <!-- Checkmark ✓ (pre-compensated for -90deg rotation) -->
+      <polyline points="20.2,8.8 19.5,9.7 21.8,11.2"
+                fill="none" stroke="#FFFFFF" stroke-width="0.65"
+                stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Shine -->
+      <circle class="sign-shine" cx="22" cy="9.3" r="0.6" fill="#FFFFFF" opacity="0"/>
+
+    </g>
+
+    <!-- === Layer 3: Torso (covers sign when at side) === -->
+    <rect x="2" y="6" width="11" height="7" fill="#DE886D"/>
+
+    <!-- === Layer 4: Right arm (ON TOP of torso, same animation as sign) === -->
+    <g class="arm-r-swing">
+      <rect x="13" y="9" width="2" height="2" fill="#DE886D"/>
+    </g>
+
+    <!-- === Layer 5: Eyes (drift wrapper + two sets, opacity-switched) === -->
+    <g class="eyes-drift">
+      <!-- Normal rect eyes (visible first 1s) -->
+      <g class="eyes-normal" fill="#000000">
+        <rect x="4" y="8" width="1" height="2"/>
+        <rect x="10" y="8" width="1" height="2"/>
+      </g>
+      <!-- Happy ^^ eyes (visible after blink) -->
+      <g class="eyes-happy" fill="none" stroke="#000000" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0">
+        <polyline points="3.5,9.5 4.5,8 5.5,9.5"/>
+        <polyline points="9.5,9.5 10.5,8 11.5,9.5"/>
+      </g>
+    </g>
+
+    <!-- === Layer 5: Left arm (at side, static) === -->
+    <rect x="0" y="9" width="2" height="2" fill="#DE886D"/>
+  </g>
+</svg>

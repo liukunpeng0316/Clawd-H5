@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-15 -25 45 45" width="500" height="500">
+  <defs>
+    <style>
+      /* Breathing */
+      .breathe {
+        transform-origin: 7.5px 13px;
+        animation: breathe 3.2s infinite ease-in-out;
+      }
+
+      /* Right arm salute — 3s cycle */
+      .arm-r {
+        animation: arm-salute 3s infinite ease-in-out;
+      }
+
+      /* Eyes — 3s cycle */
+      .eyes {
+        transform-origin: 7.5px 9px;
+        animation: eyes-salute 3s infinite ease-in-out;
+      }
+
+      /* Shadow */
+      .shadow-anim {
+        transform-origin: 7.5px 15.5px;
+        animation: shadow-salute 3s infinite ease-in-out;
+      }
+
+      /* Legs stomp during salute */
+      .legs-outer {
+        animation: legs-outer 3s infinite ease-in-out;
+      }
+      .legs-inner {
+        animation: legs-inner 3s infinite ease-in-out;
+      }
+
+      /* Salute sparkle particles */
+      .salute-sp1 {
+        opacity: 0;
+        animation: sp-salute-1 3s infinite ease-out;
+      }
+      .salute-sp2 {
+        opacity: 0;
+        animation: sp-salute-2 3s infinite ease-out;
+      }
+      .salute-sp3 {
+        opacity: 0;
+        animation: sp-salute-3 3s infinite ease-out;
+      }
+
+      /* --- Keyframes --- */
+
+      @keyframes breathe {
+        0%, 100% { transform: scale(1, 1); }
+        50% { transform: scale(1.02, 0.98) translate(0, 0.3px); }
+      }
+
+      /* Outer legs lift then inner legs lift — one stomp */
+      @keyframes legs-outer {
+        0%, 8%    { transform: translateY(0); }
+        10%, 14%  { transform: translateY(-1.5px); }
+        16%, 100% { transform: translateY(0); }
+      }
+      @keyframes legs-inner {
+        0%, 14%   { transform: translateY(0); }
+        16%, 20%  { transform: translateY(-1.5px); }
+        22%, 100% { transform: translateY(0); }
+      }
+
+      /*
+        Right arm: fast raise → long hold → lower → rest
+        10-40% hold salute
+      */
+      @keyframes arm-salute {
+        0%, 7%    { transform: translate(0, 0) rotate(0deg); }
+        10%       { transform: translate(-1px, -1.5px) rotate(-30deg); }
+        12%, 40%  { transform: translate(-1px, -1.5px) rotate(-30deg); }   /* hold */
+        45%       { transform: translate(0, 0) rotate(0deg); }
+        100%      { transform: translate(0, 0) rotate(0deg); }
+      }
+
+      /* Eyes: normal → wide open during salute → normal */
+      @keyframes eyes-salute {
+        0%, 7%    { transform: scaleY(1); }
+        10%, 40%  { transform: scaleY(1.3); }    /* wide open for salute */
+        45%, 100% { transform: scaleY(1); }
+      }
+
+      /* Sparkles burst when hand reaches head */
+      @keyframes sp-salute-1 {
+        0%, 11%  { opacity: 0; transform: translate(0, 0) scale(0.5); }
+        12%      { opacity: 1; transform: translate(0, 0) scale(1); }
+        15%      { opacity: 0.6; transform: translate(4px, -1.5px) scale(0.7); }
+        18%      { opacity: 0; transform: translate(7px, -2px) scale(0.2); }
+        100%     { opacity: 0; }
+      }
+      @keyframes sp-salute-2 {
+        0%, 12%  { opacity: 0; transform: translate(0, 0) scale(0.5); }
+        13%      { opacity: 1; transform: translate(0, 0) scale(1); }
+        16%      { opacity: 0.6; transform: translate(5px, 0) scale(0.7); }
+        19%      { opacity: 0; transform: translate(8px, 0) scale(0.2); }
+        100%     { opacity: 0; }
+      }
+      @keyframes sp-salute-3 {
+        0%, 13%  { opacity: 0; transform: translate(0, 0) scale(0.5); }
+        14%      { opacity: 1; transform: translate(0, 0) scale(1); }
+        17%      { opacity: 0.6; transform: translate(4px, 1.5px) scale(0.7); }
+        20%      { opacity: 0; transform: translate(7px, 2px) scale(0.2); }
+        100%     { opacity: 0; }
+      }
+
+      /* Shadow pulse at stomp */
+      @keyframes shadow-salute {
+        0%, 8%, 22%, 100% { transform: scaleX(1); opacity: 0.5; }
+        12%, 18%  { transform: scaleX(1.06); opacity: 0.48; }
+      }
+    </style>
+  </defs>
+
+  <!-- Ground Shadow -->
+  <rect class="shadow-anim" x="3" y="15" width="9" height="1" fill="#000000" opacity="0.5"/>
+
+  <!-- Legs: outer pair and inner pair, stomp during salute -->
+  <g class="legs-outer" fill="#DE886D">
+    <rect x="3" y="11" width="1" height="4"/>
+    <rect x="11" y="11" width="1" height="4"/>
+  </g>
+  <g class="legs-inner" fill="#DE886D">
+    <rect x="5" y="11" width="1" height="4"/>
+    <rect x="9" y="11" width="1" height="4"/>
+  </g>
+
+  <!-- Upper body -->
+  <g class="breathe">
+    <!-- Torso -->
+    <rect x="2" y="6" width="11" height="7" fill="#DE886D"/>
+
+    <!-- Eyes -->
+    <g class="eyes" fill="#000000">
+      <rect x="4" y="8" width="1" height="2"/>
+      <rect x="10" y="8" width="1" height="2"/>
+    </g>
+
+    <!-- Left arm (static at side) -->
+    <rect x="0" y="9" width="2" height="2" fill="#DE886D"/>
+
+    <!-- Right arm (salute), pivot at shoulder (13, 10) -->
+    <g class="arm-r" style="transform-origin: 13px 10px;">
+      <rect x="13" y="9" width="2" height="2" fill="#DE886D"/>
+    </g>
+
+    <!-- Salute sparkle particles -->
+    <rect class="salute-sp1" x="12" y="6.5" width="1" height="1" fill="#FFC107"/>
+    <rect class="salute-sp2" x="12" y="7.5" width="1" height="1" fill="#FFD700"/>
+    <rect class="salute-sp3" x="12" y="8.5" width="1" height="1" fill="#FFF59D"/>
+  </g>
+</svg>

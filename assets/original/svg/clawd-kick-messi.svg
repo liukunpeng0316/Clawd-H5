@@ -1,0 +1,254 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-15 -25 45 45" width="500" height="500">
+  <defs>
+    <style>
+      /*
+        Football kick (Messi jersey): 4s cycle.
+        Same kick animation but Clawd wears Argentina #10 jersey.
+      */
+
+      /* Body: lean back then forward for kick */
+      .body-kick {
+        transform-origin: 7.5px 15px;
+        animation: kick-body 4s infinite ease-in-out;
+      }
+
+      /* Eyes: watch ball right to left */
+      .eyes-kick {
+        transform-box: fill-box;
+        transform-origin: 50% 50%;
+        animation: eyes-watch 4s infinite ease-in-out;
+      }
+
+      /* Left arm: balance */
+      .arm-l-kick {
+        transform-origin: 2px 10px;
+        animation: arm-l-balance 4s infinite ease-in-out;
+      }
+
+      /* Right arm: balance */
+      .arm-r-kick {
+        transform-origin: 13px 10px;
+        animation: arm-r-balance 4s infinite ease-in-out;
+      }
+
+      /* Left legs: support */
+      .legs-left-support {
+        animation: legs-left-kick 4s infinite ease-in-out;
+      }
+
+      /* Right legs: kicking motion */
+      .legs-right-kick {
+        transform-origin: 10px 12px;
+        animation: legs-right-kick 4s infinite ease-in-out;
+      }
+
+      /* Football movement */
+      .football {
+        animation: ball-move 4s infinite ease-in-out;
+      }
+
+      /* Football spin */
+      .football-spin {
+        transform-box: fill-box;
+        transform-origin: 50% 50%;
+        animation: ball-spin 4s infinite linear;
+      }
+
+      /* Shadow */
+      .shadow-kick {
+        transform-box: fill-box;
+        transform-origin: 50% 50%;
+        animation: shadow-kick-anim 4s infinite ease-in-out;
+      }
+
+      /* Kick impact sparks */
+      .kick-spark-1 {
+        animation: spark-1 4s infinite ease-out;
+      }
+      .kick-spark-2 {
+        animation: spark-2 4s infinite ease-out;
+      }
+      .kick-spark-3 {
+        animation: spark-3 4s infinite ease-out;
+      }
+
+      /* --- Keyframes --- */
+
+      @keyframes kick-body {
+        0%, 25%   { transform: scale(1, 1) translate(0, 0) rotate(0deg); }
+        38%       { transform: scale(1.03, 0.97) translate(0.5px, 0.3px) rotate(3deg); }
+        48%       { transform: scale(0.97, 1.04) translate(-0.5px, -0.3px) rotate(-4deg); }
+        56%       { transform: scale(1, 1) translate(0, 0) rotate(-1deg); }
+        70%, 100% { transform: scale(1, 1) translate(0, 0) rotate(0deg); }
+      }
+
+      @keyframes eyes-watch {
+        0%        { transform: translateX(2px); }
+        20%       { transform: translateX(1px); }
+        30%       { transform: translateX(0); }
+        48%       { transform: translateX(-2px) scaleY(0.7); }
+        58%       { transform: translateX(-2px); }
+        80%       { transform: translateX(-1px); }
+        100%      { transform: translateX(2px); }
+      }
+
+      @keyframes arm-l-balance {
+        0%, 25%   { transform: rotate(0deg); }
+        38%       { transform: rotate(25deg); }
+        48%       { transform: rotate(-35deg); }
+        60%       { transform: rotate(-10deg); }
+        75%, 100% { transform: rotate(0deg); }
+      }
+
+      @keyframes arm-r-balance {
+        0%, 25%   { transform: rotate(0deg); }
+        38%       { transform: rotate(-20deg); }
+        48%       { transform: rotate(30deg); }
+        60%       { transform: rotate(10deg); }
+        75%, 100% { transform: rotate(0deg); }
+      }
+
+      @keyframes legs-left-kick {
+        0%, 30%   { transform: translate(0, 0); }
+        38%       { transform: translate(0, -0.5px); }
+        48%       { transform: translate(0, 0); }
+        55%, 100% { transform: translate(0, 0); }
+      }
+
+      @keyframes legs-right-kick {
+        0%, 30%   { transform: translate(0, 0) rotate(0deg); }
+        38%       { transform: translate(0, 0) rotate(-20deg); }
+        44%       { transform: translate(0, 0) rotate(-30deg); }
+        48%       { transform: translate(0, 0) rotate(40deg); }
+        53%       { transform: translate(0, 0) rotate(25deg); }
+        60%       { transform: translate(0, 0) rotate(8deg); }
+        72%, 100% { transform: translate(0, 0) rotate(0deg); }
+      }
+
+      @keyframes ball-move {
+        0%        { transform: translate(14px, 0); }
+        30%       { transform: translate(2px, 0); }
+        45%       { transform: translate(1px, 0); }
+        48%       { transform: translate(0px, -1px); }
+        55%       { transform: translate(-6px, -2px); }
+        70%       { transform: translate(-12px, 0); }
+        85%       { transform: translate(-18px, 0); }
+        100%      { transform: translate(-22px, 0); }
+      }
+
+      @keyframes ball-spin {
+        0%        { transform: rotate(0deg); }
+        30%       { transform: rotate(-360deg); }
+        45%       { transform: rotate(-360deg); }
+        100%      { transform: rotate(-1080deg); }
+      }
+
+      @keyframes shadow-kick-anim {
+        0%, 100%  { transform: scaleX(1); opacity: 0.5; }
+        48%       { transform: scaleX(1.1); opacity: 0.55; }
+      }
+
+      @keyframes spark-1 {
+        0%, 46%   { transform: translate(0, 0); opacity: 0; }
+        48%       { transform: translate(0, 0); opacity: 0.8; }
+        55%       { transform: translate(-3px, -3px); opacity: 0; }
+        100%      { opacity: 0; }
+      }
+
+      @keyframes spark-2 {
+        0%, 47%   { transform: translate(0, 0); opacity: 0; }
+        49%       { transform: translate(0, 0); opacity: 0.8; }
+        56%       { transform: translate(-2px, -4px); opacity: 0; }
+        100%      { opacity: 0; }
+      }
+
+      @keyframes spark-3 {
+        0%, 47%   { transform: translate(0, 0); opacity: 0; }
+        49%       { transform: translate(0, 0); opacity: 0.7; }
+        57%       { transform: translate(-4px, -1px); opacity: 0; }
+        100%      { opacity: 0; }
+      }
+    </style>
+  </defs>
+
+  <!-- Ground Shadow -->
+  <rect class="shadow-kick" x="3" y="15" width="9" height="1" fill="#000000" opacity="0.5"/>
+
+  <!-- Full body (legs + torso move together) -->
+  <g class="body-kick">
+
+    <!-- Legs: left pair supports, right pair kicks -->
+    <g fill="#DE886D">
+      <g class="legs-left-support">
+        <rect x="3" y="12" width="1" height="3"/>
+        <rect x="5" y="12" width="1" height="3"/>
+      </g>
+      <g class="legs-right-kick">
+        <rect x="9" y="12" width="1" height="3"/>
+        <rect x="11" y="12" width="1" height="3"/>
+      </g>
+    </g>
+
+    <!-- Torso (body color base) -->
+    <rect x="2" y="6" width="11" height="7" fill="#DE886D"/>
+
+    <!-- === Argentina Jersey (blue-white vertical stripes, below eyes) === -->
+    <g>
+      <!-- White base -->
+      <rect x="2" y="10.2" width="11" height="2.8" fill="#FFFFFF"/>
+      <!-- Sky blue stripes -->
+      <rect x="2" y="10.2" width="1.8" height="2.8" fill="#75AADB"/>
+      <rect x="5.6" y="10.2" width="1.8" height="2.8" fill="#75AADB"/>
+      <rect x="9.2" y="10.2" width="1.8" height="2.8" fill="#75AADB"/>
+      <!-- V-neck collar cutout (reveals body color underneath) -->
+      <polygon points="5.5,10 7.5,11.4 9.5,10" fill="#DE886D"/>
+      <!-- Number 10 centered -->
+      <!-- "1" -->
+      <rect x="6.2" y="11.5" width="0.5" height="1.3" fill="#222222"/>
+      <!-- "0" (height reduced to match "1" visually including stroke) -->
+      <rect x="7" y="11.7" width="0.9" height="0.9" fill="none" stroke="#222222" stroke-width="0.4"/>
+    </g>
+
+    <!-- Eyes -->
+    <g class="eyes-kick" fill="#000000">
+      <rect x="4" y="8" width="1" height="2"/>
+      <rect x="10" y="8" width="1" height="2"/>
+    </g>
+
+    <!-- Left arm (inner half sleeve, outer half hand) -->
+    <g class="arm-l-kick">
+      <rect x="0" y="9" width="2" height="2" fill="#DE886D"/>
+      <!-- Sleeve on inner side (close to body) -->
+      <rect x="1" y="9" width="1" height="2" fill="#FFFFFF"/>
+      <rect x="1" y="9" width="1" height="1" fill="#75AADB"/>
+    </g>
+
+    <!-- Right arm (inner half sleeve, outer half hand) -->
+    <g class="arm-r-kick">
+      <rect x="13" y="9" width="2" height="2" fill="#DE886D"/>
+      <!-- Sleeve on inner side (close to body) -->
+      <rect x="13" y="9" width="1" height="2" fill="#FFFFFF"/>
+      <rect x="13" y="9" width="1" height="1" fill="#75AADB"/>
+    </g>
+
+  </g>
+
+  <!-- Football -->
+  <g class="football">
+    <g class="football-spin">
+      <!-- Ball body (white circle with black pentagon pattern) -->
+      <circle cx="1" cy="14" r="2" fill="#FFFFFF" stroke="#333333" stroke-width="0.3"/>
+      <!-- Pentagon patches -->
+      <path d="M0.2,13.3 L1,12.5 L1.8,13.3 L1.5,14.2 L0.5,14.2 Z" fill="#333333"/>
+      <path d="M-0.3,14.8 L0.3,14.3 L0.8,14.9 L0.4,15.5 L-0.2,15.3 Z" fill="#333333" opacity="0.7"/>
+    </g>
+  </g>
+
+  <!-- Kick impact sparks -->
+  <g>
+    <rect class="kick-spark-1" x="2" y="12" width="0.8" height="0.8" fill="#FFC107" opacity="0"/>
+    <rect class="kick-spark-2" x="1" y="11" width="0.6" height="0.6" fill="#FFC107" opacity="0"/>
+    <rect class="kick-spark-3" x="3" y="11.5" width="0.7" height="0.7" fill="#FFC107" opacity="0"/>
+  </g>
+
+</svg>

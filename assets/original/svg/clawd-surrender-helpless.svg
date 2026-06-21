@@ -1,0 +1,167 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-15 -25 45 45" width="500" height="500">
+  <defs>
+    <style>
+      /*
+        Clawd surrendering with white flag, angel halo above head,
+        looking helpless. Gentle breathing, flag wave, halo float.
+      */
+
+
+      /* Halo floats and glows (2s for clean LCM) */
+      .halo-float {
+        transform-origin: 7.5px 3px;
+        animation: halo-float 1.4s infinite ease-in-out;
+      }
+      .halo-glow {
+        animation: halo-glow 1.4s infinite ease-in-out;
+      }
+
+      /* Gentle breathing (2s for clean LCM with everything else) */
+      .breathe {
+        transform-origin: 7.5px 13px;
+        animation: breathe 1.4s infinite ease-in-out;
+      }
+
+      /* Subtle head shake: eyes translateX to simulate "no" gesture */
+      .head-shake {
+        transform-origin: 7.5px 9px;
+        animation: head-shake 0.7s infinite ease-in-out;
+      }
+
+      /* Hand (right arm) translates left-right, carrying the flag */
+      .hand-wave {
+        animation: hand-wave 0.7s infinite ease-in-out;
+      }
+
+      /* Flag waves side-to-side around the hand grip */
+      .flag-wave {
+        transform-origin: 14px 10px;
+        animation: flag-wave 0.7s infinite ease-in-out;
+      }
+
+      /* Flag cloth flips to the trailing side as the pole reverses direction */
+      .flag-flip {
+        transform-box: fill-box;
+        transform-origin: 100% 50%;
+        animation: flag-flip 0.7s infinite ease-in-out;
+      }
+
+
+      .shadow-anim {
+        transform-origin: 7.5px 15.5px;
+        animation: shadow-sway 1.4s infinite ease-in-out;
+      }
+
+      /* --- Keyframes --- */
+
+      @keyframes breathe {
+        0%, 100% { transform: scale(1, 1); }
+        50%      { transform: scale(1.02, 0.98) translate(0, 0.3px); }
+      }
+
+      /* Continuous uniform "no" head shake via eye parallax */
+      @keyframes head-shake {
+        0%, 100% { transform: translateX(-0.8px); }
+        50%      { transform: translateX(0.8px); }
+      }
+
+      @keyframes halo-float {
+        0%, 100% { transform: translateY(0); }
+        50%      { transform: translateY(-0.4px); }
+      }
+
+      @keyframes halo-glow {
+        0%, 100% { opacity: 0.85; }
+        50%      { opacity: 1; }
+      }
+
+      /* Hand shifts around a range skewed toward the body (left) */
+      @keyframes hand-wave {
+        0%, 100% { transform: translate(-1px, 0); }
+        50%      { transform: translate(0, 0); }
+      }
+
+      /* Rapid left-right waving around the hand grip */
+      @keyframes flag-wave {
+        0%, 100% { transform: rotate(-18deg); }
+        50%      { transform: rotate(18deg); }
+      }
+
+      /*
+        Flag cloth flips around the pole: trails LEFT while pole swings right
+        (0-50%), trails RIGHT while pole swings left (50-100%).
+        The scaleX passes through 0 briefly for a "flip through edge" effect.
+      */
+      @keyframes flag-flip {
+        0%, 42%   { transform: scaleX(1); }
+        50%       { transform: scaleX(-1); }
+        58%, 92%  { transform: scaleX(-1); }
+        100%      { transform: scaleX(1); }
+      }
+
+
+      @keyframes shadow-sway {
+        0%, 100% { transform: scaleX(1); opacity: 0.5; }
+        50%      { transform: scaleX(1.02); opacity: 0.48; }
+      }
+
+    </style>
+  </defs>
+
+  <!-- Ground Shadow -->
+  <rect class="shadow-anim" x="3" y="15" width="9" height="1" fill="#000000" opacity="0.5"/>
+
+  <!-- Legs (static, slight droop feel) -->
+  <g fill="#DE886D">
+    <rect x="3" y="11" width="1" height="4"/>
+    <rect x="5" y="11" width="1" height="4"/>
+    <rect x="9" y="11" width="1" height="4"/>
+    <rect x="11" y="11" width="1" height="4"/>
+  </g>
+
+  <!-- Upper body with gentle breathing -->
+  <g class="breathe">
+    <g>
+      <!-- Torso -->
+      <rect x="2" y="6" width="11" height="7" fill="#DE886D"/>
+
+      <!-- Sad eyes (downward arc ⌢⌢) with subtle head-shake parallax -->
+      <g class="head-shake" fill="none" stroke="#000000" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="3.5,8.5 4.5,9.5 5.5,8.5"/>
+        <polyline points="9.5,8.5 10.5,9.5 11.5,8.5"/>
+      </g>
+
+      <!-- Left arm (default position, at side) -->
+      <rect x="0" y="9" width="2" height="2" fill="#DE886D"/>
+
+    <!-- Hand + flag assembly: translates left-right together -->
+    <g class="hand-wave">
+      <!-- Right arm shadow (for contrast against same-color torso) -->
+      <rect x="13.5" y="9.5" width="2" height="2" fill="#000000" opacity="0.2"/>
+      <!-- Right arm (holding flag pole) -->
+      <rect x="13" y="9" width="2" height="2" fill="#DE886D"/>
+
+      <!-- Flag assembly (pole + flag) rotates around the right hand -->
+      <g class="flag-wave">
+        <!-- Pole: shorter brown stick extending up from right hand (14, 10) -->
+        <rect x="13.75" y="3" width="0.5" height="7" fill="#795548"/>
+        <!-- Flag cloth: flips to the trailing side of the pole -->
+        <g class="flag-flip">
+          <path d="M14,3.3 L11,3.9 L11,5.6 L14,5 Z"
+                fill="#FFFFFF" stroke="#555555" stroke-width="0.2" stroke-linejoin="round"/>
+        </g>
+      </g>
+    </g>
+
+      <!-- Angel halo above head -->
+      <g class="halo-float">
+        <g class="halo-glow">
+          <!-- Outer halo ring -->
+          <ellipse cx="7.5" cy="3" rx="3.2" ry="0.9" fill="none" stroke="#FFD700" stroke-width="0.55"/>
+          <!-- Inner subtle glow -->
+          <ellipse cx="7.5" cy="3" rx="3.2" ry="0.9" fill="none" stroke="#FFF59D" stroke-width="0.2"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

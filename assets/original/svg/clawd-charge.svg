@@ -1,0 +1,179 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-15 -25 45 45" width="500" height="500">
+  <defs>
+    <style>
+      /*
+        "冲!" animation: 2s cycle.
+        Clawd flies upward, disappears at top, reappears from bottom.
+      */
+
+      /* Whole character: fly up + fade in/out */
+      .fly-up {
+        animation: fly 2s infinite linear;
+      }
+
+      /* Left arm: raised high, superman lead arm */
+      .arm-l-up {
+        transform-origin: 2px 10px;
+        transform: translate(-1px, -2px) rotate(-85deg);
+      }
+      /* Right arm: trailing behind, lowered */
+      .arm-r-up {
+        transform-origin: 13px 10px;
+        transform: translate(-1px, 1px) rotate(25deg);
+      }
+
+      /* Eyes: determined / star-eyed */
+      .eyes-determined {
+        transform-box: fill-box;
+        transform-origin: 50% 50%;
+        animation: eyes-shine 0.8s infinite;
+      }
+
+      /* Headband tails flutter */
+      .band-tail-1 {
+        transform-origin: 14px 7px;
+        animation: flutter1 0.3s infinite ease-in-out;
+      }
+      .band-tail-2 {
+        transform-origin: 14px 7.5px;
+        animation: flutter2 0.3s 0.1s infinite ease-in-out;
+      }
+
+      @keyframes flutter1 {
+        0%, 100% { transform: rotate(15deg); }
+        50%      { transform: rotate(25deg); }
+      }
+      @keyframes flutter2 {
+        0%, 100% { transform: rotate(20deg); }
+        50%      { transform: rotate(35deg); }
+      }
+
+      /* Speed lines: streak downward relative to character */
+      .speed-line {
+        animation: fly 2s infinite linear;
+      }
+      .sl-1 { animation: streak 0.4s infinite linear; }
+      .sl-2 { animation: streak 0.4s 0.13s infinite linear; }
+      .sl-3 { animation: streak 0.4s 0.27s infinite linear; }
+
+      /* Sparkle trail */
+      .spark { opacity: 0; }
+      .sp-1 { animation: trail-spark 0.6s infinite; }
+      .sp-2 { animation: trail-spark 0.6s 0.2s infinite; }
+      .sp-3 { animation: trail-spark 0.6s 0.4s infinite; }
+
+      /* --- Keyframes --- */
+
+      /*
+        Fly cycle:
+        0%:    below visible area, invisible
+        5%:    appear at bottom
+        80%:   reach top area
+        90%:   fade out
+        90.01%: jump back to bottom, invisible
+        100%:  still at bottom, invisible (loops to 0%)
+      */
+      /* Fly up with lateral shake */
+      @keyframes fly {
+        0%        { transform: translate(0, 30px); }
+        5%        { transform: translate(0.4px, 26px); }
+        10%       { transform: translate(-0.4px, 22px); }
+        15%       { transform: translate(0.4px, 18px); }
+        20%       { transform: translate(-0.4px, 14px); }
+        25%       { transform: translate(0.4px, 10px); }
+        30%       { transform: translate(-0.4px, 6px); }
+        35%       { transform: translate(0.4px, 2px); }
+        40%       { transform: translate(-0.4px, -2px); }
+        45%       { transform: translate(0.4px, -6px); }
+        50%       { transform: translate(-0.4px, -10px); }
+        55%       { transform: translate(0.4px, -14px); }
+        60%       { transform: translate(-0.4px, -18px); }
+        65%       { transform: translate(0.4px, -22px); }
+        70%       { transform: translate(-0.4px, -26px); }
+        75%       { transform: translate(0.4px, -30px); }
+        80%       { transform: translate(-0.4px, -33px); }
+        85%       { transform: translate(0, -35px); }
+        85.01%    { transform: translate(0, 30px); }
+        100%      { transform: translate(0, 30px); }
+      }
+
+      /* Eyes: quick scale pulse for excitement */
+      @keyframes eyes-shine {
+        0%, 100%  { transform: scaleY(1); }
+        50%       { transform: scaleY(0.8); }
+      }
+
+      /* Speed lines: short dashes streaming down */
+      @keyframes streak {
+        0%   { transform: translateY(0); opacity: 0.9; }
+        100% { transform: translateY(8px); opacity: 0; }
+      }
+
+      /* Sparkle trail behind character */
+      @keyframes trail-spark {
+        0%   { opacity: 0; transform: translate(0, 0) scale(1); }
+        15%  { opacity: 0.9; }
+        100% { opacity: 0; transform: translate(0, 5px) scale(0.3); }
+      }
+    </style>
+    <!-- Clip region: character gets cut off at top and bottom -->
+    <clipPath id="fly-clip">
+      <rect x="-15" y="-12" width="45" height="30"/>
+    </clipPath>
+  </defs>
+
+  <!-- Speed lines (fixed in viewport, behind character) -->
+  <g>
+    <rect class="sl-1" x="1" y="-5" width="0.4" height="3" rx="0.2" fill="#FFD700" opacity="0"/>
+    <rect class="sl-2" x="7" y="0" width="0.4" height="2.5" rx="0.2" fill="#FFA000" opacity="0"/>
+    <rect class="sl-3" x="13" y="-8" width="0.4" height="3" rx="0.2" fill="#FFD700" opacity="0"/>
+    <rect class="sl-1" x="4" y="5" width="0.3" height="2" rx="0.15" fill="#FFC107" opacity="0"/>
+    <rect class="sl-2" x="10" y="-3" width="0.4" height="2.5" rx="0.2" fill="#FFA000" opacity="0"/>
+    <rect class="sl-3" x="-2" y="3" width="0.3" height="2.5" rx="0.15" fill="#FFC107" opacity="0"/>
+  </g>
+
+  <!-- Character group (flies up, clipped) -->
+  <g clip-path="url(#fly-clip)">
+  <g class="fly-up">
+
+    <!-- Sparkle trail (below character, falls behind) -->
+    <rect class="spark sp-1" x="5" y="14" width="0.8" height="0.8" fill="#FFD700"/>
+    <rect class="spark sp-2" x="8" y="15" width="0.7" height="0.7" fill="#FFC107"/>
+    <rect class="spark sp-3" x="10" y="14.5" width="0.6" height="0.6" fill="#FFF59D"/>
+
+    <!-- Legs -->
+    <g fill="#DE886D">
+      <rect x="3" y="13" width="1" height="2"/>
+      <rect x="5" y="13" width="1" height="2"/>
+      <rect x="9" y="13" width="1" height="2"/>
+      <rect x="11" y="13" width="1" height="2"/>
+    </g>
+
+    <!-- Torso -->
+    <rect x="2" y="6" width="11" height="7" fill="#DE886D"/>
+
+    <!-- Red headband -->
+    <rect x="1" y="6.5" width="13" height="1" rx="0.2" fill="#B71C1C"/>
+    <!-- Headband tails (flutter in wind) -->
+    <rect class="band-tail-1" x="14" y="6.5" width="2.5" height="0.7" rx="0.2" fill="#B71C1C"/>
+    <rect class="band-tail-2" x="14" y="7.2" width="2" height="0.6" rx="0.2" fill="#8B0000"/>
+
+    <!-- Eyes (determined) -->
+    <g class="eyes-determined" fill="#000000">
+      <rect x="4" y="8" width="1" height="2"/>
+      <rect x="10" y="8" width="1" height="2"/>
+    </g>
+
+    <!-- Left arm (raised up) -->
+    <g class="arm-l-up">
+      <rect x="0" y="9" width="2" height="2" fill="#DE886D"/>
+    </g>
+
+    <!-- Right arm (trailing, with shadow) -->
+    <g class="arm-r-up">
+      <rect x="13.5" y="9.5" width="2" height="2" fill="#000000" opacity="0.2"/>
+      <rect x="13" y="9" width="2" height="2" fill="#DE886D"/>
+    </g>
+  </g>
+  </g>
+</svg>

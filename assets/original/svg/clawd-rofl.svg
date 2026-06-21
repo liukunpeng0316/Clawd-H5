@@ -1,0 +1,257 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-15 -25 45 45" width="500" height="500">
+<style>
+  /* 4s循环: 站立笑 → 旋转倒下 → 打滚 → 起身 */
+  /* 站立: 0%~12% + 72%~100% (40%) */
+  /* 倒下: 12%~22% */
+  /* 打滚: 22%~62% (40%) */
+  /* 起身: 62%~72% */
+
+  /* 左右缓慢滚动 */
+  .roll-move {
+    animation: roll-move 4s ease-in-out infinite;
+  }
+  @keyframes roll-move {
+    0%, 22% { transform: translateX(0px); }
+    40% { transform: translateX(-3px); }
+    58% { transform: translateX(0px); }
+    62%, 100% { transform: translateX(0px); }
+  }
+
+  /* 翻转位置补偿 */
+  .fall-compensate {
+    animation: fall-compensate 4s ease-in-out infinite;
+  }
+  @keyframes fall-compensate {
+    0%, 12% { transform: translate(0px, 0px); }
+    22%, 62% { transform: translate(-7px, -2px); }
+    72%, 100% { transform: translate(0px, 0px); }
+  }
+
+  /* 旋转倒下90度，逆转回 */
+  .fall-rotate {
+    animation: fall-rotate 4s ease-in-out infinite;
+    transform-origin: 10px 15px;
+  }
+  @keyframes fall-rotate {
+    0%, 12% { transform: rotate(0deg); }
+    22% { transform: rotate(90deg); }
+    33% { transform: rotate(94deg); }
+    44% { transform: rotate(86deg); }
+    55% { transform: rotate(91deg); }
+    60% { transform: rotate(90deg); }
+    72%, 100% { transform: rotate(0deg); }
+  }
+
+  /* 笑到颤抖 */
+  .laugh-shake {
+    animation: laugh-shake 0.12s linear infinite alternate;
+  }
+  @keyframes laugh-shake {
+    0% { transform: translate(-0.2px, -0.3px); }
+    100% { transform: translate(0.2px, 0.3px); }
+  }
+
+  /* 笑眼 ^^ 眨眼 */
+  .smile-eyes {
+    animation: smile-blink 2.5s ease-in-out infinite;
+    transform-box: fill-box;
+    transform-origin: center center;
+  }
+  @keyframes smile-blink {
+    0%, 44% { transform: scaleY(1); }
+    47% { transform: scaleY(0.1); }
+    53% { transform: scaleY(0.1); }
+    56%, 100% { transform: scaleY(1); }
+  }
+
+  /* 腿部外侧 */
+  .legs-kick-outer {
+    animation: kick-outer 4s linear infinite;
+    transform-box: fill-box;
+    transform-origin: center bottom;
+  }
+  @keyframes kick-outer {
+    0%, 12% { transform: translateY(0px); }
+    20% { transform: translateY(-2px); }
+    28% { transform: translateY(0px); }
+    36% { transform: translateY(-2px); }
+    44% { transform: translateY(0px); }
+    52% { transform: translateY(-2px); }
+    60% { transform: translateY(0px); }
+    62%, 100% { transform: translateY(0px); }
+  }
+
+  /* 腿部内侧 */
+  .legs-kick-inner {
+    animation: kick-inner 4s linear infinite;
+    transform-box: fill-box;
+    transform-origin: center bottom;
+  }
+  @keyframes kick-inner {
+    0%, 16% { transform: translateY(0px); }
+    24% { transform: translateY(-2px); }
+    32% { transform: translateY(0px); }
+    40% { transform: translateY(-2px); }
+    48% { transform: translateY(0px); }
+    56% { transform: translateY(-2px); }
+    62% { transform: translateY(0px); }
+    63%, 100% { transform: translateY(0px); }
+  }
+
+  /* 手臂摆动 */
+  .arm-flail-l {
+    animation: arm-l 4s ease-in-out infinite;
+    transform-box: fill-box;
+    transform-origin: right center;
+  }
+  @keyframes arm-l {
+    0%, 12% { transform: rotate(0deg); }
+    28% { transform: rotate(-20deg); }
+    40% { transform: rotate(12deg); }
+    52% { transform: rotate(-15deg); }
+    60% { transform: rotate(0deg); }
+    62%, 100% { transform: rotate(0deg); }
+  }
+  .arm-flail-r {
+    animation: arm-r 4s ease-in-out infinite;
+    transform-box: fill-box;
+    transform-origin: left center;
+  }
+  @keyframes arm-r {
+    0%, 12% { transform: rotate(0deg); }
+    28% { transform: rotate(20deg); }
+    40% { transform: rotate(-12deg); }
+    52% { transform: rotate(15deg); }
+    60% { transform: rotate(0deg); }
+    62%, 100% { transform: rotate(0deg); }
+  }
+
+  /* 笑声短线 - 站立时左侧扩散 */
+  .laugh-lines {
+    animation: laugh-lines-vis 4s linear infinite;
+  }
+  @keyframes laugh-lines-vis {
+    0%, 10% { opacity: 0.7; }
+    12% { opacity: 0; }
+    68% { opacity: 0; }
+    72% { opacity: 0.7; }
+    100% { opacity: 0.7; }
+  }
+  .laugh-line1 { animation: ll-flash1 0.3s step-end infinite; }
+  .laugh-line2 { animation: ll-flash2 0.3s step-end infinite; animation-delay: 0.1s; }
+  .laugh-line3 { animation: ll-flash3 0.3s step-end infinite; animation-delay: 0.2s; }
+  @keyframes ll-flash1 {
+    0% { opacity: 0.9; } 50% { opacity: 0.3; } 100% { opacity: 0.9; }
+  }
+  @keyframes ll-flash2 {
+    0% { opacity: 0.3; } 50% { opacity: 0.9; } 100% { opacity: 0.3; }
+  }
+  @keyframes ll-flash3 {
+    0% { opacity: 0.7; } 50% { opacity: 0.2; } 100% { opacity: 0.7; }
+  }
+
+  /* 倒地笑声横线 - 右上角扩散 */
+  .laugh-lines-roll {
+    animation: laugh-lines-roll-vis 4s linear infinite;
+  }
+  @keyframes laugh-lines-roll-vis {
+    0%, 24% { opacity: 0; }
+    28% { opacity: 0.7; }
+    58% { opacity: 0.7; }
+    62%, 100% { opacity: 0; }
+  }
+  .ll-roll1 { animation: ll-flash1 0.3s step-end infinite; }
+  .ll-roll2 { animation: ll-flash2 0.3s step-end infinite; animation-delay: 0.1s; }
+  .ll-roll3 { animation: ll-flash3 0.3s step-end infinite; animation-delay: 0.2s; }
+
+  /* 阴影 */
+  .shadow-anim {
+    animation: shadow-anim 4s ease-in-out infinite;
+  }
+  @keyframes shadow-anim {
+    0%, 12% { transform: translateX(0px) scaleX(0.6); opacity: 0.5; }
+    22% { transform: translateX(-4px) scaleX(1.1); opacity: 0.45; }
+    40% { transform: translateX(-4px) scaleX(1.1); opacity: 0.45; }
+    58% { transform: translateX(0px) scaleX(1.1); opacity: 0.45; }
+    62% { transform: translateX(0px) scaleX(0.8); opacity: 0.48; }
+    72%, 100% { transform: translateX(0px) scaleX(0.6); opacity: 0.5; }
+  }
+</style>
+
+  <!-- 阴影 -->
+  <g class="shadow-anim">
+    <rect x="1" y="15" width="13" height="1" fill="#000000" opacity="0.5"/>
+  </g>
+
+  <!-- 笑声短线 - 站立时左侧扩散 -->
+  <g class="laugh-lines">
+    <g class="laugh-line1">
+      <line x1="-1.5" y1="7" x2="-4" y2="5.5" stroke="#FFD700" stroke-width="0.5" stroke-linecap="round"/>
+    </g>
+    <g class="laugh-line2">
+      <line x1="-1.5" y1="9.5" x2="-4.5" y2="9.5" stroke="#FFC107" stroke-width="0.5" stroke-linecap="round"/>
+    </g>
+    <g class="laugh-line3">
+      <line x1="-1.5" y1="12" x2="-4" y2="13.5" stroke="#FFA000" stroke-width="0.5" stroke-linecap="round"/>
+    </g>
+  </g>
+
+  <!-- 倒地笑声横线 - 右上角扩散 -->
+  <g class="laugh-lines-roll">
+    <g class="ll-roll1">
+      <line x1="14" y1="4" x2="17" y2="1.5" stroke="#FFD700" stroke-width="0.5" stroke-linecap="round"/>
+    </g>
+    <g class="ll-roll2">
+      <line x1="15" y1="5.5" x2="18.5" y2="4" stroke="#FFC107" stroke-width="0.5" stroke-linecap="round"/>
+    </g>
+    <g class="ll-roll3">
+      <line x1="14.5" y1="7" x2="17.5" y2="6.5" stroke="#FFA000" stroke-width="0.5" stroke-linecap="round"/>
+    </g>
+  </g>
+
+  <!-- 水平滚动 -->
+  <g class="roll-move">
+    <!-- 位置补偿 -->
+    <g class="fall-compensate">
+    <!-- 旋转倒下 -->
+    <g class="fall-rotate">
+      <!-- 颤抖 -->
+      <g class="laugh-shake">
+
+        <!-- 腿部外侧 -->
+        <g class="legs-kick-outer">
+          <rect x="3" y="12" width="1" height="3" fill="#DE886D"/>
+          <rect x="11" y="12" width="1" height="3" fill="#DE886D"/>
+        </g>
+
+        <!-- 腿部内侧 -->
+        <g class="legs-kick-inner">
+          <rect x="5" y="12" width="1" height="3" fill="#DE886D"/>
+          <rect x="9" y="12" width="1" height="3" fill="#DE886D"/>
+        </g>
+
+        <!-- 躯干 -->
+        <rect x="2" y="6" width="11" height="7" fill="#DE886D"/>
+
+        <!-- 笑眼 ^^ -->
+        <g class="smile-eyes">
+          <polyline points="3.5,9.5 4.5,8.5 5.5,9.5" fill="none" stroke="#000000" stroke-width="0.7" stroke-linecap="round"/>
+          <polyline points="9.5,9.5 10.5,8.5 11.5,9.5" fill="none" stroke="#000000" stroke-width="0.7" stroke-linecap="round"/>
+        </g>
+
+        <!-- 左臂 -->
+        <g class="arm-flail-l">
+          <rect x="0" y="9" width="2" height="2" fill="#DE886D"/>
+        </g>
+
+        <!-- 右臂 -->
+        <g class="arm-flail-r">
+          <rect x="13" y="9" width="2" height="2" fill="#DE886D"/>
+        </g>
+
+      </g>
+    </g>
+    </g>
+  </g>
+
+</svg>

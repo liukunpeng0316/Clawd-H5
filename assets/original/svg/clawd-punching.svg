@@ -1,0 +1,195 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-15 -25 45 45" width="500" height="500">
+  <defs>
+    <style>
+      /* Body: crouched + bob with each punch */
+      .body-punch {
+        transform-origin: 7.5px 15px;
+        animation: body-bob 0.7s infinite;
+      }
+
+      /* Eyes: always squinted, occasional blink */
+      .eyes-angry {
+        transform-box: fill-box;
+        transform-origin: 50% 50%;
+        animation: eyes-squint 3s infinite;
+      }
+
+      /* Arms always in front, alternating scale punches */
+      .arm-l {
+        transform-box: fill-box;
+        transform-origin: 50% 100%;
+        animation: punch-l 0.7s infinite;
+      }
+      .arm-r {
+        transform-box: fill-box;
+        transform-origin: 50% 100%;
+        animation: punch-r 0.7s infinite;
+      }
+
+      /* Shadow */
+      .shadow-anim {
+        transform-box: fill-box;
+        transform-origin: 50% 50%;
+        animation: shadow-pulse 0.7s infinite;
+      }
+
+      /* Impact particles */
+      .impact-l1 { opacity: 0; animation: imp-l1 0.7s infinite; }
+      .impact-l2 { opacity: 0; animation: imp-l2 0.7s infinite; }
+      .impact-r1 { opacity: 0; animation: imp-r1 0.7s infinite; }
+      .impact-r2 { opacity: 0; animation: imp-r2 0.7s infinite; }
+
+      /* Anger mark: always visible, gentle pulse */
+      .anger-mark {
+        transform-box: fill-box;
+        transform-origin: 50% 50%;
+        animation: anger-pulse 0.7s infinite;
+      }
+
+      /* --- Keyframes --- */
+
+      /*
+        Continuous punch cycle: 0.7s per L-R pair.
+        L punch at 15%, R punch at 65%.
+        Body dips on each punch, rises between.
+      */
+      @keyframes body-bob {
+        0%        { transform: translate(0, 0.5px) scale(1.02, 0.96); }
+        15%       { transform: translate(-0.4px, 1px) scale(1.04, 0.94); }
+        30%       { transform: translate(0, 0.5px) scale(1.02, 0.96); }
+        40%       { transform: translate(0, 0.4px) scale(1.02, 0.97); }
+        50%       { transform: translate(0, 0.5px) scale(1.02, 0.96); }
+        65%       { transform: translate(0.4px, 1px) scale(1.04, 0.94); }
+        80%       { transform: translate(0, 0.5px) scale(1.02, 0.96); }
+        90%       { transform: translate(0, 0.4px) scale(1.02, 0.97); }
+        100%      { transform: translate(0, 0.5px) scale(1.02, 0.96); }
+      }
+
+      /* Left arm: always in front, scale pulse at 15% */
+      @keyframes punch-l {
+        0%        { transform: translate(3px, 1px) scale(1); }
+        10%       { transform: translate(3px, 1px) scale(1); }
+        15%       { transform: translate(3px, 1px) scale(1.4); }
+        25%       { transform: translate(3px, 1px) scale(1); }
+        100%      { transform: translate(3px, 1px) scale(1); }
+      }
+
+      /* Right arm: scale pulse at 65% */
+      @keyframes punch-r {
+        0%        { transform: translate(-3px, 1px) scale(1); }
+        60%       { transform: translate(-3px, 1px) scale(1); }
+        65%       { transform: translate(-3px, 1px) scale(1.4); }
+        75%       { transform: translate(-3px, 1px) scale(1); }
+        100%      { transform: translate(-3px, 1px) scale(1); }
+      }
+
+      /* Eyes always squinted, blink every 3s */
+      @keyframes eyes-squint {
+        0%, 90%   { transform: scaleY(0.7); }
+        93%       { transform: scaleY(0.05); }
+        96%       { transform: scaleY(0.7); }
+        100%      { transform: scaleY(0.7); }
+      }
+
+      /* Impact: left at 15%, right at 65% */
+      @keyframes imp-l1 {
+        0%, 13%   { opacity: 0; }
+        15%       { opacity: 0.9; transform: translate(4px, 7.5px) scale(1); }
+        25%       { opacity: 0; transform: translate(2.5px, 5.5px) scale(0.3); }
+        100%      { opacity: 0; }
+      }
+      @keyframes imp-l2 {
+        0%, 14%   { opacity: 0; }
+        16%       { opacity: 0.9; transform: translate(5.5px, 9px) scale(1); }
+        26%       { opacity: 0; transform: translate(7px, 7.5px) scale(0.3); }
+        100%      { opacity: 0; }
+      }
+      @keyframes imp-r1 {
+        0%, 63%   { opacity: 0; }
+        65%       { opacity: 0.9; transform: translate(9px, 7.5px) scale(1); }
+        75%       { opacity: 0; transform: translate(11px, 5.5px) scale(0.3); }
+        100%      { opacity: 0; }
+      }
+      @keyframes imp-r2 {
+        0%, 64%   { opacity: 0; }
+        66%       { opacity: 0.9; transform: translate(7.5px, 9px) scale(1); }
+        76%       { opacity: 0; transform: translate(6px, 7.5px) scale(0.3); }
+        100%      { opacity: 0; }
+      }
+
+      /* Shadow pulse with each punch */
+      @keyframes shadow-pulse {
+        0%        { transform: scale(1); opacity: 0.5; }
+        15%       { transform: scaleX(1.06); opacity: 0.45; }
+        30%       { transform: scale(1); opacity: 0.5; }
+        65%       { transform: scaleX(1.06); opacity: 0.45; }
+        80%       { transform: scale(1); opacity: 0.5; }
+        100%      { transform: scale(1); opacity: 0.5; }
+      }
+
+      /* Anger mark: gentle pulse with punches */
+      @keyframes anger-pulse {
+        0%        { opacity: 1; transform: scale(1); }
+        15%       { opacity: 1; transform: scale(1.15); }
+        30%       { opacity: 1; transform: scale(1); }
+        65%       { opacity: 1; transform: scale(1.15); }
+        80%       { opacity: 1; transform: scale(1); }
+        100%      { opacity: 1; transform: scale(1); }
+      }
+    </style>
+  </defs>
+
+  <!-- Ground Shadow -->
+  <rect class="shadow-anim" x="3" y="15" width="9" height="1" fill="#000000" opacity="0.5"/>
+
+  <!-- Legs (extended for overlap during crouch) -->
+  <g fill="#DE886D">
+    <rect x="3" y="11" width="1" height="4"/>
+    <rect x="5" y="11" width="1" height="4"/>
+    <rect x="9" y="11" width="1" height="4"/>
+    <rect x="11" y="11" width="1" height="4"/>
+  </g>
+
+  <!-- Upper body -->
+  <g class="body-punch">
+
+    <!-- === Torso === -->
+    <rect x="2" y="6" width="11" height="7" fill="#DE886D"/>
+
+    <!-- === Eyes (always squinted) === -->
+    <g class="eyes-angry" fill="#000000">
+      <rect x="4" y="8" width="1" height="2"/>
+      <rect x="10" y="8" width="1" height="2"/>
+    </g>
+
+    <!-- === Left arm + shadow (always in front) === -->
+    <g class="arm-l">
+      <rect x="0.5" y="9.5" width="2" height="2" fill="#000000" opacity="0.2"/>
+      <rect x="0" y="9" width="2" height="2" fill="#DE886D"/>
+    </g>
+
+    <!-- === Right arm + shadow === -->
+    <g class="arm-r">
+      <rect x="13.5" y="9.5" width="2" height="2" fill="#000000" opacity="0.2"/>
+      <rect x="13" y="9" width="2" height="2" fill="#DE886D"/>
+    </g>
+
+    <!-- === Impact particles === -->
+    <rect class="impact-l1" x="0" y="0" width="0.8" height="0.8" fill="#FFC107"/>
+    <rect class="impact-l2" x="0" y="0" width="0.7" height="0.7" fill="#FF9800"/>
+    <rect class="impact-r1" x="0" y="0" width="0.8" height="0.8" fill="#FFC107"/>
+    <rect class="impact-r2" x="0" y="0" width="0.7" height="0.7" fill="#FF9800"/>
+
+    <!-- === Anger mark 💢: 4 L-shapes, vertices at center, rotated 45° === -->
+    <g transform="translate(12, 4)">
+      <g class="anger-mark">
+        <g transform="rotate(45, 1, 0.5)" fill="none" stroke="#FF3D00" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="-0.05,0.15 0.65,0.15 0.65,-0.55"/>
+          <polyline points="2.05,0.15 1.35,0.15 1.35,-0.55"/>
+          <polyline points="2.05,0.85 1.35,0.85 1.35,1.55"/>
+          <polyline points="-0.05,0.85 0.65,0.85 0.65,1.55"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

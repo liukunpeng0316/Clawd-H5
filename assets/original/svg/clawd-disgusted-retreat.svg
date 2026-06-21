@@ -1,0 +1,272 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-15 -25 45 45" width="500" height="500">
+<style>
+  /* 全身向左缓慢后退一步 - 3s循环 */
+  /* 0%~12%: 站立 → 15%~60%: 缓慢后退+踏两步 → 60%~80%: 停顿 → 80%~100%: 慢慢回位 */
+  .retreat-move {
+    animation: retreat-move 3s linear infinite;
+  }
+  @keyframes retreat-move {
+    0%, 12% { transform: translateX(2px); }
+    35% { transform: translateX(-1px); }
+    55% { transform: translateX(-3px); }
+    72% { transform: translateX(-3px); }
+    88% { transform: translateX(2px); }
+    100% { transform: translateX(2px); }
+  }
+
+  /* 身体压低重心 + 后仰嫌弃 */
+  .body-lean {
+    animation: body-lean 3s ease-in-out infinite;
+    transform-box: fill-box;
+    transform-origin: center bottom;
+  }
+  @keyframes body-lean {
+    0%, 10% { transform: rotate(0deg) scaleY(1) translateY(0px); }
+    20% { transform: rotate(-3deg) scaleY(0.97) translateY(0.3px); }
+    55%, 72% { transform: rotate(-4deg) scaleY(0.96) translateY(0.4px); }
+    86% { transform: rotate(0deg) scaleY(1) translateY(0px); }
+    100% { transform: rotate(0deg) scaleY(1) translateY(0px); }
+  }
+
+  /* 呼吸 */
+  .breathe {
+    animation: breathe 3.2s ease-in-out infinite;
+    transform-box: fill-box;
+    transform-origin: center bottom;
+  }
+  @keyframes breathe {
+    0%, 100% { transform: scale(1, 1); }
+    50% { transform: scale(1.02, 0.98) translateY(0.5px); }
+  }
+
+  /* 皱眉眼睛 - 压扁 + 视差看向右边(嫌弃地看着) */
+  .eyes-frown {
+    animation: eyes-frown 3s ease-in-out infinite;
+    transform-box: fill-box;
+    transform-origin: center center;
+  }
+  @keyframes eyes-frown {
+    0%, 8% { transform: scaleY(1) translateX(0px); }
+    12% { transform: scaleY(0.1) translateX(0px); }
+    18% { transform: scaleY(0.6) translateX(1.5px); }
+    70% { transform: scaleY(0.6) translateX(1.5px); }
+    75% { transform: scaleY(0.1) translateX(0px); }
+    80% { transform: scaleY(1) translateX(0px); }
+    100% { transform: scaleY(1) translateX(0px); }
+  }
+
+  /* 腿部 - 外侧：2次踏步，匀速线性 */
+  .legs-outer {
+    animation: legs-step-outer 3s linear infinite;
+    transform-box: fill-box;
+    transform-origin: center top;
+  }
+  @keyframes legs-step-outer {
+    0%, 15% { transform: translateY(0px); }
+    25% { transform: translateY(-1.5px); }
+    35% { transform: translateY(0px); }
+    45% { transform: translateY(-1.5px); }
+    55% { transform: translateY(0px); }
+    56%, 100% { transform: translateY(0px); }
+  }
+
+  /* 腿部 - 内侧：与外侧反相，匀速线性 */
+  .legs-inner {
+    animation: legs-step-inner 3s linear infinite;
+    transform-box: fill-box;
+    transform-origin: center top;
+  }
+  @keyframes legs-step-inner {
+    0%, 20% { transform: translateY(0px); }
+    30% { transform: translateY(-1.5px); }
+    40% { transform: translateY(0px); }
+    50% { transform: translateY(-1.5px); }
+    60% { transform: translateY(0px); }
+    61%, 100% { transform: translateY(0px); }
+  }
+
+  /* 手臂微摆 - 跟随踏步小幅摆动 */
+  .arm-left {
+    animation: arm-left 3s ease-in-out infinite;
+    transform-box: fill-box;
+    transform-origin: right center;
+  }
+  @keyframes arm-left {
+    0%, 12% { transform: rotate(0deg); }
+    24% { transform: rotate(8deg); }
+    33% { transform: rotate(-3deg); }
+    42% { transform: rotate(6deg); }
+    55% { transform: rotate(0deg); }
+    75%, 100% { transform: rotate(0deg); }
+  }
+
+  .arm-right {
+    animation: arm-right 3s ease-in-out infinite;
+    transform-box: fill-box;
+    transform-origin: left center;
+  }
+  @keyframes arm-right {
+    0%, 12% { transform: rotate(0deg); }
+    24% { transform: rotate(-10deg); }
+    33% { transform: rotate(3deg); }
+    42% { transform: rotate(-8deg); }
+    55% { transform: rotate(0deg); }
+    75%, 100% { transform: rotate(0deg); }
+  }
+
+  /* 阴影跟随 - 缓慢同步 */
+  .shadow-move {
+    animation: shadow-move 3s linear infinite;
+  }
+  @keyframes shadow-move {
+    0%, 12% { transform: translateX(2px) scaleX(1); opacity: 0.5; }
+    35% { transform: translateX(-1px) scaleX(1.03); opacity: 0.48; }
+    55%, 72% { transform: translateX(-3px) scaleX(1.05); opacity: 0.45; }
+    88% { transform: translateX(2px) scaleX(1); opacity: 0.5; }
+    100% { transform: translateX(2px) scaleX(1); opacity: 0.5; }
+  }
+
+  /* 波浪线原地出现 + 波动 */
+  .wave-show {
+    animation: wave-show 3s ease-in-out infinite;
+  }
+  @keyframes wave-show {
+    0%, 12% { opacity: 0; }
+    20% { opacity: 0.6; }
+    68% { opacity: 0.6; }
+    78% { opacity: 0; }
+    100% { opacity: 0; }
+  }
+  /* 波动摆动 - 左右晃动产生波动感 */
+  .wiggle1 {
+    animation: wiggle1 0.3s ease-in-out infinite alternate;
+  }
+  .wiggle2 {
+    animation: wiggle2 0.35s ease-in-out infinite alternate-reverse;
+  }
+  .wiggle3 {
+    animation: wiggle3 0.4s ease-in-out infinite alternate;
+  }
+  @keyframes wiggle1 {
+    0% { transform: translateX(-0.4px); }
+    100% { transform: translateX(0.4px); }
+  }
+  @keyframes wiggle2 {
+    0% { transform: translateX(0.35px); }
+    100% { transform: translateX(-0.35px); }
+  }
+  @keyframes wiggle3 {
+    0% { transform: translateX(-0.3px); }
+    100% { transform: translateX(0.3px); }
+  }
+
+  /* 紫色圈圈上浮 */
+  .circle1 {
+    animation: circle-rise1 3s ease-out infinite;
+  }
+  @keyframes circle-rise1 {
+    0%, 18% { opacity: 0; transform: translate(0px, 0px) scale(0.5); }
+    23% { opacity: 0.7; transform: translate(0px, 0px) scale(0.8); }
+    50% { opacity: 0.4; transform: translate(-2px, -6px) scale(1.2); }
+    65% { opacity: 0; transform: translate(-3px, -9px) scale(1.4); }
+    66%, 100% { opacity: 0; }
+  }
+  .circle2 {
+    animation: circle-rise2 3s ease-out infinite;
+  }
+  @keyframes circle-rise2 {
+    0%, 28% { opacity: 0; transform: translate(0px, 0px) scale(0.5); }
+    33% { opacity: 0.6; transform: translate(0px, 0px) scale(0.7); }
+    58% { opacity: 0.3; transform: translate(2px, -5px) scale(1.1); }
+    72% { opacity: 0; transform: translate(2.5px, -8px) scale(1.3); }
+    73%, 100% { opacity: 0; }
+  }
+  .circle3 {
+    animation: circle-rise3 3s ease-out infinite;
+  }
+  @keyframes circle-rise3 {
+    0%, 35% { opacity: 0; transform: translate(0px, 0px) scale(0.4); }
+    40% { opacity: 0.5; transform: translate(0px, 0px) scale(0.6); }
+    63% { opacity: 0.3; transform: translate(0px, -5px) scale(1); }
+    78% { opacity: 0; transform: translate(-1px, -8px) scale(1.2); }
+    79%, 100% { opacity: 0; }
+  }
+</style>
+
+  <!-- 阴影 -->
+  <g class="shadow-move">
+    <rect x="3" y="15" width="9" height="1" fill="#000000" opacity="0.5"/>
+  </g>
+
+  <!-- 全身移动组 -->
+  <g class="retreat-move">
+
+    <!-- 特效在最底层（身后） -->
+
+    <!-- 波浪线 - 身后，原地波动 -->
+    <g class="wave-show">
+      <g class="wiggle1">
+        <path d="M3,5 Q2.4,4.3 3,3.6 Q3.6,2.9 3,2.2" fill="none" stroke="#8D6E63" stroke-width="0.25"/>
+      </g>
+      <g class="wiggle2">
+        <path d="M4.5,4.5 Q3.9,3.8 4.5,3.1 Q5.1,2.4 4.5,1.7" fill="none" stroke="#8D6E63" stroke-width="0.25"/>
+      </g>
+      <g class="wiggle3">
+        <path d="M2,3.5 Q1.4,2.8 2,2.1 Q2.6,1.4 2,0.7" fill="none" stroke="#8D6E63" stroke-width="0.25"/>
+      </g>
+    </g>
+
+    <!-- 紫色圈圈 - 身后散发 -->
+    <g class="circle1">
+      <circle cx="2" cy="7" r="0.8" fill="none" stroke="#7B1FA2" stroke-width="0.35"/>
+    </g>
+    <g class="circle2">
+      <circle cx="13" cy="6.5" r="0.7" fill="none" stroke="#9C27B0" stroke-width="0.3"/>
+    </g>
+    <g class="circle3">
+      <circle cx="7.5" cy="5" r="0.6" fill="none" stroke="#AB47BC" stroke-width="0.3"/>
+    </g>
+
+    <!-- 腿部 - 外侧（不跟随后仰，延长到y=12与躯干重叠1px防断开） -->
+    <g class="legs-outer">
+      <rect x="3" y="12" width="1" height="3" fill="#DE886D"/>
+      <rect x="11" y="12" width="1" height="3" fill="#DE886D"/>
+    </g>
+
+    <!-- 腿部 - 内侧（不跟随后仰，延长到y=12与躯干重叠1px防断开） -->
+    <g class="legs-inner">
+      <rect x="5" y="12" width="1" height="3" fill="#DE886D"/>
+      <rect x="9" y="12" width="1" height="3" fill="#DE886D"/>
+    </g>
+
+    <!-- 身体后仰组 -->
+    <g class="body-lean">
+
+      <!-- 呼吸组 -->
+      <g class="breathe">
+
+        <!-- 躯干 -->
+        <rect x="2" y="6" width="11" height="7" fill="#DE886D"/>
+
+        <!-- 眼睛 - 皱眉嫌弃 -->
+        <g class="eyes-frown">
+          <rect x="4" y="8" width="1" height="2" fill="#000000"/>
+          <rect x="10" y="8" width="1" height="2" fill="#000000"/>
+        </g>
+
+        <!-- 左臂 -->
+        <g class="arm-left">
+          <rect x="0" y="9" width="2" height="2" fill="#DE886D"/>
+        </g>
+
+        <!-- 右臂 -->
+        <g class="arm-right">
+          <rect x="13" y="9" width="2" height="2" fill="#DE886D"/>
+        </g>
+
+      </g>
+    </g>
+
+  </g>
+
+</svg>

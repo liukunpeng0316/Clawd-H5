@@ -1,0 +1,237 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-15 -25 45 45" width="500" height="500">
+  <defs>
+    <style>
+      /*
+        Clawd pleading face 5s cycle:
+        0-8%: normal standing
+        10-11%: blink transition
+        15-78%: pleading (round eyes + shine + tears + arms clasped + body shrink)
+        82-83%: blink transition
+        88-100%: normal standing
+      */
+
+      .body-plead {
+        transform-origin: 7.5px 15px;
+        animation: body-plead 5s infinite ease-in-out;
+      }
+      .breathe {
+        transform-origin: 7.5px 13px;
+        animation: breathe 3.2s infinite ease-in-out;
+      }
+
+      /* Normal eyes: visible during normal phase */
+      .eyes-normal {
+        animation: eyes-normal-vis 5s infinite ease-in-out;
+      }
+
+      /* Pleading eyes group (round + shine): visible during plead phase */
+      .eyes-plead-scale {
+        transform-origin: 7.5px 9px;
+        animation: eyes-plead-scale 5s infinite ease-in-out;
+      }
+      .eyes-plead-vis {
+        opacity: 0;
+        animation: eyes-plead-vis 5s infinite ease-in-out;
+      }
+
+      /* Shine: twinkle only during plead */
+      .eye-shine {
+        animation: eye-shine 1.5s infinite ease-in-out;
+      }
+
+      /* Tears: only visible during plead phase */
+      .tears-group {
+        opacity: 0;
+        animation: tears-vis 5s infinite ease-in-out;
+      }
+
+      .arm-l { animation: arm-l-plead 5s infinite ease-in-out; }
+      .arm-r { animation: arm-r-plead 5s infinite ease-in-out; }
+
+      /* Background sparkle stars: visible only during plead, staggered twinkle */
+      .stars-group {
+        opacity: 0;
+        animation: stars-vis 5s infinite ease-in-out;
+      }
+      .star-1 { animation: star-twinkle 1.2s infinite ease-in-out 0s; }
+      .star-2 { animation: star-twinkle 1.2s infinite ease-in-out 0.3s; }
+      .star-3 { animation: star-twinkle 1.2s infinite ease-in-out 0.6s; }
+      .star-4 { animation: star-twinkle 1.2s infinite ease-in-out 0.15s; }
+      .star-5 { animation: star-twinkle 1.2s infinite ease-in-out 0.45s; }
+
+      .shadow-anim {
+        transform-origin: 7.5px 15.5px;
+        animation: shadow-plead 5s infinite ease-in-out;
+      }
+
+      /* --- Keyframes --- */
+
+      @keyframes body-plead {
+        0%, 8%    { transform: translate(0, 0) scaleX(1) scaleY(1); }
+        15%, 78%  { transform: translate(0, 0.5px) scaleX(1.03) scaleY(0.97); }
+        85%, 100% { transform: translate(0, 0) scaleX(1) scaleY(1); }
+      }
+
+      @keyframes breathe {
+        0%, 100% { transform: scale(1, 1); }
+        50% { transform: scale(1.02, 0.98) translate(0, 0.3px); }
+      }
+
+      /* Normal eyes: visible at start and end, hidden during plead */
+      @keyframes eyes-normal-vis {
+        0%, 8%    { opacity: 1; }
+        10%, 83%  { opacity: 0; }
+        88%, 100% { opacity: 1; }
+      }
+
+      /* Pleading eyes: hidden at start/end, visible during plead */
+      @keyframes eyes-plead-vis {
+        0%, 11%   { opacity: 0; }
+        15%, 78%  { opacity: 1; }
+        82%, 100% { opacity: 0; }
+      }
+
+      /* Pleading eyes scale: slight enlarge */
+      @keyframes eyes-plead-scale {
+        0%, 11%   { transform: scaleY(1) scaleX(1); }
+        15%, 78%  { transform: scaleY(1.15) scaleX(1.1); }
+        82%, 100% { transform: scaleY(1) scaleX(1); }
+      }
+
+      /* Tears visible only during plead */
+      @keyframes tears-vis {
+        0%, 13%   { opacity: 0; }
+        18%, 75%  { opacity: 1; }
+        80%, 100% { opacity: 0; }
+      }
+
+      @keyframes eye-shine {
+        0%, 100% { opacity: 0.9; }
+        50% { opacity: 0.4; }
+      }
+
+
+      /* Stars visible during plead phase */
+      @keyframes stars-vis {
+        0%, 13%   { opacity: 0; }
+        18%, 75%  { opacity: 1; }
+        80%, 100% { opacity: 0; }
+      }
+
+      /* Twinkle: scale pulse */
+      @keyframes star-twinkle {
+        0%, 100% { transform: scale(1); opacity: 0.6; }
+        50%      { transform: scale(1.5); opacity: 1; }
+      }
+
+      @keyframes arm-l-plead {
+        0%, 8%    { transform: translate(0, 0); }
+        15%, 78%  { transform: translate(5px, 1px); }
+        88%, 100% { transform: translate(0, 0); }
+      }
+      @keyframes arm-r-plead {
+        0%, 8%    { transform: translate(0, 0); }
+        15%, 78%  { transform: translate(-5px, 1px); }
+        88%, 100% { transform: translate(0, 0); }
+      }
+
+      @keyframes shadow-plead {
+        0%, 8%    { transform: scaleX(1); opacity: 0.5; }
+        15%, 78%  { transform: scaleX(1.04); opacity: 0.47; }
+        88%, 100% { transform: scaleX(1); opacity: 0.5; }
+      }
+    </style>
+  </defs>
+
+  <!-- Background sparkle stars (behind Clawd) -->
+  <g class="stars-group">
+    <!-- 5 four-pointed stars at various positions around Clawd -->
+    <!-- Each star: two crossed rects forming a + shape -->
+    <g transform="translate(-2, 5)">
+      <g class="star-1">
+        <rect x="-0.2" y="-0.6" width="0.4" height="1.2" rx="0.1" fill="#FFD700"/>
+        <rect x="-0.6" y="-0.2" width="1.2" height="0.4" rx="0.1" fill="#FFD700"/>
+      </g>
+    </g>
+    <g transform="translate(16, 4)">
+      <g class="star-2">
+        <rect x="-0.25" y="-0.7" width="0.5" height="1.4" rx="0.1" fill="#FFC107"/>
+        <rect x="-0.7" y="-0.25" width="1.4" height="0.5" rx="0.1" fill="#FFC107"/>
+      </g>
+    </g>
+    <g transform="translate(-4, 11)">
+      <g class="star-3">
+        <rect x="-0.15" y="-0.5" width="0.3" height="1" rx="0.08" fill="#FFF59D"/>
+        <rect x="-0.5" y="-0.15" width="1" height="0.3" rx="0.08" fill="#FFF59D"/>
+      </g>
+    </g>
+    <g transform="translate(18, 10)">
+      <g class="star-4">
+        <rect x="-0.2" y="-0.55" width="0.4" height="1.1" rx="0.08" fill="#FFD700"/>
+        <rect x="-0.55" y="-0.2" width="1.1" height="0.4" rx="0.08" fill="#FFD700"/>
+      </g>
+    </g>
+    <g transform="translate(7.5, 1)">
+      <g class="star-5">
+        <rect x="-0.3" y="-0.8" width="0.6" height="1.6" rx="0.12" fill="#FFC107"/>
+        <rect x="-0.8" y="-0.3" width="1.6" height="0.6" rx="0.12" fill="#FFC107"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- Ground Shadow -->
+  <rect class="shadow-anim" x="3" y="15" width="9" height="1" fill="#000000" opacity="0.5"/>
+
+  <!-- Legs (static) -->
+  <g fill="#DE886D">
+    <rect x="3" y="11" width="1" height="4"/>
+    <rect x="5" y="11" width="1" height="4"/>
+    <rect x="9" y="11" width="1" height="4"/>
+    <rect x="11" y="11" width="1" height="4"/>
+  </g>
+
+  <!-- Upper body -->
+  <g class="body-plead">
+    <g class="breathe">
+      <!-- Torso -->
+      <rect x="2" y="6" width="11" height="7" fill="#DE886D"/>
+
+      <!-- Normal eyes: standard rect, no rounded corners -->
+      <g class="eyes-normal" fill="#000000">
+        <rect x="4" y="8" width="1" height="2"/>
+        <rect x="10" y="8" width="1" height="2"/>
+      </g>
+
+      <!-- Pleading eyes: rounded + shine, scaled up slightly -->
+      <g class="eyes-plead-scale">
+        <g class="eyes-plead-vis" fill="#000000">
+          <rect x="4" y="8" width="1" height="2" rx="0.3"/>
+          <rect x="10" y="8" width="1" height="2" rx="0.3"/>
+          <!-- White shine highlights -->
+          <g class="eye-shine">
+            <rect x="4.2" y="8.2" width="0.5" height="0.5" rx="0.15" fill="#FFFFFF"/>
+            <rect x="10.2" y="8.2" width="0.5" height="0.5" rx="0.15" fill="#FFFFFF"/>
+          </g>
+        </g>
+      </g>
+
+      <!-- Watery puddles under eyes (static, visible only during plead) -->
+      <g class="tears-group">
+        <rect x="3.2" y="10" width="2.6" height="0.7" rx="0.35" fill="#81D4FA" opacity="0.7"/>
+        <rect x="9.2" y="10" width="2.6" height="0.7" rx="0.35" fill="#81D4FA" opacity="0.7"/>
+      </g>
+
+      <!-- Left arm + shadow -->
+      <g class="arm-l">
+        <rect x="0.5" y="9.5" width="2" height="2" fill="#000000" opacity="0.2"/>
+        <rect x="0" y="9" width="2" height="2" fill="#DE886D"/>
+      </g>
+
+      <!-- Right arm + shadow -->
+      <g class="arm-r">
+        <rect x="13.5" y="9.5" width="2" height="2" fill="#000000" opacity="0.2"/>
+        <rect x="13" y="9" width="2" height="2" fill="#DE886D"/>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,189 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-15 -25 45 45" width="500" height="500">
+  <defs>
+    <style>
+      /*
+        Clawd going to sleep: warm cozy goodnight vibe.
+        6s cycle: standing → eyes droop → body tilts → Zzz floats → loop
+      */
+
+      /* Drowsy body: slowly compresses and tilts to one side */
+      .body-drowsy {
+        transform-origin: 7.5px 15px;
+        animation: body-drowsy 6s infinite ease-in-out;
+      }
+
+      /* Eyes slowly close (each eye scales from own center) */
+      .eyes-drowsy {
+        transform-box: fill-box;
+        transform-origin: center;
+        animation: eyes-drowsy 6s infinite ease-in-out;
+      }
+
+      /* Sleep cap gentle sway */
+      .cap-sway {
+        transform-origin: 7.5px 6px;
+        animation: cap-sway 6s infinite ease-in-out;
+      }
+
+      /* Zzz particles float up and fade */
+      .zzz-1 { opacity: 0; animation: zzz-float 6s infinite ease-out 0s; }
+      .zzz-2 { opacity: 0; animation: zzz-float 6s infinite ease-out 2s; }
+      .zzz-3 { opacity: 0; animation: zzz-float 6s infinite ease-out 4s; }
+
+      /* Small stars twinkle in background */
+      .star-1 { animation: star-twinkle 2s infinite ease-in-out 0s; }
+      .star-2 { animation: star-twinkle 2s infinite ease-in-out 0.6s; }
+      .star-3 { animation: star-twinkle 2s infinite ease-in-out 1.2s; }
+
+      /* Moon glow */
+      .moon-glow {
+        animation: moon-glow 3s infinite ease-in-out;
+      }
+
+      .shadow-anim {
+        transform-origin: 7.5px 15.5px;
+        animation: shadow-drowsy 6s infinite ease-in-out;
+      }
+
+      /* --- Keyframes --- */
+
+      /* Body slowly sinks and tilts (falling asleep standing) */
+      @keyframes body-drowsy {
+        0%, 10%   { transform: translate(0, 0) scaleY(1) scaleX(1) rotate(0deg); }
+        40%, 60%  { transform: translate(0.3px, 0.5px) scaleY(0.96) scaleX(1.03) rotate(2deg); }
+        80%, 90%  { transform: translate(0.5px, 0.8px) scaleY(0.94) scaleX(1.04) rotate(3deg); }
+        100%      { transform: translate(0, 0) scaleY(1) scaleX(1) rotate(0deg); }
+      }
+
+      /* Eyes: open → half close → nearly shut. Wider when more compressed. */
+      @keyframes eyes-drowsy {
+        0%, 8%    { transform: scaleY(1) scaleX(1); }
+        20%       { transform: scaleY(0.5) scaleX(1.2); }
+        35%       { transform: scaleY(0.25) scaleX(1.4); }
+        45%       { transform: scaleY(0.5) scaleX(1.2); }
+        55%       { transform: scaleY(0.15) scaleX(1.5); }
+        70%       { transform: scaleY(0.4) scaleX(1.3); }
+        85%       { transform: scaleY(0.1) scaleX(1.5); }
+        95%, 100% { transform: scaleY(1) scaleX(1); }
+      }
+
+      /* Sleep cap sways with body tilt */
+      @keyframes cap-sway {
+        0%, 10%   { transform: translate(0, 0) rotate(0deg); }
+        40%, 60%  { transform: translate(0.5px, -0.3px) rotate(4deg); }
+        80%, 90%  { transform: translate(0.8px, -0.5px) rotate(6deg); }
+        100%      { transform: translate(0, 0) rotate(0deg); }
+      }
+
+      /* Zzz: appear small, float up-right, grow slightly, fade */
+      @keyframes zzz-float {
+        0%, 5%    { opacity: 0; transform: translate(0, 0) scale(0.5); }
+        15%       { opacity: 0.8; transform: translate(1px, -3px) scale(0.7); }
+        50%       { opacity: 0.7; transform: translate(3px, -8px) scale(0.9); }
+        80%       { opacity: 0.3; transform: translate(4px, -12px) scale(1); }
+        100%      { opacity: 0; transform: translate(5px, -15px) scale(1); }
+      }
+
+      /* Stars twinkle */
+      @keyframes star-twinkle {
+        0%, 100% { opacity: 0.3; transform: scale(0.8); }
+        50%      { opacity: 1; transform: scale(1.2); }
+      }
+
+      /* Moon gentle glow */
+      @keyframes moon-glow {
+        0%, 100% { opacity: 0.8; }
+        50%      { opacity: 1; }
+      }
+
+      @keyframes shadow-drowsy {
+        0%, 10%   { transform: scaleX(1); opacity: 0.5; }
+        40%, 90%  { transform: scaleX(1.04) translateX(0.3px); opacity: 0.45; }
+        100%      { transform: scaleX(1); opacity: 0.5; }
+      }
+    </style>
+  </defs>
+
+  <!-- Background: small moon (upper-left) -->
+  <g class="moon-glow">
+    <circle cx="1" cy="-1" r="1.8" fill="#FFF9C4"/>
+    <circle cx="1.5" cy="-1.4" r="0.7" fill="#FFF9C4" opacity="0.5"/>
+  </g>
+
+  <!-- Background: tiny stars (one left of moon, two on right side) -->
+  <g transform="translate(-2, -3)">
+    <g class="star-1">
+      <rect x="-0.3" y="-0.3" width="0.6" height="0.6" rx="0.1" fill="#FFF9C4"/>
+    </g>
+  </g>
+  <g transform="translate(8, -3)">
+    <g class="star-2">
+      <rect x="-0.25" y="-0.25" width="0.5" height="0.5" rx="0.1" fill="#FFF9C4"/>
+    </g>
+  </g>
+  <g transform="translate(17, -2)">
+    <g class="star-3">
+      <rect x="-0.2" y="-0.2" width="0.4" height="0.4" rx="0.08" fill="#FFF9C4"/>
+    </g>
+  </g>
+
+  <!-- Ground Shadow -->
+  <rect class="shadow-anim" x="3" y="15" width="9" height="1" fill="#000000" opacity="0.5"/>
+
+  <!-- Legs (static) -->
+  <g fill="#DE886D">
+    <rect x="3" y="11" width="1" height="4"/>
+    <rect x="5" y="11" width="1" height="4"/>
+    <rect x="9" y="11" width="1" height="4"/>
+    <rect x="11" y="11" width="1" height="4"/>
+  </g>
+
+  <!-- Upper body (drowsy tilt) -->
+  <g class="body-drowsy">
+    <!-- Torso -->
+    <rect x="2" y="6" width="11" height="7" fill="#DE886D"/>
+
+    <!-- Drowsy eyes (each in own group so fill-box scales from own center) -->
+    <g class="eyes-drowsy" fill="#000000">
+      <rect x="4" y="8" width="1" height="2"/>
+    </g>
+    <g class="eyes-drowsy" fill="#000000">
+      <rect x="10" y="8" width="1" height="2"/>
+    </g>
+
+    <!-- Arms (at side, still) -->
+    <rect x="0" y="9" width="2" height="2" fill="#DE886D"/>
+    <rect x="13" y="9" width="2" height="2" fill="#DE886D"/>
+
+    <!-- Sleep cap (soft droopy nightcap) -->
+    <g class="cap-sway">
+      <!-- Cap base (rounded, covers head top) -->
+      <rect x="2" y="4.5" width="11" height="2" rx="1" fill="#5C6BC0"/>
+      <!-- Cap body (droopy cone going right) -->
+      <rect x="8" y="3" width="6" height="2" rx="1" fill="#5C6BC0"/>
+      <rect x="11" y="2" width="4" height="2" rx="1" fill="#5C6BC0"/>
+      <rect x="13" y="1" width="3" height="2" rx="1" fill="#5C6BC0"/>
+      <!-- Pompom at tip -->
+      <circle cx="15.5" cy="1.5" r="1" fill="#FFFFFF"/>
+      <!-- White trim at base -->
+      <rect x="2" y="5.3" width="11" height="1.1" rx="0.35" fill="#FFFFFF" opacity="0.9"/>
+    </g>
+
+    <!-- Zzz particles (float up from head area) -->
+    <g transform="translate(13, 4)">
+      <g class="zzz-1">
+        <text font-size="2.5" font-weight="bold" fill="#7986CB" font-family="monospace">z</text>
+      </g>
+    </g>
+    <g transform="translate(14, 3)">
+      <g class="zzz-2">
+        <text font-size="3" font-weight="bold" fill="#9FA8DA" font-family="monospace">z</text>
+      </g>
+    </g>
+    <g transform="translate(15, 2)">
+      <g class="zzz-3">
+        <text font-size="3.5" font-weight="bold" fill="#C5CAE9" font-family="monospace">Z</text>
+      </g>
+    </g>
+  </g>
+</svg>

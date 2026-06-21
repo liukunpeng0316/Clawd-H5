@@ -1,0 +1,237 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-15 -25 45 45" width="500" height="500">
+  <defs>
+    <style>
+      /* Shadow */
+      .shadow {
+        transform-origin: 7.5px 15.5px;
+        animation: shadowPulse 3s infinite ease-in-out;
+      }
+
+      /* Body: gentle musical sway */
+      .performer {
+        transform-origin: 7.5px 11px;
+        animation: sway 3s infinite ease-in-out;
+      }
+
+      /* Breathe layer */
+      .breathe {
+        transform-origin: 7.5px 11px;
+        animation: breathe 1.8s infinite ease-in-out;
+      }
+
+      /* Flute bob */
+      .flute-group {
+        animation: fluteBob 3s infinite ease-in-out;
+      }
+
+      /* Eyes: serene blink */
+      .eyes-soft {
+        transform-box: fill-box;
+        transform-origin: 50% 50%;
+        animation: sereneBlink 3.2s infinite ease-in-out;
+      }
+
+      /* Pixel music notes */
+      .music-note {
+        opacity: 0;
+        animation: floatNote 2.2s infinite ease-out;
+      }
+      .n1 { animation-delay: 0s; fill: #FFD700; }
+      .n2 { animation-delay: 0.7s; fill: #40C4FF; }
+      .n3 { animation-delay: 1.4s; fill: #B388FF; }
+
+      /* Snake body sway */
+      .snake {
+        transform-origin: 21px 15px;
+        animation: snakeSway 3s infinite ease-in-out;
+      }
+
+      /* Snake head independent wave */
+      .snake-head {
+        transform-origin: 21px 7px;
+        animation: snakeHeadWave 1.4s infinite ease-in-out;
+      }
+
+      /* PYTHON text wave */
+      .py { animation: text-pulse 1s infinite ease-in-out; }
+      .py0 { animation-delay: 0s; }
+      .py1 { animation-delay: 0.1s; }
+      .py2 { animation-delay: 0.2s; }
+      .py3 { animation-delay: 0.3s; }
+      .py4 { animation-delay: 0.4s; }
+      .py5 { animation-delay: 0.5s; }
+      .py6 { animation-delay: 0.6s; }
+      .py7 { animation-delay: 0.7s; }
+      .py8 { animation-delay: 0.8s; }
+
+      /* --- Keyframes --- */
+
+      @keyframes sway {
+        0%, 100% { transform: translate(0, 0) rotate(0deg); }
+        25% { transform: translate(-0.3px, 0.2px) rotate(-1deg); }
+        50% { transform: translate(0, 0.4px) rotate(0deg); }
+        75% { transform: translate(0.3px, 0.2px) rotate(1deg); }
+      }
+
+      @keyframes breathe {
+        0%, 100% { transform: scale(1, 1); }
+        50% { transform: scale(1.02, 0.98); }
+      }
+
+      @keyframes fluteBob {
+        0%, 100% { transform: translate(0, 0); }
+        50% { transform: translate(0, -0.3px); }
+      }
+
+      @keyframes shadowPulse {
+        0%, 100% { transform: scaleX(1); opacity: 0.45; }
+        50% { transform: scaleX(1.06); opacity: 0.38; }
+      }
+
+      @keyframes sereneBlink {
+        0%, 15%, 100% { transform: scaleY(1); }
+        18%, 22% { transform: scaleY(0.2); }
+        58%, 62% { transform: scaleY(0.35); }
+      }
+
+      @keyframes floatNote {
+        0% { transform: translate(2px, 7px) scale(0.6); opacity: 0; }
+        20% { opacity: 0.9; }
+        100% { transform: translate(2px, -6px) scale(0.9); opacity: 0; }
+      }
+
+      @keyframes snakeSway {
+        0%, 100% { transform: translate(0, 0) rotate(0deg); }
+        25% { transform: translate(-0.2px, 0.15px) rotate(-0.8deg); }
+        50% { transform: translate(0, 0.25px) rotate(0deg); }
+        75% { transform: translate(0.2px, 0.15px) rotate(0.8deg); }
+      }
+
+      @keyframes snakeHeadWave {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-0.6px); }
+        75% { transform: translateX(0.6px); }
+      }
+
+      @keyframes text-pulse {
+        0%, 100% { opacity: 0.15; }
+        50% { opacity: 1; }
+      }
+    </style>
+
+  </defs>
+
+  <!-- Ground shadows -->
+  <rect class="shadow" x="2" y="15" width="11" height="1" fill="#000000" opacity="0.45"/>
+  <g opacity="0.35">
+    <rect x="18" y="15" width="7" height="1" fill="#000000"/>
+  </g>
+
+  <!-- Floating music notes (text characters) -->
+  <g>
+    <text class="music-note n1" x="1" y="4" font-size="4">&#9835;</text>
+    <text class="music-note n2" x="-1" y="2" font-size="3.5">&#9833;</text>
+    <text class="music-note n3" x="4" y="0" font-size="3.8">&#9834;</text>
+  </g>
+
+  <!-- PYTHON... text above scene -->
+  <text x="16" y="1" text-anchor="middle" font-family="monospace" font-size="2.4" font-weight="bold" letter-spacing="0.1">
+    <tspan class="py py0" fill="#40C4FF">P</tspan><tspan class="py py1" fill="#66BB6A">Y</tspan><tspan class="py py2" fill="#FFD54F">T</tspan><tspan class="py py3" fill="#FF8A65">H</tspan><tspan class="py py4" fill="#B388FF">O</tspan><tspan class="py py5" fill="#40C4FF">N</tspan><tspan class="py py6" fill="#FFFFFF">.</tspan><tspan class="py py7" fill="#FFFFFF">.</tspan><tspan class="py py8" fill="#FFFFFF">.</tspan>
+  </text>
+
+  <!-- Legs (extended) -->
+  <g fill="#DE886D">
+    <rect x="3" y="12" width="1" height="3"/>
+    <rect x="5" y="12" width="1" height="3"/>
+    <rect x="9" y="12" width="1" height="3"/>
+    <rect x="11" y="12" width="1" height="3"/>
+  </g>
+
+  <!-- Clawd body -->
+  <g class="performer">
+    <g class="breathe">
+
+      <!-- Torso -->
+      <rect x="2" y="6" width="11" height="7" fill="#DE886D"/>
+
+      <!-- Eyes (serene blink) -->
+      <g class="eyes-soft" fill="#000000">
+        <rect x="4" y="8" width="1" height="2"/>
+        <rect x="10" y="8" width="1" height="2"/>
+      </g>
+
+      <!-- Flute (pungi) + arms group -->
+      <g class="flute-group">
+
+        <!-- Left arm at front + shadow -->
+        <g transform="translate(5, 1)">
+          <rect x="0.5" y="9.5" width="2" height="2" fill="#000000" opacity="0.2"/>
+          <rect x="0" y="9" width="2" height="2" fill="#DE886D"/>
+        </g>
+
+        <!-- Pungi (snake charmer pipe) -->
+        <g transform="translate(6.5, 0)">
+          <!-- Pipe shaft -->
+          <rect x="0" y="7" width="1" height="5" fill="#8D6E63"/>
+          <!-- Gourd resonator at top -->
+          <circle cx="0.5" cy="6.5" r="1.2" fill="#A1887F"/>
+          <circle cx="0.5" cy="6.5" r="0.8" fill="#8D6E63"/>
+          <!-- Pipe opening -->
+          <rect x="0.1" y="5.5" width="0.8" height="0.5" rx="0.2" fill="#6D4C41"/>
+        </g>
+
+        <!-- Right arm at front + shadow -->
+        <g transform="translate(-5, 1)">
+          <rect x="13.5" y="9.5" width="2" height="2" fill="#000000" opacity="0.2"/>
+          <rect x="13" y="9" width="2" height="2" fill="#DE886D"/>
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <!-- Snake (drawn BEFORE basket so basket covers snake bottom) -->
+  <g class="snake">
+    <!-- Body segments with belly stripe -->
+    <g fill="#4CAF50">
+      <rect x="20" y="12.5" width="2" height="1.5"/>
+      <rect x="19.7" y="11" width="2" height="1.8"/>
+      <rect x="20.2" y="9.5" width="2" height="1.8"/>
+    </g>
+    <g fill="#81C784">
+      <rect x="20.5" y="12.5" width="1" height="1.5"/>
+      <rect x="20.2" y="11" width="1" height="1.8"/>
+      <rect x="20.7" y="9.5" width="1" height="1.8"/>
+    </g>
+
+    <!-- Snake head (independent wave) -->
+    <g class="snake-head">
+      <g fill="#4CAF50">
+        <rect x="19.8" y="8" width="2" height="1.8"/>
+        <rect x="20.3" y="6.5" width="2" height="1.8"/>
+      </g>
+      <g fill="#81C784">
+        <rect x="20.3" y="8" width="1" height="1.8"/>
+        <rect x="20.8" y="6.5" width="1" height="1.8"/>
+      </g>
+      <!-- Head -->
+      <rect x="19.5" y="5" width="3" height="2" rx="0.3" fill="#388E3C"/>
+      <!-- Eyes -->
+      <rect x="20" y="5.5" width="0.6" height="0.6" rx="0.3" fill="#FFEB3B"/>
+      <rect x="21.5" y="5.5" width="0.6" height="0.6" rx="0.3" fill="#FFEB3B"/>
+      <rect x="20.15" y="5.6" width="0.3" height="0.4" fill="#000000"/>
+      <rect x="21.65" y="5.6" width="0.3" height="0.4" fill="#000000"/>
+      <!-- Tongue -->
+      <line x1="21" y1="5" x2="21" y2="4" stroke="#F44336" stroke-width="0.3" stroke-linecap="round"/>
+      <line x1="21" y1="4" x2="20.5" y2="3.5" stroke="#F44336" stroke-width="0.25" stroke-linecap="round"/>
+      <line x1="21" y1="4" x2="21.5" y2="3.5" stroke="#F44336" stroke-width="0.25" stroke-linecap="round"/>
+    </g>
+  </g>
+
+  <!-- Basket (on top of snake, covers snake bottom) -->
+  <g transform="translate(18, 12)">
+    <rect x="-0.3" y="0.8" width="6.6" height="0.5" rx="0.3" fill="#6D4C41"/>
+    <rect x="0" y="1" width="6" height="2" rx="0.5" fill="#8D6E63"/>
+    <rect x="0.3" y="1.3" width="5.4" height="0.4" fill="#A1887F"/>
+    <rect x="0.3" y="2.1" width="5.4" height="0.4" fill="#A1887F"/>
+  </g>
+</svg>

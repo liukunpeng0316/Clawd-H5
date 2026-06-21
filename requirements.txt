@@ -1,0 +1,5 @@
+# Runtime dependencies. Requires Python 3.10+ and a system Chrome/Chromium
+# (rendering is done with Chrome directly).
+# Install with: pip install -r requirements.txt
+numpy>=2.0
+pillow>=10.0

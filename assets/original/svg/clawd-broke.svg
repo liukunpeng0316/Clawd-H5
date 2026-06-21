@@ -1,0 +1,223 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-15 -25 45 45" width="500" height="500">
+<style>
+  /* 没钱了 - 5s循环 */
+  /* 0-15%: 正常站立 → 15-25%: 掏出钱袋 → 25-35%: 抖两下掉硬币 */
+  /* 35-42%: 收回手臂切换悲伤眼 → 42-95%: 流泪抽泣 → 95-100%: 恢复 */
+
+  /* 呼吸 */
+  .breathe {
+    animation: breathe 3.2s ease-in-out infinite;
+    transform-box: fill-box;
+    transform-origin: center bottom;
+  }
+  @keyframes breathe {
+    0%, 100% { transform: scale(1, 1); }
+    50% { transform: scale(1.02, 0.98) translateY(0.5px); }
+  }
+
+  /* 丧气塌陷 - 悲伤阶段身体下沉 */
+  .sag {
+    animation: sag 5s ease-in-out infinite;
+    transform-box: fill-box;
+    transform-origin: center bottom;
+  }
+  @keyframes sag {
+    0%, 58% { transform: scaleY(1) translateY(0px); }
+    65%, 85% { transform: scaleY(0.95) translateY(0.5px); }
+    92%, 100% { transform: scaleY(1) translateY(0px); }
+  }
+
+  /* 普通眼 - 前半段可见 */
+  .normal-eyes {
+    animation: normal-eyes-vis 5s ease-in-out infinite;
+  }
+  @keyframes normal-eyes-vis {
+    0%, 57% { opacity: 1; }
+    59% { opacity: 0; }
+    90% { opacity: 0; }
+    91% { opacity: 0; }
+    93% { opacity: 1; }
+    100% { opacity: 1; }
+  }
+
+  /* 眼睛看右边 - 掉硬币时 */
+  .eyes-look {
+    animation: eyes-look 5s ease-in-out infinite;
+  }
+  @keyframes eyes-look {
+    0%, 40% { transform: translateX(0px); }
+    42%, 55% { transform: translateX(1.5px); }
+    58%, 100% { transform: translateX(0px); }
+  }
+
+  /* 悲伤眼 - 后半段可见 */
+  .sad-eyes {
+    animation: sad-eyes-vis 5s ease-in-out infinite;
+  }
+  @keyframes sad-eyes-vis {
+    0%, 60% { opacity: 0; }
+    65% { opacity: 1; }
+    85% { opacity: 1; }
+    89% { opacity: 0; }
+    90%, 100% { opacity: 0; }
+  }
+
+
+  /* 右臂+钱袋 - 从背后掏出再收回 */
+  .arm-right-anim {
+    animation: arm-right-anim 5s ease-in-out infinite;
+    transform-box: fill-box;
+    transform-origin: left center;
+  }
+  @keyframes arm-right-anim {
+    0%, 20% { transform: rotate(0deg); }
+    30% { transform: rotate(-70deg); }
+    32%, 45% { transform: rotate(-70deg); }
+    55%, 100% { transform: rotate(0deg); }
+  }
+
+  /* 钱袋 - 举起时可见 */
+  .bag-vis {
+    animation: bag-vis 5s ease-in-out infinite;
+  }
+  @keyframes bag-vis {
+    0%, 25% { opacity: 0; }
+    30% { opacity: 1; }
+    48% { opacity: 1; }
+    52%, 100% { opacity: 0; }
+  }
+
+  /* 钱袋抖动 */
+  .bag-shake {
+    animation: bag-shake 5s ease-in-out infinite;
+    transform-box: fill-box;
+    transform-origin: center top;
+  }
+  @keyframes bag-shake {
+    0%, 35% { transform: rotate(20deg); }
+    37% { transform: rotate(32deg); }
+    38.5% { transform: rotate(10deg); }
+    40% { transform: rotate(30deg); }
+    42% { transform: rotate(12deg); }
+    44% { transform: rotate(20deg); }
+    45%, 100% { transform: rotate(20deg); }
+  }
+
+  /* 硬币掉落 - 抖动时掉出 */
+  .coin1 {
+    animation: coin-fall 5s ease-in infinite;
+  }
+  @keyframes coin-fall {
+    0%, 40% { opacity: 0; transform: translate(0px, 0px); }
+    42% { opacity: 0.9; transform: translate(0px, 0px); }
+    44% { opacity: 0.9; transform: translate(0px, 1px); }
+    46% { opacity: 0.9; transform: translate(0px, 3px); }
+    48% { opacity: 0.9; transform: translate(0px, 7px); }
+    49% { opacity: 0.9; transform: translate(0px, 7.5px); }
+    51% { opacity: 0.9; transform: translate(1.5px, 4px); }
+    52.5% { opacity: 0; transform: translate(2.5px, 3px); }
+    53%, 100% { opacity: 0; }
+  }
+
+  /* 一滴泪挂在脸上 - 悲伤阶段出现 */
+  .tear-hang {
+    animation: tear-hang 5s ease-in-out infinite;
+  }
+  @keyframes tear-hang {
+    0%, 65% { opacity: 0; }
+    68% { opacity: 0.8; }
+    85% { opacity: 0.8; }
+    90%, 100% { opacity: 0; }
+  }
+
+  /* 阴影 */
+  .shadow-anim {
+    animation: shadow-breathe 3.2s ease-in-out infinite;
+  }
+  @keyframes shadow-breathe {
+    0%, 100% { transform: scaleX(1); opacity: 0.5; }
+    50% { transform: scaleX(1.02); opacity: 0.48; }
+  }
+</style>
+
+  <!-- 阴影 -->
+  <g class="shadow-anim">
+    <rect x="3" y="15" width="9" height="1" fill="#000000" opacity="0.5"/>
+  </g>
+
+  <!-- 丧气塌陷 -->
+  <g class="sag">
+  <!-- 呼吸 -->
+  <g class="breathe">
+
+    <!-- 腿部 -->
+    <rect x="3" y="12" width="1" height="3" fill="#DE886D"/>
+    <rect x="5" y="12" width="1" height="3" fill="#DE886D"/>
+    <rect x="9" y="12" width="1" height="3" fill="#DE886D"/>
+    <rect x="11" y="12" width="1" height="3" fill="#DE886D"/>
+
+    <!-- 躯干 -->
+    <rect x="2" y="6" width="11" height="7" fill="#DE886D"/>
+
+    <!-- 普通眼 -->
+    <g class="normal-eyes">
+      <g class="eyes-look">
+        <rect x="4" y="8" width="1" height="2" fill="#000000"/>
+        <rect x="10" y="8" width="1" height="2" fill="#000000"/>
+      </g>
+    </g>
+
+    <!-- 悲伤眼 -->
+    <g class="sad-eyes">
+      <g>
+        <polyline points="3.5,8.5 4.5,9.5 5.5,8.5" fill="none" stroke="#000000" stroke-width="0.7" stroke-linecap="round"/>
+        <polyline points="9.5,8.5 10.5,9.5 11.5,8.5" fill="none" stroke="#000000" stroke-width="0.7" stroke-linecap="round"/>
+      </g>
+    </g>
+
+    <!-- 一滴泪挂在脸上 -->
+    <g class="tear-hang">
+      <rect x="4.2" y="10" width="0.8" height="1.2" fill="#4FC3F7"/>
+    </g>
+
+    <!-- 左臂静止 -->
+    <rect x="0" y="9" width="2" height="2" fill="#DE886D"/>
+
+    <!-- 右臂+钱袋 -->
+    <g class="arm-right-anim">
+      <!-- 手臂 -->
+      <rect x="13" y="9" width="2" height="2" fill="#DE886D"/>
+
+      <!-- 钱袋 - 倒扣💰，鼓起在上，窄颈开口朝下 -->
+      <g class="bag-vis">
+        <g class="bag-shake">
+          <!-- 袋身鼓起(上方) -->
+          <rect x="13" y="7" width="3.5" height="0.5" fill="#C9A84C"/>
+          <rect x="12.5" y="7.5" width="4.5" height="1" fill="#DEAF42"/>
+          <rect x="13" y="8.5" width="3.5" height="1" fill="#D9BC52"/>
+          <!-- 扎口绳 -->
+          <rect x="14" y="9.5" width="1.5" height="0.5" fill="#8B5E2B"/>
+          <!-- 颈部收窄 -->
+          <rect x="13.5" y="10" width="2.5" height="0.5" fill="#D4A43C"/>
+          <rect x="13.5" y="10.5" width="2.5" height="0.5" fill="#D4B44C"/>
+          <!-- 开口(最底) -->
+          <rect x="14" y="11" width="1.5" height="0.5" fill="#C9A84C"/>
+          <!-- $ 符号 -->
+          <rect x="14.5" y="7.7" width="0.5" height="0.3" fill="#8B6914"/>
+          <rect x="14" y="8" width="0.5" height="0.3" fill="#8B6914"/>
+          <rect x="14.5" y="8.3" width="0.5" height="0.3" fill="#8B6914"/>
+          <rect x="15" y="8.6" width="0.5" height="0.3" fill="#8B6914"/>
+          <rect x="14.5" y="8.9" width="0.5" height="0.3" fill="#8B6914"/>
+        </g>
+      </g>
+    </g>
+
+  </g>
+  </g>
+
+  <!-- 硬币 - 绝对位置，从钱袋口处掉落到地面 -->
+  <g class="coin1">
+    <rect x="14" y="8" width="1.2" height="1.2" fill="#FFD700"/>
+  </g>
+
+</svg>

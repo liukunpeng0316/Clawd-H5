@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-15 -25 45 45" width="500" height="500">
+  <defs>
+    <style>
+      /* Gentle breathing */
+      .breathe {
+        transform-origin: 7.5px 13px;
+        animation: breathe 3.2s infinite ease-in-out;
+      }
+
+      /* Subtle content sway */
+      .sway {
+        transform-origin: 7.5px 15px;
+        animation: sway 4s infinite ease-in-out;
+      }
+
+      /* Eyes: mostly ^^ with occasional soft blink */
+      .eyes-smile {
+        transform-origin: 7.5px 9px;
+        animation: smile-blink 4s infinite ease-in-out;
+      }
+
+/* Shadow syncs with sway */
+      .shadow-anim {
+        transform-origin: 7.5px 15.5px;
+        animation: shadow-sway 4s infinite ease-in-out;
+      }
+
+      /* --- Keyframes --- */
+
+      @keyframes breathe {
+        0%, 100% { transform: scale(1, 1); }
+        50% { transform: scale(1.02, 0.98) translate(0, 0.3px); }
+      }
+
+      /* Gentle left-right tilt, like swaying with contentment */
+      @keyframes sway {
+        0%, 100% { transform: rotate(0deg) translateX(0); }
+        30% { transform: rotate(1.5deg) translateX(0.5px); }
+        70% { transform: rotate(-1.5deg) translateX(-0.5px); }
+      }
+
+      /* Soft blink: mostly visible, quick close at ~50% */
+      @keyframes smile-blink {
+        0%, 40%, 55%, 100% { transform: scaleY(1); }
+        47%, 53% { transform: scaleY(0.1); }
+      }
+
+@keyframes shadow-sway {
+        0%, 100% { transform: scaleX(1); opacity: 0.5; }
+        30% { transform: scaleX(1.03) translateX(0.3px); opacity: 0.48; }
+        70% { transform: scaleX(1.03) translateX(-0.3px); opacity: 0.48; }
+      }
+    </style>
+  </defs>
+
+  <!-- Ground Shadow -->
+  <rect class="shadow-anim" x="3" y="15" width="9" height="1" fill="#000000" opacity="0.5"/>
+
+  <!-- Legs (static) -->
+  <g fill="#DE886D">
+    <rect x="3" y="12" width="1" height="3"/>
+    <rect x="5" y="12" width="1" height="3"/>
+    <rect x="9" y="12" width="1" height="3"/>
+    <rect x="11" y="12" width="1" height="3"/>
+  </g>
+
+  <!-- Upper body with sway -->
+  <g class="sway">
+    <g class="breathe">
+      <!-- Torso -->
+      <rect x="2" y="6" width="11" height="7" fill="#DE886D"/>
+
+      <!-- Eyes: ^^ happy squint -->
+      <g class="eyes-smile" fill="none" stroke="#000000" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="3.5,9.5 4.5,8.5 5.5,9.5"/>
+        <polyline points="9.5,9.5 10.5,8.5 11.5,9.5"/>
+      </g>
+
+<!-- Arms (resting at sides, static) -->
+      <rect x="0" y="9" width="2" height="2" fill="#DE886D"/>
+      <rect x="13" y="9" width="2" height="2" fill="#DE886D"/>
+    </g>
+  </g>
+</svg>

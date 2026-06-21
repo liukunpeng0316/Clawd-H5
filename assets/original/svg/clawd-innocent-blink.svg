@@ -1,0 +1,168 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-15 -25 45 45" width="500" height="500">
+  <defs>
+    <style>
+      /*
+        Clawd innocent: uniform left-right head tilts (rotate),
+        2 blinks total (one at each tilt peak). 2.5s cycle.
+        Arms held in front mid-lower (static innocent pose), halo above head.
+      */
+
+      .breathe {
+        transform-origin: 7.5px 13px;
+        animation: breathe 3.2s infinite ease-in-out;
+      }
+
+      /* Torso + eyes tilt together (rotate around neck / torso bottom) */
+      .body-tilt {
+        transform-origin: 7.5px 13px;
+        animation: body-tilt 2.5s infinite ease-in-out;
+      }
+
+      /* Eye blink (scaleY), inside body-tilt so eyes rotate with body */
+      .eyes-blink {
+        transform-origin: 7.5px 9px;
+        animation: eyes-blink 2.5s infinite ease-in-out;
+      }
+
+      /*
+        4 flowers in 2 size groups, alternating waves.
+        Big pair: delay 0s (wave 1). Small pair: delay 1.5s (wave 2).
+        Linear timing for uniform speed, no pause.
+      */
+      .flower-big-1, .flower-big-2 {
+        opacity: 0;
+        animation: flower-rise 2.5s infinite linear;
+      }
+      .flower-small-1, .flower-small-2 {
+        opacity: 0;
+        animation: flower-rise 2.5s infinite linear 1.25s;
+      }
+
+      /* --- Keyframes --- */
+
+      @keyframes breathe {
+        0%, 100% { transform: scale(1, 1); }
+        50% { transform: scale(1.02, 0.98) translate(0, 0.3px); }
+      }
+
+      /*
+        Symmetric tilt with extended holds at each peak for slower double blinks.
+        Hold at left 18-40%, back to center 50%, hold at right 60-82%.
+      */
+      @keyframes body-tilt {
+        0%, 100%  { transform: rotate(0deg); }
+        18%, 40%  { transform: rotate(-6deg); }
+        50%       { transform: rotate(0deg); }
+        60%, 82%  { transform: rotate(6deg); }
+      }
+
+      /* Two slower blinks at each tilt peak (each blink ~250ms) */
+      @keyframes eyes-blink {
+        0%, 18%   { transform: scaleY(1); }
+        23%       { transform: scaleY(0.1); }
+        28%       { transform: scaleY(1); }
+        33%       { transform: scaleY(0.1); }
+        38%, 60%  { transform: scaleY(1); }
+        65%       { transform: scaleY(0.1); }
+        70%       { transform: scaleY(1); }
+        75%       { transform: scaleY(0.1); }
+        80%, 100% { transform: scaleY(1); }
+      }
+
+      /*
+        Uniform linear rise in local rotated space (~0.14 units/% throughout).
+        Opacity fades in at start, stays visible through flight, fades out at end.
+      */
+      @keyframes flower-rise {
+        0%   { opacity: 0; transform: translate(0, 0); }
+        10%  { opacity: 1; transform: translate(0, -1.4px); }
+        85%  { opacity: 1; transform: translate(0, -11.9px); }
+        100% { opacity: 0; transform: translate(0, -14px); }
+      }
+    </style>
+  </defs>
+
+  <!--
+    Background flowers: 2 size groups flying in alternating waves.
+    Common origin at (7.5, 10). 4 flowers total:
+    - Wave 1 (big, delay 0s): ±40° inner angles (pink + purple)
+    - Wave 2 (small, delay 1.5s): ±70° outer angles (yellow + white)
+  -->
+  <g transform="translate(7.5, 10)">
+    <!-- Wave 1: big flower, outer left -->
+    <g transform="rotate(-60)">
+      <g class="flower-big-1">
+        <rect x="-0.5" y="-1.5" width="1" height="1" rx="0.28" fill="#FFB6C1"/>
+        <rect x="-0.5" y="0.5" width="1" height="1" rx="0.28" fill="#FFB6C1"/>
+        <rect x="-1.5" y="-0.5" width="1" height="1" rx="0.28" fill="#FFB6C1"/>
+        <rect x="0.5" y="-0.5" width="1" height="1" rx="0.28" fill="#FFB6C1"/>
+        <rect x="-0.6" y="-0.6" width="1.2" height="1.2" rx="0.35" fill="#FFE066"/>
+      </g>
+    </g>
+    <!-- Wave 1: big flower, inner right -->
+    <g transform="rotate(20)">
+      <g class="flower-big-2">
+        <rect x="-0.5" y="-1.5" width="1" height="1" rx="0.28" fill="#D8BFD8"/>
+        <rect x="-0.5" y="0.5" width="1" height="1" rx="0.28" fill="#D8BFD8"/>
+        <rect x="-1.5" y="-0.5" width="1" height="1" rx="0.28" fill="#D8BFD8"/>
+        <rect x="0.5" y="-0.5" width="1" height="1" rx="0.28" fill="#D8BFD8"/>
+        <rect x="-0.6" y="-0.6" width="1.2" height="1.2" rx="0.35" fill="#FFE066"/>
+      </g>
+    </g>
+    <!-- Wave 2: small flower, inner left -->
+    <g transform="rotate(-20)">
+      <g class="flower-small-1">
+        <rect x="-0.3" y="-0.9" width="0.6" height="0.6" rx="0.18" fill="#A0C4FF"/>
+        <rect x="-0.3" y="0.3" width="0.6" height="0.6" rx="0.18" fill="#A0C4FF"/>
+        <rect x="-0.9" y="-0.3" width="0.6" height="0.6" rx="0.18" fill="#A0C4FF"/>
+        <rect x="0.3" y="-0.3" width="0.6" height="0.6" rx="0.18" fill="#A0C4FF"/>
+        <rect x="-0.35" y="-0.35" width="0.7" height="0.7" rx="0.22" fill="#FFE066"/>
+      </g>
+    </g>
+    <!-- Wave 2: small flower, outer right -->
+    <g transform="rotate(60)">
+      <g class="flower-small-2">
+        <rect x="-0.3" y="-0.9" width="0.6" height="0.6" rx="0.18" fill="#FFFFFF"/>
+        <rect x="-0.3" y="0.3" width="0.6" height="0.6" rx="0.18" fill="#FFFFFF"/>
+        <rect x="-0.9" y="-0.3" width="0.6" height="0.6" rx="0.18" fill="#FFFFFF"/>
+        <rect x="0.3" y="-0.3" width="0.6" height="0.6" rx="0.18" fill="#FFFFFF"/>
+        <rect x="-0.35" y="-0.35" width="0.7" height="0.7" rx="0.22" fill="#FFE066"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- Ground Shadow (static) -->
+  <rect x="3" y="15" width="9" height="1" fill="#000000" opacity="0.5"/>
+
+  <!-- Legs (static) -->
+  <g fill="#DE886D">
+    <rect x="3" y="11" width="1" height="4"/>
+    <rect x="5" y="11" width="1" height="4"/>
+    <rect x="9" y="11" width="1" height="4"/>
+    <rect x="11" y="11" width="1" height="4"/>
+  </g>
+
+  <!-- Upper body -->
+  <g class="breathe">
+    <!-- Tilted: torso + eyes + arms all tilt together -->
+    <g class="body-tilt">
+      <!-- Torso -->
+      <rect x="2" y="6" width="11" height="7" fill="#DE886D"/>
+
+      <!-- Innocent eyes -->
+      <g class="eyes-blink">
+        <g fill="#000000">
+          <rect x="3.8" y="7.8" width="1.4" height="2.4" rx="0.4"/>
+          <rect x="9.8" y="7.8" width="1.4" height="2.4" rx="0.4"/>
+        </g>
+        <rect x="4.1" y="8.1" width="0.4" height="0.5" rx="0.1" fill="#FFFFFF"/>
+        <rect x="10.1" y="8.1" width="0.4" height="0.5" rx="0.1" fill="#FFFFFF"/>
+      </g>
+
+      <!-- Arms at sides (inside body-tilt, tilt with body) -->
+      <rect x="0" y="9" width="2" height="2" fill="#DE886D"/>
+      <rect x="13" y="9" width="2" height="2" fill="#DE886D"/>
+    </g>
+
+  </g>
+</svg>

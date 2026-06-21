@@ -1,0 +1,176 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-15 -25 45 45" width="500" height="500">
+  <defs>
+    <style>
+      /* Breathing */
+      .breathe {
+        transform-origin: 7.5px 13px;
+        animation: breathe 3.2s infinite ease-in-out;
+      }
+
+      /* Body: step back left + lean backward -- 4s cycle */
+      .body-surprise {
+        transform-origin: 7.5px 15px;
+        animation: body-surprise 4s infinite ease-in-out;
+      }
+
+      /* Eyes -- 4s cycle */
+      .eyes {
+        transform-origin: 7.5px 9px;
+        animation: eyes-surprise 4s infinite ease-in-out;
+      }
+
+      /* Left arm raise outward */
+      .arm-l {
+        transform-origin: 2px 10px;
+        animation: arm-l-surprise 4s infinite ease-in-out;
+      }
+
+      /* Right arm raise outward */
+      .arm-r {
+        transform-origin: 13px 10px;
+        animation: arm-r-surprise 4s infinite ease-in-out;
+      }
+
+      /* Left legs: step further back */
+      .legs-left {
+        animation: legs-left 4s infinite ease-in-out;
+      }
+      /* Right legs: pivot at feet (bottom), top leans toward body */
+      .legs-right {
+        transform-origin: 10px 15px;
+        animation: legs-right 4s infinite ease-in-out;
+      }
+
+      /* Shadow */
+      .shadow-anim {
+        transform-origin: 7.5px 15.5px;
+        animation: shadow-surprise 4s infinite ease-in-out;
+      }
+
+      /* Exclamation mark */
+      .exclaim {
+        opacity: 0;
+        animation: exclaim-pop 4s infinite ease-out;
+      }
+
+      /* --- Keyframes --- */
+
+      @keyframes breathe {
+        0%, 100% { transform: scale(1, 1); }
+        50% { transform: scale(1.02, 0.98) translate(0, 0.3px); }
+      }
+
+      /*
+        Body: idle -> step back 1 -> step back 2 -> hold lean -> return
+        Lean: rotate(5deg) tilts body slightly backward-right
+      */
+      @keyframes body-surprise {
+        0%, 8%    { transform: translate(0, 0) scaleX(1); }
+        15%       { transform: translate(-5px, -1.5px) scaleX(0.85); }     /* arrive + jump */
+        20%, 48%  { transform: translate(-5px, 0) scaleX(0.85); }          /* land + hold */
+        58%       { transform: translate(0, 0) scaleX(1); }               /* snap back */
+        100%      { transform: translate(0, 0) scaleX(1); }
+      }
+
+      /* Left legs: move with body (-5px) + jump */
+      @keyframes legs-left {
+        0%, 8%    { transform: translate(0, 0); }
+        15%       { transform: translate(-5px, -1.5px); }
+        20%, 48%  { transform: translate(-5px, 0); }
+        58%, 100% { transform: translate(0, 0); }
+      }
+      /* Right legs: feet stay put, top leans left (CCW) to follow body at x≈7.2 */
+      @keyframes legs-right {
+        0%, 8%    { transform: translate(0, 0) rotate(0deg); }
+        15%       { transform: translate(-3.5px, -1.5px) rotate(-35deg); }
+        20%, 48%  { transform: translate(-3.5px, 0) rotate(-35deg); }
+        58%, 100% { transform: translate(0, 0) rotate(0deg); }
+      }
+
+      /* Eyes: normal -> shock blink -> wide open -> normal */
+      @keyframes eyes-surprise {
+        0%, 10%   { transform: translateX(0) scaleY(1) scaleX(1); }
+        12%, 13%  { transform: translateX(0) scaleY(0) scaleX(1); }                /* shock blink */
+        16%, 48%  { transform: translateX(0.8px) scaleY(1.35) scaleX(1.1); }       /* wide open + shift right (turning) */
+        58%, 100% { transform: translateX(0) scaleY(1) scaleX(1); }
+      }
+
+      /* Left arm: side -> spread outward-down (CCW = negative for left arm) */
+      @keyframes arm-l-surprise {
+        0%, 10%   { transform: translate(0, 0) rotate(0deg); }
+        16%       { transform: translate(-1.5px, 1px) rotate(-35deg); }    /* spread outward-down */
+        20%, 48%  { transform: translate(-1.5px, 1px) rotate(-40deg); }    /* hold */
+        58%, 100% { transform: translate(0, 0) rotate(0deg); }
+      }
+
+      /* Right arm: mirror, spread outward-down (CW = positive for right arm) */
+      @keyframes arm-r-surprise {
+        0%, 10%   { transform: translate(0, 0) rotate(0deg); }
+        16%       { transform: translate(1.5px, 1px) rotate(35deg); }
+        20%, 48%  { transform: translate(1.5px, 1px) rotate(40deg); }
+        58%, 100% { transform: translate(0, 0) rotate(0deg); }
+      }
+
+      /* Exclamation: pop above head during surprise */
+      @keyframes exclaim-pop {
+        0%, 13%   { opacity: 0; transform: translate(0, 0) scale(0.3); }
+        16%       { opacity: 1; transform: translate(0, 0) scale(1.3); }  /* overshoot */
+        18%       { opacity: 1; transform: translate(0, 0) scale(1); }    /* settle */
+        42%       { opacity: 1; transform: translate(0, 0) scale(1); }    /* hold */
+        50%       { opacity: 0; transform: translate(0, -3px) scale(0.7); }
+        100%      { opacity: 0; }
+      }
+
+      /* Shadow: shift left with body, shrink during steps */
+      @keyframes shadow-surprise {
+        0%, 8%    { transform: translate(0, 0) scaleX(1); opacity: 0.5; }
+        16%       { transform: translate(-3px, 0) scaleX(0.9); opacity: 0.45; }
+        28%, 48%  { transform: translate(-5px, 0) scaleX(0.85); opacity: 0.4; }
+        58%, 100% { transform: translate(0, 0) scaleX(1); opacity: 0.5; }
+      }
+    </style>
+  </defs>
+
+  <!-- Ground Shadow -->
+  <rect class="shadow-anim" x="3" y="15" width="9" height="1" fill="#000000" opacity="0.5"/>
+
+  <!-- Legs: left pair steps further back, right pair stays closer -->
+  <g class="legs-left" fill="#DE886D">
+    <rect x="3" y="11" width="1" height="4"/>
+    <rect x="5" y="11" width="1" height="4"/>
+  </g>
+  <g class="legs-right" fill="#DE886D">
+    <rect x="9" y="11" width="1" height="4"/>
+    <rect x="11" y="11" width="1" height="4"/>
+  </g>
+
+  <!-- Upper body -->
+  <g class="body-surprise">
+    <g class="breathe">
+      <!-- Torso -->
+      <rect x="2" y="6" width="11" height="7" fill="#DE886D"/>
+
+      <!-- Eyes -->
+      <g class="eyes" fill="#000000">
+        <rect x="4" y="8" width="1" height="2"/>
+        <rect x="10" y="8" width="1" height="2"/>
+      </g>
+
+      <!-- Left arm (raise outward) -->
+      <g class="arm-l">
+        <rect x="0" y="9" width="2" height="2" fill="#DE886D"/>
+      </g>
+
+      <!-- Right arm (raise outward) -->
+      <g class="arm-r">
+        <rect x="13" y="9" width="2" height="2" fill="#DE886D"/>
+      </g>
+
+      <!-- Exclamation mark above head -->
+      <g class="exclaim" transform="translate(6.5, 2)">
+        <rect x="0" y="0" width="1.5" height="3" rx="0.3" fill="#FF3D00"/>
+        <rect x="0.25" y="3.5" width="1" height="1" rx="0.2" fill="#FF3D00"/>
+      </g>
+    </g>
+  </g>
+</svg>

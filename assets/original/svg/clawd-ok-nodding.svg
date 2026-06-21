@@ -1,0 +1,186 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-15 -25 45 45" width="500" height="500">
+  <defs>
+    <style>
+      /*
+        Clawd with OK sign on head, continuous jumping (no idle pauses).
+        2s cycle: 2 bounces per cycle, loops seamlessly at squat position.
+      */
+
+      .breathe {
+        transform-origin: 7.5px 13px;
+        animation: breathe 3.2s infinite ease-in-out;
+      }
+
+      /* Whole-body translate (includes sign, no squash) */
+      .body-translate {
+        animation: body-translate 1s infinite ease-in-out;
+      }
+      /*
+        Sign: scaled down to 0.8 + extra bounce that lags body,
+        creating a "punched up by head" effect at each launch.
+      */
+      .sign-bounce {
+        transform-origin: 7.5px 2.75px;
+        animation: sign-bounce 1s infinite ease-in-out;
+      }
+      /* Body squash/stretch (excludes sign) */
+      .body-squash {
+        transform-origin: 7.5px 15px;
+        animation: body-squash 1s infinite ease-in-out;
+      }
+
+      /* Normal eyes with blinks synced to apex moments */
+      .eyes {
+        transform-origin: 7.5px 9px;
+        animation: eyes-blink 1s infinite ease-in-out;
+      }
+
+      /* Ground shadow: shrinks at apex, wider at squat */
+      .shadow-anim {
+        transform-origin: 7.5px 15.5px;
+        animation: shadow-jump 1s infinite ease-in-out;
+      }
+
+      /* --- Keyframes --- */
+
+      @keyframes breathe {
+        0%, 100% { transform: scale(1, 1); }
+        50% { transform: scale(1.02, 0.98) translate(0, 0.3px); }
+      }
+
+      /*
+        Split into translate-only (includes sign) and squash-only (excludes sign)
+        so the sign only moves up/down with the body, without distorting.
+      */
+      /*
+        Two small hops per cycle with high-jump style arc (squat → launch →
+        rise → apex hang → fall → land/squat → next launch...).
+        Landing IS the next squat — no ground rest between hops.
+        Loops seamlessly at squat pose.
+      */
+      @keyframes body-translate {
+        0%        { transform: translate(0, 0.8px); }
+        5%        { transform: translate(0, -1px); }
+        20%       { transform: translate(0, -4px); }
+        25%, 30%  { transform: translate(0, -4.5px); }
+        40%       { transform: translate(0, -4px); }
+        48%       { transform: translate(0, -1px); }
+        50%       { transform: translate(0, 0.8px); }
+        55%       { transform: translate(0, -1px); }
+        70%       { transform: translate(0, -4px); }
+        75%, 80%  { transform: translate(0, -4.5px); }
+        90%       { transform: translate(0, -4px); }
+        98%       { transform: translate(0, -1px); }
+        100%      { transform: translate(0, 0.8px); }
+      }
+      @keyframes body-squash {
+        0%        { transform: scaleY(0.94) scaleX(1.04); }
+        5%        { transform: scaleY(1.04) scaleX(0.98); }
+        20%       { transform: scaleY(1.02) scaleX(0.99); }
+        25%, 30%  { transform: scaleY(1) scaleX(1); }
+        40%       { transform: scaleY(1.02) scaleX(0.99); }
+        48%       { transform: scaleY(1.04) scaleX(0.98); }
+        50%       { transform: scaleY(0.94) scaleX(1.04); }
+        55%       { transform: scaleY(1.04) scaleX(0.98); }
+        70%       { transform: scaleY(1.02) scaleX(0.99); }
+        75%, 80%  { transform: scaleY(1) scaleX(1); }
+        90%       { transform: scaleY(1.02) scaleX(0.99); }
+        98%       { transform: scaleY(1.04) scaleX(0.98); }
+        100%      { transform: scaleY(0.94) scaleX(1.04); }
+      }
+
+      /*
+        Sign: scaled to 0.8, plus lag bounce.
+        When body launches, sign briefly trails (goes down relative to head),
+        then overshoots up as body reaches apex — "punched up" feel.
+      */
+      @keyframes sign-bounce {
+        0%        { transform: scale(0.6) translateY(0); }
+        5%        { transform: scale(0.6) translateY(0.8px); }  /* compressed by head push */
+        12%       { transform: scale(0.6) translateY(-0.8px); } /* launched up */
+        25%, 30%  { transform: scale(0.6) translateY(0); }      /* settle at apex */
+        48%       { transform: scale(0.6) translateY(0.8px); }  /* landing impact */
+        50%       { transform: scale(0.6) translateY(0.8px); }
+        55%       { transform: scale(0.6) translateY(0.8px); }  /* second launch compress */
+        62%       { transform: scale(0.6) translateY(-0.8px); } /* second launched */
+        75%, 80%  { transform: scale(0.6) translateY(0); }
+        98%       { transform: scale(0.6) translateY(0.8px); }
+        100%      { transform: scale(0.6) translateY(0.8px); }
+      }
+
+      /* One slow blink per cycle during the first hop's apex */
+      @keyframes eyes-blink {
+        0%, 22%   { transform: scaleY(1); }
+        27%       { transform: scaleY(0.1); }
+        32%, 100% { transform: scaleY(1); }
+      }
+
+      /* Shadow tracks hop rhythm (wide at squat, small at apex) */
+      @keyframes shadow-jump {
+        0%        { transform: scaleX(1.1); opacity: 0.55; }
+        5%        { transform: scaleX(0.95); opacity: 0.48; }
+        25%, 30%  { transform: scaleX(0.7); opacity: 0.3; }
+        48%       { transform: scaleX(0.95); opacity: 0.48; }
+        50%       { transform: scaleX(1.1); opacity: 0.55; }
+        55%       { transform: scaleX(0.95); opacity: 0.48; }
+        75%, 80%  { transform: scaleX(0.7); opacity: 0.3; }
+        98%       { transform: scaleX(0.95); opacity: 0.48; }
+        100%      { transform: scaleX(1.1); opacity: 0.55; }
+      }
+    </style>
+  </defs>
+
+  <!-- Ground Shadow -->
+  <rect class="shadow-anim" x="3" y="15" width="9" height="1" fill="#000000" opacity="0.5"/>
+
+  <!-- body-translate moves the whole character up/down (includes the sign) -->
+  <g class="body-translate">
+    <!-- OK sign: scaled 0.8 + bounce lag, translates with body but NOT squashed -->
+    <g class="sign-bounce">
+      <!-- Brown border (thinner) -->
+      <rect x="2" y="-0.5" width="11" height="6.5" rx="0.6" fill="#795548"/>
+      <!-- White fill -->
+      <rect x="2.5" y="0" width="10" height="5.5" rx="0.4" fill="#FFFFFF"/>
+
+      <!-- "OK" text (grass green, thick strokes) -->
+      <!-- Letter O: outlined rounded rect (narrower) -->
+      <rect x="4.9" y="1.5" width="2" height="2.5" rx="0.4" fill="none"
+            stroke="#7CB342" stroke-width="1"/>
+      <!-- Letter K: vertical bar + two diagonals -->
+      <line x1="8.4" y1="1.5" x2="8.4" y2="4" stroke="#7CB342"
+            stroke-width="1" stroke-linecap="round"/>
+      <line x1="8.5" y1="2.75" x2="10.2" y2="1.5" stroke="#7CB342"
+            stroke-width="1" stroke-linecap="round"/>
+      <line x1="8.5" y1="2.75" x2="10.2" y2="4" stroke="#7CB342"
+            stroke-width="1" stroke-linecap="round"/>
+    </g>
+
+    <!-- body-squash applies scale to body only (not sign) -->
+    <g class="body-squash">
+      <!-- Legs -->
+      <g fill="#DE886D">
+        <rect x="3" y="11" width="1" height="4"/>
+        <rect x="5" y="11" width="1" height="4"/>
+        <rect x="9" y="11" width="1" height="4"/>
+        <rect x="11" y="11" width="1" height="4"/>
+      </g>
+
+      <g class="breathe">
+        <!-- Torso -->
+        <rect x="2" y="6" width="11" height="7" fill="#DE886D"/>
+
+        <!-- Eyes (normal rect with blinks) -->
+        <g class="eyes" fill="#000000">
+          <rect x="4" y="8" width="1" height="2"/>
+          <rect x="10" y="8" width="1" height="2"/>
+        </g>
+
+        <!-- Left arm (static at side) -->
+        <rect x="0" y="9" width="2" height="2" fill="#DE886D"/>
+
+        <!-- Right arm (static at side) -->
+        <rect x="13" y="9" width="2" height="2" fill="#DE886D"/>
+      </g>
+    </g>
+  </g>
+</svg>

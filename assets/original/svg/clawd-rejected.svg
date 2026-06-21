@@ -1,0 +1,194 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-15 -25 45 45" width="500" height="500">
+  <defs>
+    <style>
+      /* Body: gentle breathing sway */
+      .body-sway {
+        transform-origin: 7.5px 15px;
+        animation: sway 2.5s infinite ease-in-out;
+      }
+
+      /* Right arm + sign: swing from behind to top */
+      .arm-r-swing {
+        transform-origin: 14px 10px;
+        animation: arm-swing-up 3s infinite ease-in-out;
+      }
+
+      .sign-shine {
+        animation: shine-pulse 3s infinite ease-in-out;
+      }
+
+      /* Normal eyes: visible first, then hidden when frown appears */
+      .eyes-normal {
+        transform-box: fill-box;
+        transform-origin: 50% 50%;
+        animation: eyes-normal-vis 3s infinite;
+      }
+
+      /* Frown eyes: squinted, visible after sign swings up */
+      .eyes-frown {
+        transform-box: fill-box;
+        transform-origin: 50% 50%;
+        animation: eyes-frown-vis 3s infinite;
+      }
+
+      /* Eye position drift */
+      .eyes-drift {
+        animation: eye-drift 3s infinite ease-in-out;
+      }
+
+      /* Shadow */
+      .shadow-sway {
+        transform-box: fill-box;
+        transform-origin: 50% 50%;
+        animation: shadow-breathe 2.5s infinite ease-in-out;
+      }
+
+      /* --- Keyframes --- */
+
+      @keyframes sway {
+        0%, 100% { transform: scale(1, 1) translate(0, 0); }
+        50%      { transform: scale(1.02, 0.98) translate(0, 0.5px); }
+      }
+
+      /* Sign starts swinging at 33%, synced with eye switch */
+      @keyframes arm-swing-up {
+        0%, 33%  { transform: rotate(180deg); }
+        45%      { transform: rotate(-95deg); }
+        48%      { transform: rotate(-83deg); }
+        52%      { transform: rotate(-90deg); }
+        93%      { transform: rotate(-90deg); }
+        93.01%   { transform: rotate(180deg); }
+        100%     { transform: rotate(180deg); }
+      }
+
+      @keyframes shine-pulse {
+        0%, 52%  { opacity: 0; }
+        62%      { opacity: 0.5; }
+        72%      { opacity: 0; }
+        82%      { opacity: 0.5; }
+        90%, 100% { opacity: 0; }
+      }
+
+      /*
+        Eye switch: normal → frown (squinted)
+        0-29%:   normal eyes, full open
+        29-31%:  normal eyes squeeze shut
+        31-33%:  both hidden (closed gap)
+        33-35%:  frown eyes open up (squinted)
+        35-91%:  frown eyes visible
+        91-93%:  frown eyes squeeze shut
+        93-95%:  both hidden
+        95-97%:  normal eyes open up
+        97-100%: normal eyes full open
+      */
+      @keyframes eyes-normal-vis {
+        0%       { opacity: 1; transform: scaleY(1); }
+        29%      { opacity: 1; transform: scaleY(1); }
+        31%      { opacity: 1; transform: scaleY(0.05); }
+        31.01%   { opacity: 0; transform: scaleY(0.05); }
+        95%      { opacity: 0; transform: scaleY(0.05); }
+        95.01%   { opacity: 1; transform: scaleY(0.05); }
+        97%      { opacity: 1; transform: scaleY(1); }
+        100%     { opacity: 1; transform: scaleY(1); }
+      }
+
+      /* Frown eyes: squinted (scaleY 0.7) to show disapproval */
+      @keyframes eyes-frown-vis {
+        0%       { opacity: 0; transform: scaleY(0.05); }
+        33%      { opacity: 0; transform: scaleY(0.05); }
+        33.01%   { opacity: 1; transform: scaleY(0.05); }
+        35%      { opacity: 1; transform: scaleY(0.7); }
+        91%      { opacity: 1; transform: scaleY(0.7); }
+        93%      { opacity: 1; transform: scaleY(0.05); }
+        93.01%   { opacity: 0; transform: scaleY(0.05); }
+        100%     { opacity: 0; transform: scaleY(0.05); }
+      }
+
+      /*
+        Eye drift: neutral glance, then head-shake via eyes when sign is up.
+        Eyes move 2-3x body amplitude for parallax = "shaking head" feel.
+        35-80%: left-right-left-right shake, decaying amplitude
+      */
+      @keyframes eye-drift {
+        0%, 15%  { transform: translate(0, 0); }
+        20%, 28% { transform: translate(1px, 0); }
+        33%      { transform: translate(0, 0); }
+        40%      { transform: translate(-1px, 0); }
+        50%      { transform: translate(1px, 0); }
+        60%      { transform: translate(-1px, 0); }
+        70%      { transform: translate(0, 0); }
+        93%, 100% { transform: translate(0, 0); }
+      }
+
+      @keyframes shadow-breathe {
+        0%, 100% { transform: scale(1); opacity: 0.5; }
+        50%      { transform: scale(1.02); opacity: 0.5; }
+      }
+    </style>
+  </defs>
+
+  <!-- Ground Shadow -->
+  <rect class="shadow-sway" x="3" y="15" width="9" height="1" fill="#000000" opacity="0.5"/>
+
+  <!-- Body group -->
+  <g class="body-sway">
+
+    <!-- === Layer 1: Legs === -->
+    <g fill="#DE886D">
+      <rect x="3" y="13" width="1" height="2"/>
+      <rect x="5" y="13" width="1" height="2"/>
+      <rect x="9" y="13" width="1" height="2"/>
+      <rect x="11" y="13" width="1" height="2"/>
+    </g>
+
+    <!-- === Layer 2: Right arm + sign (BEHIND body, drawn before torso) === -->
+    <!--
+      Pivot: (14, 10). Sign at local (21, 10) = 7px to the RIGHT.
+      rotate(180deg):  sign at (7, 10) = behind torso (hidden)
+      rotate(-90deg):  sign at (14, 3) = above head (visible)
+    -->
+    <g class="arm-r-swing">
+      <!-- Handle: horizontal stick from arm to sign -->
+      <rect x="15" y="9.5" width="5.5" height="1" fill="#795548" rx="0.2"/>
+
+      <!-- Red round sign -->
+      <circle cx="21" cy="10" r="2.5" fill="#C62828"/>
+      <circle cx="21" cy="10" r="2" fill="#E53935"/>
+      <!-- X mark (two crossing lines) -->
+      <line x1="19.9" y1="8.9" x2="22.1" y2="11.1"
+            stroke="#FFFFFF" stroke-width="0.6"
+            stroke-linecap="round"/>
+      <line x1="22.1" y1="8.9" x2="19.9" y2="11.1"
+            stroke="#FFFFFF" stroke-width="0.6"
+            stroke-linecap="round"/>
+      <!-- Shine -->
+      <circle class="sign-shine" cx="22" cy="9.3" r="0.6" fill="#FFFFFF" opacity="0"/>
+
+    </g>
+
+    <!-- === Layer 3: Torso (covers sign when at side) === -->
+    <rect x="2" y="6" width="11" height="7" fill="#DE886D"/>
+
+    <!-- === Layer 4: Right arm (ON TOP of torso, same animation as sign) === -->
+    <g class="arm-r-swing">
+      <rect x="13" y="9" width="2" height="2" fill="#DE886D"/>
+    </g>
+
+    <!-- === Layer 5: Eyes (drift wrapper + two sets) === -->
+    <g class="eyes-drift">
+      <!-- Normal rect eyes (visible before sign swing) -->
+      <g class="eyes-normal" fill="#000000">
+        <rect x="4" y="8" width="1" height="2"/>
+        <rect x="10" y="8" width="1" height="2"/>
+      </g>
+      <!-- Frown eyes: same rect but squinted via scaleY 0.7 -->
+      <g class="eyes-frown" fill="#000000" opacity="0">
+        <rect x="4" y="8" width="1" height="2"/>
+        <rect x="10" y="8" width="1" height="2"/>
+      </g>
+    </g>
+
+    <!-- === Layer 6: Left arm (at side, static) === -->
+    <rect x="0" y="9" width="2" height="2" fill="#DE886D"/>
+  </g>
+</svg>

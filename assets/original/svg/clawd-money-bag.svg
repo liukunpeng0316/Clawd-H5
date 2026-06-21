@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-15 -25 45 45" width="500" height="500">
+  <!-- Ground Shadow -->
+  <rect x="3" y="15" width="9" height="1" fill="#000000" opacity="0.5"/>
+
+  <!-- Legs -->
+  <g fill="#DE886D">
+    <rect x="3" y="13" width="1" height="2"/>
+    <rect x="5" y="13" width="1" height="2"/>
+    <rect x="9" y="13" width="1" height="2"/>
+    <rect x="11" y="13" width="1" height="2"/>
+  </g>
+
+  <!-- Torso -->
+  <rect x="2" y="6" width="11" height="7" fill="#DE886D"/>
+
+  <!-- Money bag (behind arms, sitting on head) -->
+  <g id="money-bag">
+    <!-- Bag body (bulging sack shape, built with rects) -->
+    <!-- Bottom (widest, resting on head) -->
+    <rect x="3" y="3" width="9" height="1" fill="#C9A84C"/>
+    <rect x="2" y="1" width="11" height="2" fill="#D4B44C"/>
+    <rect x="3" y="-1" width="9" height="2" fill="#D9BC52"/>
+    <!-- Middle (still wide) -->
+    <rect x="4" y="-3" width="7" height="2" fill="#DEAF42"/>
+    <!-- Neck (narrowing) -->
+    <rect x="5" y="-5" width="5" height="2" fill="#D4A43C"/>
+    <!-- Tie/knot -->
+    <rect x="5" y="-6" width="5" height="1" fill="#8B5E2B"/>
+    <rect x="6" y="-7" width="3" height="1" fill="#8B5E2B"/>
+    <!-- Top poof (above tie) -->
+    <rect x="5" y="-9" width="5" height="2" fill="#D9BC52"/>
+    <rect x="4" y="-10" width="7" height="1" fill="#DEAF42"/>
+    <rect x="5" y="-11" width="5" height="1" fill="#D4B44C"/>
+    <rect x="6" y="-12" width="3" height="1" fill="#C9A84C"/>
+
+    <!-- "$" symbol on bag front -->
+    <!-- S shape -->
+    <rect x="7" y="-2" width="1" height="1" fill="#8B6914"/>
+    <rect x="6" y="-1" width="1" height="1" fill="#8B6914"/>
+    <rect x="7" y="0" width="1" height="1" fill="#8B6914"/>
+    <rect x="8" y="1" width="1" height="1" fill="#8B6914"/>
+    <rect x="7" y="2" width="1" height="1" fill="#8B6914"/>
+    <!-- Vertical bar of $ -->
+    <rect x="7" y="-3" width="1" height="1" fill="#8B6914"/>
+    <rect x="7" y="3" width="1" height="1" fill="#8B6914"/>
+
+    <!-- Bag highlight (left side shine) -->
+    <rect x="3" y="0" width="1" height="2" fill="#E8D480" opacity="0.6"/>
+    <rect x="4" y="-2" width="1" height="1" fill="#E8D480" opacity="0.5"/>
+  </g>
+
+  <!-- Eyes -->
+  <g fill="#000000">
+    <rect x="4" y="8" width="1" height="2"/>
+    <rect x="10" y="8" width="1" height="2"/>
+  </g>
+
+  <!-- Arms (on top, slightly raised to "hold" bag) -->
+  <rect x="0" y="8" width="2" height="2" fill="#DE886D"/>
+  <rect x="13" y="8" width="2" height="2" fill="#DE886D"/>
+</svg>

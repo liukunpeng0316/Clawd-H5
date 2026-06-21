@@ -1,0 +1,235 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-15 -25 45 45" width="500" height="500">
+  <defs>
+    <style>
+      /* Body bob at each clap */
+      .clap-body {
+        transform-origin: 7.5px 15px;
+        animation: clap-bob 3.5s infinite ease-in-out;
+      }
+
+      .breathe {
+        transform-origin: 7.5px 13px;
+        animation: breathe 3.2s infinite ease-in-out;
+      }
+
+      /* Legs: only vertical bounce at clap moments */
+      .legs-bounce {
+        transform-origin: 7.5px 15px;
+        animation: legs-bob 3.5s infinite ease-in-out;
+      }
+
+      .arm-l { animation: arm-l 3.5s infinite ease-in-out; }
+      .arm-r { animation: arm-r 3.5s infinite ease-in-out; }
+
+      .shadow-anim {
+        transform-origin: 7.5px 15.5px;
+        animation: shadow-pulse 3.5s infinite ease-in-out;
+      }
+
+      /* Normal eyes: visible during rest phases */
+      .eyes-normal {
+        transform-origin: 7.5px 9px;
+        animation: eyes-normal-vis 3.5s infinite ease-in-out;
+      }
+
+      /* Smile eyes: visible during clapping */
+      .eyes-smile {
+        opacity: 0;
+        animation: eyes-smile-vis 3.5s infinite ease-in-out;
+      }
+
+      .spark-1 { opacity: 0; animation: sp1 3.5s infinite ease-out; }
+      .spark-2 { opacity: 0; animation: sp2 3.5s infinite ease-out; }
+      .spark-3 { opacity: 0; animation: sp3 3.5s infinite ease-out; }
+
+      /* --- Keyframes --- */
+
+      /* Legs only bounce vertically at clap moments */
+      @keyframes legs-bob {
+        0%, 25%, 47%, 50%, 69%, 74%, 100% { transform: translateY(0); }
+        34%, 36%  { transform: translateY(-1.5px); }
+        42%, 44%  { transform: translateY(-1.5px); }
+        56%, 58%  { transform: translateY(-1.5px); }
+        64%, 66%  { transform: translateY(-1.5px); }
+      }
+
+      @keyframes breathe {
+        0%, 100% { transform: scale(1, 1); }
+        50% { transform: scale(1.02, 0.98) translate(0, 0.3px); }
+      }
+
+      /* Body sway: left-up during left claps, right-up during right claps */
+      @keyframes clap-bob {
+        0%, 25%, 100% { transform: translate(0, 0); }
+        31%       { transform: translate(-1px, -0.5px); }   /* lean left-up */
+        34%, 36%  { transform: translate(-1px, -1.5px); }   /* left clap 1 bob */
+        39%       { transform: translate(-1px, -0.5px); }
+        42%, 44%  { transform: translate(-1px, -1.5px); }   /* left clap 2 bob */
+        47%, 50%  { transform: translate(0, 0); }           /* center transition */
+        53%       { transform: translate(1px, -0.5px); }    /* lean right-up */
+        56%, 58%  { transform: translate(1px, -1.5px); }    /* right clap 1 bob */
+        61%       { transform: translate(1px, -0.5px); }
+        64%, 66%  { transform: translate(1px, -1.5px); }    /* right clap 2 bob */
+        69%       { transform: translate(1px, -0.5px); }
+        74%       { transform: translate(0, 0); }           /* return center */
+      }
+
+      /*
+        Left arm (original x=0):
+        Rest (0-25%) → move in → left-clap ×2 → transition → right-clap ×2 → move out → rest (82-100%)
+      */
+      @keyframes arm-l {
+        0%, 100%  { transform: translate(0, 0); }
+        25%       { transform: translate(0, 0); }           /* rest end */
+        28%       { transform: translate(1.5px, 0.5px); }   /* moving */
+        31%       { transform: translate(2px, 1px); }       /* left open */
+        34%, 36%  { transform: translate(4.5px, 1px); }     /* left clap 1 */
+        39%       { transform: translate(2px, 1px); }       /* left open */
+        42%, 44%  { transform: translate(4.5px, 1px); }     /* left clap 2 */
+        47%       { transform: translate(2px, 1px); }       /* left open */
+        50%       { transform: translate(5px, 1px); }       /* transition */
+        53%       { transform: translate(6px, 1px); }       /* right open */
+        56%, 58%  { transform: translate(8.5px, 1px); }     /* right clap 1 */
+        61%       { transform: translate(6px, 1px); }       /* right open */
+        64%, 66%  { transform: translate(8.5px, 1px); }     /* right clap 2 */
+        69%       { transform: translate(6px, 1px); }       /* right open */
+        74%       { transform: translate(3px, 0.5px); }     /* returning */
+        78%       { transform: translate(0, 0); }           /* rest start */
+      }
+
+      /* Right arm: mirrored */
+      @keyframes arm-r {
+        0%, 100%  { transform: translate(0, 0); }
+        25%       { transform: translate(0, 0); }
+        28%       { transform: translate(-1.5px, 0.5px); }
+        31%       { transform: translate(-6px, 1px); }
+        34%, 36%  { transform: translate(-8.5px, 1px); }
+        39%       { transform: translate(-6px, 1px); }
+        42%, 44%  { transform: translate(-8.5px, 1px); }
+        47%       { transform: translate(-6px, 1px); }
+        50%       { transform: translate(-5px, 1px); }
+        53%       { transform: translate(-2px, 1px); }
+        56%, 58%  { transform: translate(-4.5px, 1px); }
+        61%       { transform: translate(-2px, 1px); }
+        64%, 66%  { transform: translate(-4.5px, 1px); }
+        69%       { transform: translate(-2px, 1px); }
+        74%       { transform: translate(-3px, 0.5px); }
+        78%       { transform: translate(0, 0); }
+      }
+
+      @keyframes shadow-pulse {
+        0%, 100% { transform: scaleX(1); opacity: 0.5; }
+        35%, 43%, 57%, 65% { transform: scaleX(1.06); opacity: 0.45; }
+      }
+
+      /* Normal eyes: visible during rest, blink only at transitions */
+      @keyframes eyes-normal-vis {
+        0%, 22%   { opacity: 1; }
+        24%, 78%  { opacity: 0; }
+        80%, 100% { opacity: 1; }
+      }
+
+      /* Smile eyes: visible during clapping (27-75%) */
+      @keyframes eyes-smile-vis {
+        0%, 25%   { opacity: 0; }
+        27%, 73%  { opacity: 1; }
+        75%, 100% { opacity: 0; }
+      }
+
+      /* Sparks: 4 bursts at 35%, 43% (left) and 57%, 65% (right) */
+      @keyframes sp1 {
+        0%, 32% { opacity: 0; }
+        35% { opacity: 1; transform: translate(4px, 9px) scale(1); }
+        38% { opacity: 0; transform: translate(2px, 7px) scale(0.5); }
+        40% { opacity: 0; }
+        43% { opacity: 1; transform: translate(4px, 9px) scale(1); }
+        46% { opacity: 0; transform: translate(2px, 7px) scale(0.5); }
+        54% { opacity: 0; }
+        57% { opacity: 1; transform: translate(8px, 9px) scale(1); }
+        60% { opacity: 0; transform: translate(6px, 7px) scale(0.5); }
+        62% { opacity: 0; }
+        65% { opacity: 1; transform: translate(8px, 9px) scale(1); }
+        68% { opacity: 0; transform: translate(6px, 7px) scale(0.5); }
+        100% { opacity: 0; }
+      }
+      @keyframes sp2 {
+        0%, 32% { opacity: 0; }
+        35% { opacity: 1; transform: translate(5.5px, 8px) scale(1); }
+        38% { opacity: 0; transform: translate(5.5px, 5px) scale(0.5); }
+        40% { opacity: 0; }
+        43% { opacity: 1; transform: translate(5.5px, 8px) scale(1); }
+        46% { opacity: 0; transform: translate(5.5px, 5px) scale(0.5); }
+        54% { opacity: 0; }
+        57% { opacity: 1; transform: translate(9.5px, 8px) scale(1); }
+        60% { opacity: 0; transform: translate(9.5px, 5px) scale(0.5); }
+        62% { opacity: 0; }
+        65% { opacity: 1; transform: translate(9.5px, 8px) scale(1); }
+        68% { opacity: 0; transform: translate(9.5px, 5px) scale(0.5); }
+        100% { opacity: 0; }
+      }
+      @keyframes sp3 {
+        0%, 32% { opacity: 0; }
+        35% { opacity: 1; transform: translate(7px, 9px) scale(1); }
+        38% { opacity: 0; transform: translate(9px, 7px) scale(0.5); }
+        40% { opacity: 0; }
+        43% { opacity: 1; transform: translate(7px, 9px) scale(1); }
+        46% { opacity: 0; transform: translate(9px, 7px) scale(0.5); }
+        54% { opacity: 0; }
+        57% { opacity: 1; transform: translate(11px, 9px) scale(1); }
+        60% { opacity: 0; transform: translate(13px, 7px) scale(0.5); }
+        62% { opacity: 0; }
+        65% { opacity: 1; transform: translate(11px, 9px) scale(1); }
+        68% { opacity: 0; transform: translate(13px, 7px) scale(0.5); }
+        100% { opacity: 0; }
+      }
+    </style>
+  </defs>
+
+  <!-- Ground Shadow -->
+  <rect class="shadow-anim" x="3" y="15" width="9" height="1" fill="#000000" opacity="0.5"/>
+
+  <!-- Legs (static, extended to overlap with body during bounce) -->
+  <g fill="#DE886D">
+    <rect x="3" y="11" width="1" height="4"/>
+    <rect x="5" y="11" width="1" height="4"/>
+    <rect x="9" y="11" width="1" height="4"/>
+    <rect x="11" y="11" width="1" height="4"/>
+  </g>
+
+  <!-- Upper body -->
+  <g class="clap-body">
+    <g class="breathe">
+      <!-- Torso -->
+      <rect x="2" y="6" width="11" height="7" fill="#DE886D"/>
+
+      <!-- Normal eyes (visible at rest) -->
+      <g class="eyes-normal" fill="#000000">
+        <rect x="4" y="8" width="1" height="2"/>
+        <rect x="10" y="8" width="1" height="2"/>
+      </g>
+
+      <!-- Smile ^^ eyes (visible during clapping) -->
+      <g class="eyes-smile" fill="none" stroke="#000000" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="3.5,9.5 4.5,8.5 5.5,9.5"/>
+        <polyline points="9.5,9.5 10.5,8.5 11.5,9.5"/>
+      </g>
+
+      <!-- Left arm + shadow -->
+      <g class="arm-l">
+        <rect x="0.5" y="9.5" width="2" height="2" fill="#000000" opacity="0.25"/>
+        <rect x="0" y="9" width="2" height="2" fill="#DE886D"/>
+      </g>
+
+      <!-- Right arm + shadow -->
+      <g class="arm-r">
+        <rect x="13.5" y="9.5" width="2" height="2" fill="#000000" opacity="0.25"/>
+        <rect x="13" y="9" width="2" height="2" fill="#DE886D"/>
+      </g>
+
+      <!-- Sparks -->
+      <rect class="spark-1" x="0" y="0" width="1" height="1" fill="#FFC107"/>
+      <rect class="spark-2" x="0" y="0" width="1" height="1" fill="#FFD700"/>
+      <rect class="spark-3" x="0" y="0" width="1" height="1" fill="#FFF59D"/>
+    </g>
+  </g>
+</svg>

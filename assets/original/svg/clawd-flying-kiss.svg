@@ -1,0 +1,186 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-15 -25 45 45" width="500" height="500">
+  <defs>
+    <style>
+      /* Body lean toward kiss direction */
+      .kiss-body {
+        transform-origin: 7.5px 15px;
+        animation: kiss-lean 3s infinite ease-in-out;
+      }
+
+      .breathe {
+        transform-box: fill-box;
+        transform-origin: center bottom;
+        animation: breathe 3.2s infinite ease-in-out;
+      }
+
+      /* Right arm: raise to face then extend outward */
+      .arm-r {
+        animation: arm-kiss 3s infinite ease-in-out;
+      }
+
+      /* Left arm: slight sway */
+      .arm-l {
+        animation: arm-l-sway 3s infinite ease-in-out;
+      }
+
+      /* Normal eyes */
+      .eyes-normal {
+        animation: eyes-norm 3s infinite ease-in-out;
+      }
+
+      /* Happy ^^ eyes */
+      .eyes-happy {
+        opacity: 0;
+        animation: eyes-hap 3s infinite ease-in-out;
+      }
+
+      /* Flying heart */
+      .heart-fly {
+        opacity: 0;
+        animation: heart-float 3s infinite ease-out;
+      }
+
+      /* Shadow */
+      .shadow-anim {
+        transform-box: fill-box;
+        transform-origin: center center;
+        animation: shadow-pulse 3s infinite ease-in-out;
+      }
+
+      /* Legs bounce */
+      .legs-bounce {
+        animation: legs-bob 3s infinite ease-in-out;
+      }
+
+      /* --- Keyframes --- */
+
+      @keyframes breathe {
+        0%, 100% { transform: scale(1, 1); }
+        50% { transform: scale(1.02, 0.98) translateY(0.3px); }
+      }
+
+      /* Body leans slightly right during blow */
+      @keyframes kiss-lean {
+        0%, 20%, 85%, 100% { transform: translate(0, 0); }
+        35%  { transform: translate(-0.5px, 0); }       /* lean left while arm near face */
+        50%  { transform: translate(0.5px, -0.5px); }   /* lean right during blow */
+        65%  { transform: translate(0.3px, 0); }
+      }
+
+      /*
+        Right arm motion:
+        Rest → raise to face area (translate left+down to stay below eyes) → extend out+up (blow)
+        Original position: (13, 9), 2x2
+        Near face: translate(-4px, 1px) → visual (9, 10), y range 10-12 (safe, below eyes y=8-10)
+        Extended: translate(2px, -2px) → visual (15, 7), arm flung outward
+      */
+      @keyframes arm-kiss {
+        0%, 15%, 100%  { transform: translate(0, 0); }
+        30%, 38%       { transform: translate(-4px, 1px); }    /* near face */
+        50%, 55%       { transform: translate(2px, -2px); }    /* extended outward */
+        70%            { transform: translate(1px, -1px); }    /* returning */
+        82%            { transform: translate(0, 0); }         /* back to rest */
+      }
+
+      /* Left arm gentle sway */
+      @keyframes arm-l-sway {
+        0%, 100% { transform: translate(0, 0); }
+        50%      { transform: translate(0, 0.5px); }
+      }
+
+      /* Normal eyes visible at rest */
+      @keyframes eyes-norm {
+        0%, 20%   { opacity: 1; }
+        25%, 75%  { opacity: 0; }
+        80%, 100% { opacity: 1; }
+      }
+
+      /* Happy eyes visible during kiss */
+      @keyframes eyes-hap {
+        0%, 23%   { opacity: 0; }
+        28%, 72%  { opacity: 1; }
+        77%, 100% { opacity: 0; }
+      }
+
+      /*
+        Heart flies from hand area outward and upward
+        Starts near extended arm position (~x=15, y=7)
+        Flies to upper-right
+      */
+      @keyframes heart-float {
+        0%, 48%  { opacity: 0; transform: translate(15px, 5px) scale(0.5); }
+        52%      { opacity: 1; transform: translate(15px, 4px) scale(1); }
+        60%      { opacity: 1; transform: translate(16px, 2px) scale(1); }
+        70%      { opacity: 0.8; transform: translate(17px, 0px) scale(1.1); }
+        80%      { opacity: 0.4; transform: translate(17.5px, -1.5px) scale(0.9); }
+        85%      { opacity: 0; transform: translate(18px, -3px) scale(0.6); }
+        100%     { opacity: 0; transform: translate(18px, -3px) scale(0.6); }
+      }
+
+      @keyframes shadow-pulse {
+        0%, 100% { transform: scaleX(1); opacity: 0.5; }
+        50%      { transform: scaleX(0.95); opacity: 0.45; }
+      }
+
+      @keyframes legs-bob {
+        0%, 20%, 85%, 100% { transform: translateY(0); }
+        50%                { transform: translateY(-0.5px); }
+      }
+    </style>
+  </defs>
+
+  <!-- Ground Shadow -->
+  <rect class="shadow-anim" x="3" y="15" width="9" height="1" fill="#000000" opacity="0.5"/>
+
+  <!-- Legs -->
+  <g class="legs-bounce" fill="#DE886D">
+    <rect x="3" y="12" width="1" height="3"/>
+    <rect x="5" y="12" width="1" height="3"/>
+    <rect x="9" y="12" width="1" height="3"/>
+    <rect x="11" y="12" width="1" height="3"/>
+  </g>
+
+  <!-- Upper body -->
+  <g class="kiss-body">
+    <g class="breathe">
+      <!-- Torso -->
+      <rect x="2" y="6" width="11" height="7" fill="#DE886D"/>
+
+      <!-- Normal eyes (visible at rest) -->
+      <g class="eyes-normal" fill="#000000">
+        <rect x="4" y="8" width="1" height="2"/>
+        <rect x="10" y="8" width="1" height="2"/>
+      </g>
+
+      <!-- Happy ^^ eyes (visible during kiss) -->
+      <g class="eyes-happy" fill="none" stroke="#000000" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="3.5,9.5 4.5,8.5 5.5,9.5"/>
+        <polyline points="9.5,9.5 10.5,8.5 11.5,9.5"/>
+      </g>
+
+      <!-- Left arm (stays mostly still) -->
+      <g class="arm-l">
+        <rect x="0" y="9" width="2" height="2" fill="#DE886D"/>
+      </g>
+
+      <!-- Right arm + shadow (does the kiss motion) -->
+      <g class="arm-r">
+        <rect x="13.5" y="9.5" width="2" height="2" fill="#000000" opacity="0.2"/>
+        <rect x="13" y="9" width="2" height="2" fill="#DE886D"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- Flying heart (compact pixel heart, 5x3) -->
+  <g class="heart-fly" fill="#E84057">
+    <!-- Top bumps -->
+    <rect x="0" y="0" width="1.5" height="0.8"/>
+    <rect x="2.5" y="0" width="1.5" height="0.8"/>
+    <!-- Full row -->
+    <rect x="0" y="0.8" width="4" height="0.8"/>
+    <!-- Taper -->
+    <rect x="0.8" y="1.6" width="2.4" height="0.8"/>
+    <!-- Point -->
+    <rect x="1.5" y="2.4" width="1" height="0.7"/>
+  </g>
+</svg>

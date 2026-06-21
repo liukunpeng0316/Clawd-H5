@@ -1,0 +1,185 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-15 -25 45 45" width="500" height="500">
+  <defs>
+    <style>
+      /*
+        Lion dance: 0.6s bounce cycle
+        Squash at ground → stretch at peak → squash at ground
+      */
+
+      /* Full body + lion head bounce */
+      .bounce {
+        transform-origin: 7.5px 15px;
+        animation: lion-bounce 0.6s infinite ease-in-out;
+      }
+
+      /* Legs: fast alternating step */
+      .leg-outer {
+        animation: step-outer 0.3s infinite ease-in-out;
+      }
+      .leg-inner {
+        animation: step-inner 0.3s infinite ease-in-out;
+      }
+
+      /* Lion mouth: opens at jump peak, closes on land */
+      .mouth-lower {
+        transform-origin: 7.5px -1px;
+        animation: mouth-chomp 0.6s infinite ease-in-out;
+      }
+
+      /* Lion eye pupils: bounce with excitement */
+      .pupil-bounce {
+        animation: pupil-bob 0.6s infinite ease-in-out;
+      }
+
+      /* Shadow synced with bounce */
+      .shadow-bounce {
+        transform-box: fill-box;
+        transform-origin: 50% 50%;
+        animation: shadow-lion 0.6s infinite ease-in-out;
+      }
+
+      /* Confetti particles */
+      .confetti {
+        opacity: 0;
+        animation: confetti-burst 1.2s infinite ease-out;
+      }
+
+      /* --- Keyframes --- */
+
+      @keyframes lion-bounce {
+        0%, 100% { transform: translateY(0) scaleY(0.92); }
+        15%      { transform: translateY(0) scaleY(1.05); }     /* Launch stretch */
+        40%      { transform: translateY(-8px) scaleY(1.02); }  /* Peak */
+        45%      { transform: translateY(-8px) scaleY(1); }     /* Hangtime */
+        70%      { transform: translateY(0) scaleY(1.05); }     /* Fall stretch */
+        85%      { transform: translateY(0) scaleY(0.92); }     /* Land squash */
+      }
+
+      @keyframes step-outer {
+        0%, 100% { transform: translateY(0); }
+        50%      { transform: translateY(-1.5px); }
+      }
+
+      @keyframes step-inner {
+        0%, 100% { transform: translateY(-1.5px); }
+        50%      { transform: translateY(0); }
+      }
+
+      /* Mouth: opens at peak (40-45%), closed at ground */
+      @keyframes mouth-chomp {
+        0%, 25%  { transform: translateY(0); }
+        40%, 50% { transform: translateY(1.5px); }   /* Mouth open */
+        65%, 100% { transform: translateY(0); }       /* Mouth closed */
+      }
+
+      @keyframes pupil-bob {
+        0%, 100% { transform: translateY(0); }
+        40%, 50% { transform: translateY(-0.5px); }
+      }
+
+      @keyframes shadow-lion {
+        0%, 85%, 100% { transform: scale(1); opacity: 0.5; }
+        15%           { transform: scale(0.9); opacity: 0.45; }
+        40%, 45%      { transform: scale(0.5); opacity: 0.2; }  /* Tiny at peak */
+        70%           { transform: scale(0.9); opacity: 0.45; }
+      }
+
+      @keyframes confetti-burst {
+        0%   { opacity: 0; transform: translate(0, 0) scale(0.5); }
+        10%  { opacity: 1; }
+        100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0.3); }
+      }
+    </style>
+  </defs>
+
+  <!-- Ground Shadow -->
+  <rect class="shadow-bounce" x="1" y="15" width="13" height="1" fill="#000000" opacity="0.5"/>
+
+  <!-- Gold confetti particles -->
+  <g>
+    <rect class="confetti" x="0" y="-11" width="1" height="1" fill="#FFD700" style="--dx: -6px; --dy: -4px; animation-delay: 0s;"/>
+    <rect class="confetti" x="14" y="-9" width="1" height="1" fill="#FFC107" style="--dx: 5px; --dy: -5px; animation-delay: 0.2s;"/>
+    <rect class="confetti" x="5" y="-14" width="1" height="1" fill="#FF6F00" style="--dx: -3px; --dy: -3px; animation-delay: 0.4s;"/>
+    <rect class="confetti" x="10" y="-12" width="1" height="1" fill="#FFD700" style="--dx: 4px; --dy: -6px; animation-delay: 0.6s;"/>
+    <rect class="confetti" x="-3" y="-8" width="1" height="1" fill="#FFA000" style="--dx: -4px; --dy: -5px; animation-delay: 0.8s;"/>
+    <rect class="confetti" x="17" y="-11" width="1" height="1" fill="#FFC107" style="--dx: 3px; --dy: -4px; animation-delay: 1.0s;"/>
+  </g>
+
+  <!-- Bouncing body group -->
+  <g class="bounce">
+
+    <!-- === Legs (visible below drape) === -->
+    <g fill="#DE886D">
+      <rect class="leg-outer" x="3" y="12" width="1" height="3"/>
+      <rect class="leg-inner" x="5" y="12" width="1" height="3"/>
+      <rect class="leg-inner" x="9" y="12" width="1" height="3"/>
+      <rect class="leg-outer" x="11" y="12" width="1" height="3"/>
+    </g>
+
+    <!-- === Clawd's body (visible) === -->
+    <rect x="2" y="6" width="11" height="7" fill="#DE886D"/>
+
+    <!-- Clawd's eyes: happy ^^ -->
+    <g fill="none" stroke="#000000" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="3.5,9.5 4.5,8 5.5,9.5"/>
+      <polyline points="9.5,9.5 10.5,8 11.5,9.5"/>
+    </g>
+
+    <!-- === Side drape/cloth (hanging from lion head, framing Clawd's face) === -->
+    <!-- Left drape -->
+    <rect x="-1" y="0" width="3" height="11" fill="#43A047"/>
+    <rect x="-1" y="0" width="3" height="1" fill="#FFC107"/>
+    <polygon points="-1,11 0,9.5 1,11" fill="#FFC107"/>
+    <!-- Right drape -->
+    <rect x="13" y="0" width="3" height="11" fill="#43A047"/>
+    <rect x="13" y="0" width="3" height="1" fill="#FFC107"/>
+    <polygon points="13,11 14,9.5 15,11" fill="#FFC107"/>
+
+    <!-- === Arms (holding lion head up) === -->
+    <rect x="0" y="7" width="2" height="2" fill="#DE886D"/>
+    <rect x="13" y="7" width="2" height="2" fill="#DE886D"/>
+
+    <!-- === Lion Head (raised above Clawd) === -->
+    <g>
+      <!-- Main head block (red) -->
+      <rect x="-1" y="-8" width="17" height="7" fill="#E53935" rx="0.5"/>
+
+      <!-- Gold top crown/ridge -->
+      <rect x="-1" y="-9" width="17" height="1.5" fill="#FFC107" rx="0.3"/>
+      <!-- Crown bumps -->
+      <rect x="1" y="-10" width="2" height="1.5" fill="#FFC107" rx="0.3"/>
+      <rect x="6" y="-10.5" width="3" height="2" fill="#FFC107" rx="0.3"/>
+      <rect x="12" y="-10" width="2" height="1.5" fill="#FFC107" rx="0.3"/>
+
+      <!-- Gold side trim -->
+      <rect x="-1" y="-8" width="1" height="7" fill="#FFC107"/>
+      <rect x="15" y="-8" width="1" height="7" fill="#FFC107"/>
+
+      <!-- Eyes: big white with black pupils -->
+      <rect x="1" y="-6" width="4" height="3" fill="#FFFFFF" rx="0.5"/>
+      <g class="pupil-bounce">
+        <rect x="2.5" y="-5.5" width="2" height="2" fill="#000000" rx="0.3"/>
+      </g>
+      <rect x="10" y="-6" width="4" height="3" fill="#FFFFFF" rx="0.5"/>
+      <g class="pupil-bounce">
+        <rect x="11.5" y="-5.5" width="2" height="2" fill="#000000" rx="0.3"/>
+      </g>
+
+      <!-- Nose dots -->
+      <rect x="6" y="-4" width="1" height="1" fill="#B71C1C"/>
+      <rect x="8" y="-4" width="1" height="1" fill="#B71C1C"/>
+
+      <!-- Upper jaw (fixed) -->
+      <rect x="0" y="-2" width="15" height="1" fill="#FFD54F"/>
+
+      <!-- Lower jaw (opens and closes) -->
+      <g class="mouth-lower">
+        <rect x="0" y="-1" width="15" height="1.5" fill="#FFD54F"/>
+        <rect x="2" y="-1" width="1.5" height="0.8" fill="#FFFFFF"/>
+        <rect x="5" y="-1" width="1.5" height="0.8" fill="#FFFFFF"/>
+        <rect x="8.5" y="-1" width="1.5" height="0.8" fill="#FFFFFF"/>
+        <rect x="11.5" y="-1" width="1.5" height="0.8" fill="#FFFFFF"/>
+      </g>
+    </g>
+  </g>
+</svg>

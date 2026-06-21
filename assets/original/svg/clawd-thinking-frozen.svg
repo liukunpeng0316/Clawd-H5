@@ -1,0 +1,150 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-15 -25 45 45" width="500" height="500">
+  <defs>
+    <style>
+      /*
+        Timeline (6s cycle):
+        0-10%:  normal Clawd, breathing, normal eyes
+        10-20%: transition to frozen (fade color, eyes compress, breathing stops)
+        20-80%: frozen state - desaturated, dead eyes, spinner active
+        80-90%: transition back to normal
+        90-100%: normal standing
+      */
+
+      /* Body color fade: normal → desaturated */
+      .body-fade {
+        animation: body-fade 6s infinite ease-in-out;
+      }
+      .eye-fade {
+        animation: eye-fade 6s infinite ease-in-out;
+      }
+
+      /* Breathing: only active during normal phase */
+      .breathe {
+        transform-origin: 7.5px 13px;
+        animation: breathe 6s infinite ease-in-out;
+      }
+
+      /* Eyes: normal → compressed dead stare → normal */
+      .eyes-state {
+        transform-origin: 7.5px 9px;
+        animation: eyes-state 6s infinite ease-in-out;
+      }
+
+      /* Loading spinner */
+      .spinner {
+        transform-origin: 7.5px 2px;
+        animation: spin 1.2s infinite steps(8);
+      }
+
+      /* Spinner visibility: hidden during normal, visible during frozen */
+      .spinner-fade {
+        animation: spinner-fade 6s infinite ease-in-out;
+      }
+
+      /* Shadow */
+      .shadow-anim {
+        transform-origin: 7.5px 15.5px;
+        animation: shadow-fade 6s infinite ease-in-out;
+      }
+
+      /* --- Keyframes --- */
+
+      /*
+        Breathing: 2 breaths in normal window (72-100-0-10%, wrapping).
+        Peak A at 0%/100% boundary, peak B at 81%. Evenly spaced ~19% apart.
+      */
+      @keyframes breathe {
+        0%, 100%  { transform: scale(1.03, 0.97) translate(0, 0.4px); }
+        6%, 74%   { transform: scale(1, 1); }
+        81%       { transform: scale(1.03, 0.97) translate(0, 0.4px); }
+        88%, 94%  { transform: scale(1, 1); }
+      }
+
+      /* Body color: #DE886D normal → #C4A99A desaturated/pale */
+      @keyframes body-fade {
+        0%, 10%   { fill: #DE886D; }
+        20%, 62%  { fill: #C4A99A; }
+        72%, 100% { fill: #DE886D; }
+      }
+
+      /* Eye color: black → dark gray (faded) */
+      @keyframes eye-fade {
+        0%, 10%   { fill: #000000; }
+        20%, 62%  { fill: #555555; }
+        72%, 100% { fill: #000000; }
+      }
+
+      /* Eyes: normal → dead stare (compressed + wider) → normal */
+      @keyframes eyes-state {
+        0%, 10%   { transform: scaleY(1) scaleX(1); }
+        13%, 14%  { transform: scaleY(0.1) scaleX(1); }
+        20%, 62%  { transform: scaleY(0.7) scaleX(1.1); }
+        67%, 68%  { transform: scaleY(0.1) scaleX(1); }
+        72%, 100% { transform: scaleY(1) scaleX(1); }
+      }
+
+      /* Spinner rotation */
+      @keyframes spin {
+        0%   { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      /* Spinner: invisible during normal, fade in during frozen */
+      @keyframes spinner-fade {
+        0%, 14%   { opacity: 0; }
+        24%, 58%  { opacity: 1; }
+        68%, 100% { opacity: 0; }
+      }
+
+      /* Shadow fades slightly during frozen */
+      @keyframes shadow-fade {
+        0%, 10%   { opacity: 0.5; }
+        20%, 62%  { opacity: 0.35; }
+        72%, 100% { opacity: 0.5; }
+      }
+    </style>
+  </defs>
+
+  <!-- Ground Shadow -->
+  <rect class="shadow-anim" x="3" y="15" width="9" height="1" fill="#000000" opacity="0.5"/>
+
+  <!-- Legs -->
+  <g class="body-fade" fill="#DE886D">
+    <rect x="3" y="11" width="1" height="4"/>
+    <rect x="5" y="11" width="1" height="4"/>
+    <rect x="9" y="11" width="1" height="4"/>
+    <rect x="11" y="11" width="1" height="4"/>
+  </g>
+
+  <!-- Upper body -->
+  <g class="breathe">
+    <!-- Torso -->
+    <rect class="body-fade" x="2" y="6" width="11" height="7" fill="#DE886D"/>
+
+    <!-- Eyes -->
+    <g class="eyes-state">
+      <rect class="eye-fade" x="4" y="8" width="1" height="2" fill="#000000"/>
+      <rect class="eye-fade" x="10" y="8" width="1" height="2" fill="#000000"/>
+    </g>
+
+    <!-- Left arm -->
+    <rect class="body-fade" x="0" y="9" width="2" height="2" fill="#DE886D"/>
+
+    <!-- Right arm -->
+    <rect class="body-fade" x="13" y="9" width="2" height="2" fill="#DE886D"/>
+
+    <!-- Loading spinner above head -->
+    <g class="spinner-fade" opacity="0">
+      <g class="spinner">
+        <rect x="7.15" y="-0.35" width="0.7" height="0.7" rx="0.15" fill="#7B8FA0" opacity="1"/>
+        <rect x="8.56" y="0.24" width="0.7" height="0.7" rx="0.15" fill="#7B8FA0" opacity="0.85"/>
+        <rect x="9.15" y="1.65" width="0.7" height="0.7" rx="0.15" fill="#7B8FA0" opacity="0.65"/>
+        <rect x="8.56" y="3.06" width="0.7" height="0.7" rx="0.15" fill="#7B8FA0" opacity="0.48"/>
+        <rect x="7.15" y="3.65" width="0.7" height="0.7" rx="0.15" fill="#7B8FA0" opacity="0.33"/>
+        <rect x="5.74" y="3.06" width="0.7" height="0.7" rx="0.15" fill="#7B8FA0" opacity="0.22"/>
+        <rect x="5.15" y="1.65" width="0.7" height="0.7" rx="0.15" fill="#7B8FA0" opacity="0.14"/>
+        <rect x="5.74" y="0.24" width="0.7" height="0.7" rx="0.15" fill="#7B8FA0" opacity="0.08"/>
+      </g>
+    </g>
+  </g>
+</svg>

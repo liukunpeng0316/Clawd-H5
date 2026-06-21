@@ -1,0 +1,21 @@
+.venv/
+.DS_Store
+__pycache__/
+*.pyc
+*.egg-info/
+.claude/*
+!.claude/skills/
+# Personal dev docs (kept local, not published)
+/PROJECT.md
+/TODO.md
+# Project maintenance / CI tooling (kept local, not published)
+/scripts/
+/.github/
+# Per-checkout collection name chosen at init
+/.collection
+# Local scratch / downstream development workspace
+workspace/*
+!workspace/.gitkeep
+!workspace/gif/
+workspace/gif/*
+!workspace/gif/.gitkeep

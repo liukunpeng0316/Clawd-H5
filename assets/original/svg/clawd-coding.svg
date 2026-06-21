@@ -1,0 +1,204 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-15 -25 45 45" width="500" height="500">
+<style>
+  /* 敲代码忙碌 - 持续循环 */
+  /* 双手在身前快速交替敲击，眼睛专注盯着，代码行从头顶飘出 */
+
+  /* 呼吸 */
+  .breathe {
+    animation: breathe 3.2s ease-in-out infinite;
+    transform-box: fill-box;
+    transform-origin: center bottom;
+  }
+  @keyframes breathe {
+    0%, 100% { transform: scale(1, 1); }
+    50% { transform: scale(1.02, 0.98) translateY(0.5px); }
+  }
+
+  /* 身体前倾投入感 + 微bob */
+  .lean-bob {
+    animation: lean-bob 0.4s ease-in-out infinite;
+    transform-box: fill-box;
+    transform-origin: center bottom;
+  }
+  @keyframes lean-bob {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(0.3px); }
+  }
+
+  /* 左臂 - 前置到身前敲击 */
+  .arm-l-tap {
+    animation: tap-l 0.25s ease-in-out infinite;
+  }
+  @keyframes tap-l {
+    0%, 100% { transform: translate(4px, 1px); }
+    50% { transform: translate(4px, 2px); }
+  }
+
+  /* 右臂 - 前置到身前敲击，与左臂反相 */
+  .arm-r-tap {
+    animation: tap-r 0.25s ease-in-out infinite;
+  }
+  @keyframes tap-r {
+    0%, 100% { transform: translate(-4px, 2px); }
+    50% { transform: translate(-4px, 1px); }
+  }
+
+  /* 左臂阴影 */
+  .arm-l-shadow {
+    animation: tap-l 0.25s ease-in-out infinite;
+  }
+  /* 右臂阴影 */
+  .arm-r-shadow {
+    animation: tap-r 0.25s ease-in-out infinite;
+  }
+
+  /* 专注眯眼 scaleY(0.7) + 左右扫视 */
+  .eyes-focus {
+    animation: eyes-scan 1.8s step-end infinite;
+  }
+  @keyframes eyes-scan {
+    0%, 16% { transform: scaleY(0.7) translateX(-1px); }
+    17%, 33% { transform: scaleY(0.7) translateX(0px); }
+    34%, 50% { transform: scaleY(0.7) translateX(1px); }
+    51%, 67% { transform: scaleY(0.7) translateX(0.5px); }
+    68%, 83% { transform: scaleY(0.7) translateX(-0.5px); }
+    84%, 100% { transform: scaleY(0.7) translateX(-1px); }
+  }
+
+  /* 眨眼 */
+  .eyes-blink {
+    animation: blink 3s ease-in-out infinite;
+    transform-box: fill-box;
+    transform-origin: center center;
+  }
+  @keyframes blink {
+    0%, 46% { transform: scaleY(1); }
+    48% { transform: scaleY(0.1); }
+    50%, 100% { transform: scaleY(1); }
+  }
+
+  /* 代码行逐行出现 - 模拟打字写出 */
+  .code-line1 {
+    animation: code-type 3s step-end infinite;
+  }
+  .code-line2 {
+    animation: code-type 3s step-end infinite;
+    animation-delay: 1s;
+  }
+  .code-line3 {
+    animation: code-type 3s step-end infinite;
+    animation-delay: 2s;
+  }
+  @keyframes code-type {
+    0%, 5% { opacity: 0; }
+    6% { opacity: 0.9; }
+    85% { opacity: 0.9; }
+    86%, 100% { opacity: 0; }
+  }
+
+  /* 阴影 */
+  .shadow-anim {
+    animation: shadow-breathe 3.2s ease-in-out infinite;
+  }
+  @keyframes shadow-breathe {
+    0%, 100% { transform: scaleX(1); opacity: 0.5; }
+    50% { transform: scaleX(1.02); opacity: 0.48; }
+  }
+</style>
+
+  <!-- 阴影 -->
+  <g class="shadow-anim">
+    <rect x="3" y="15" width="9" height="1" fill="#000000" opacity="0.5"/>
+  </g>
+
+  <!-- 悬浮代码板 -->
+  <g transform="translate(0, -1)">
+    <!-- 板子背景 -->
+    <rect x="0" y="-2" width="15" height="8" fill="#263238"/>
+    <!-- 板子顶栏 -->
+    <rect x="0" y="-2" width="15" height="1.2" fill="#37474F"/>
+    <!-- 顶栏小圆点 -->
+    <rect x="0.8" y="-1.5" width="0.6" height="0.6" fill="#EF5350"/>
+    <rect x="2" y="-1.5" width="0.6" height="0.6" fill="#FFC107"/>
+    <rect x="3.2" y="-1.5" width="0.6" height="0.6" fill="#66BB6A"/>
+    <!-- 代码行 -->
+    <g class="code-line1">
+      <rect x="1.5" y="0" width="3.5" height="0.5" fill="#66BB6A"/>
+      <rect x="5.5" y="0" width="2" height="0.5" fill="#42A5F5"/>
+    </g>
+    <g class="code-line2">
+      <rect x="2.5" y="1.2" width="2.5" height="0.5" fill="#AB47BC"/>
+      <rect x="5.5" y="1.2" width="4" height="0.5" fill="#FFA726"/>
+    </g>
+    <g class="code-line3">
+      <rect x="2.5" y="2.4" width="1.5" height="0.5" fill="#42A5F5"/>
+      <rect x="4.5" y="2.4" width="5" height="0.5" fill="#EF5350"/>
+    </g>
+    <!-- 静态代码行 -->
+    <rect x="1.5" y="3.6" width="4" height="0.5" fill="#78909C" opacity="0.4"/>
+    <rect x="6" y="3.6" width="2" height="0.5" fill="#78909C" opacity="0.3"/>
+    <rect x="2.5" y="4.8" width="3" height="0.5" fill="#78909C" opacity="0.25"/>
+    <rect x="6" y="4.8" width="4" height="0.5" fill="#78909C" opacity="0.2"/>
+  </g>
+
+  <!-- 身体 -->
+  <g class="lean-bob">
+  <g class="breathe">
+
+    <!-- 腿部 -->
+    <rect x="3" y="12" width="1" height="3" fill="#DE886D"/>
+    <rect x="5" y="12" width="1" height="3" fill="#DE886D"/>
+    <rect x="9" y="12" width="1" height="3" fill="#DE886D"/>
+    <rect x="11" y="12" width="1" height="3" fill="#DE886D"/>
+
+    <!-- 躯干 -->
+    <rect x="2" y="6" width="11" height="7" fill="#DE886D"/>
+
+    <!-- 眼睛 -->
+    <g class="eyes-blink">
+      <g class="eyes-focus">
+        <rect x="4" y="10" width="1" height="2" fill="#000000"/>
+        <rect x="10" y="10" width="1" height="2" fill="#000000"/>
+      </g>
+    </g>
+
+    <!-- 键盘 -->
+    <g>
+      <!-- 键盘主体 -->
+      <rect x="3" y="12" width="9" height="2" fill="#424242"/>
+      <!-- 按键行1 -->
+      <rect x="3.5" y="12.3" width="1" height="0.5" fill="#616161"/>
+      <rect x="5" y="12.3" width="1" height="0.5" fill="#616161"/>
+      <rect x="6.5" y="12.3" width="1" height="0.5" fill="#616161"/>
+      <rect x="8" y="12.3" width="1" height="0.5" fill="#616161"/>
+      <rect x="9.5" y="12.3" width="1" height="0.5" fill="#616161"/>
+      <!-- 按键行2 -->
+      <rect x="4" y="13.1" width="1" height="0.5" fill="#616161"/>
+      <rect x="5.5" y="13.1" width="1" height="0.5" fill="#616161"/>
+      <rect x="7" y="13.1" width="1" height="0.5" fill="#616161"/>
+      <rect x="8.5" y="13.1" width="1" height="0.5" fill="#616161"/>
+      <rect x="10" y="13.1" width="0.8" height="0.5" fill="#616161"/>
+    </g>
+
+    <!-- 左臂阴影 -->
+    <g class="arm-l-shadow">
+      <rect x="0.5" y="9.5" width="2" height="2" fill="#000000" opacity="0.2"/>
+    </g>
+    <!-- 左臂 -->
+    <g class="arm-l-tap">
+      <rect x="0" y="9" width="2" height="2" fill="#DE886D"/>
+    </g>
+
+    <!-- 右臂阴影 -->
+    <g class="arm-r-shadow">
+      <rect x="13.5" y="9.5" width="2" height="2" fill="#000000" opacity="0.2"/>
+    </g>
+    <!-- 右臂 -->
+    <g class="arm-r-tap">
+      <rect x="13" y="9" width="2" height="2" fill="#DE886D"/>
+    </g>
+
+  </g>
+  </g>
+
+</svg>

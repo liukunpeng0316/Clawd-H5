@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-15 -25 45 45" width="500" height="500">
+  <!-- Legs -->
+  <g fill="#DE886D">
+    <rect x="3" y="13" width="1" height="2"/>
+    <rect x="5" y="13" width="1" height="2"/>
+    <rect x="9" y="13" width="1" height="2"/>
+    <rect x="11" y="13" width="1" height="2"/>
+  </g>
+
+  <!-- Torso -->
+  <rect x="2" y="6" width="11" height="7" fill="#DE886D"/>
+
+  <!-- Pixel heart above head -->
+  <g id="heart" fill="#E84057">
+    <!--
+      Pixel heart (12 wide, centered on body):
+        .###..###.    y=-4
+       #####.#####    y=-3
+       ##########     y=-2
+       ##########     y=-1
+        ########      y=0
+         ######       y=1
+          ####        y=2
+           ##         y=3
+    -->
+    <!-- Top bumps -->
+    <rect x="3" y="-4" width="3" height="1"/>
+    <rect x="9" y="-4" width="3" height="1"/>
+    <!-- Wider bumps -->
+    <rect x="2" y="-3" width="5" height="1"/>
+    <rect x="8" y="-3" width="5" height="1"/>  <!-- gap at x=7 -->
+    <!-- Full rows -->
+    <rect x="2" y="-2" width="11" height="1"/>
+    <rect x="2" y="-1" width="11" height="1"/>
+    <!-- Tapering -->
+    <rect x="3" y="0" width="9" height="1"/>
+    <rect x="4" y="1" width="7" height="1"/>
+    <rect x="5" y="2" width="5" height="1"/>
+    <rect x="6" y="3" width="3" height="1"/>
+    <!-- Highlight -->
+    <rect x="3" y="-3" width="2" height="1" fill="#F47088" opacity="0.6"/>
+    <rect x="3" y="-2" width="1" height="2" fill="#F47088" opacity="0.4"/>
+  </g>
+
+  <!-- Happy ^^ eyes -->
+  <g fill="none" stroke="#000000" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="3.5,9.5 4.5,8 5.5,9.5"/>
+    <polyline points="9.5,9.5 10.5,8 11.5,9.5"/>
+  </g>
+
+  <!-- Arms slightly raised -->
+  <rect x="0" y="8" width="2" height="2" fill="#DE886D"/>
+  <rect x="13" y="8" width="2" height="2" fill="#DE886D"/>
+</svg>

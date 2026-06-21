@@ -1,0 +1,195 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-15 -25 45 45" width="500" height="500">
+  <defs>
+    <style>
+      /* Breathing */
+      .breathe {
+        transform-origin: 7.5px 13px;
+        animation: breathe 3.2s infinite ease-in-out;
+      }
+
+      /* Wow bounce: only during star-eye phase */
+      .wow-bounce {
+        transform-origin: 7.5px 15px;
+        animation: wow-bounce 4s infinite ease-in-out;
+      }
+
+      /* Normal eyes */
+      .eyes-normal {
+        transform-origin: 7.5px 9px;
+        animation: eyes-normal-vis 4s infinite ease-in-out;
+      }
+
+      /* Star eyes: visibility + pulse */
+      .star-eye-l {
+        transform-origin: 4.5px 9px;
+        opacity: 0;
+        animation: star-vis 4s infinite ease-in-out, star-pulse 0.8s infinite ease-in-out;
+      }
+      .star-eye-r {
+        transform-origin: 10.5px 9px;
+        opacity: 0;
+        animation: star-vis 4s infinite ease-in-out, star-pulse 0.8s infinite ease-in-out;
+      }
+
+      /* Sparkle particles: only during star phase */
+      .sparkle {
+        opacity: 0;
+        animation: sparkle-pop 1.5s infinite ease-out, sparkle-vis 4s infinite ease-in-out;
+      }
+
+      /* Arms: move to front and clasp during star phase */
+      .arm-l-wow {
+        animation: arm-l-wow 4s infinite ease-in-out;
+      }
+      .arm-r-wow {
+        animation: arm-r-wow 4s infinite ease-in-out;
+      }
+
+      /* Shadow */
+      .shadow-anim {
+        transform-origin: 7.5px 15.5px;
+        animation: shadow-wow 4s infinite ease-in-out;
+      }
+
+      /* --- Keyframes --- */
+
+      @keyframes breathe {
+        0%, 100% { transform: scale(1, 1); }
+        50% { transform: scale(1.02, 0.98) translate(0, 0.3px); }
+      }
+
+      /*
+        4s cycle:
+        0-20%:   normal eyes, still
+        20-22%:  blink (close)
+        22-24%:  blink (both hidden)
+        24-72%:  star eyes + bounce + sparkles
+        72-74%:  blink (close)
+        74-76%:  blink (both hidden)
+        76-100%: normal eyes, still
+      */
+
+      /* Lean right: two bounces, hold at peak, then return */
+      @keyframes wow-bounce {
+        0%, 18%, 74%, 100% { transform: translate(0, 0) scale(1, 1); }
+        24%       { transform: translate(1px, 0px) scale(1.02, 0.97); }     /* crouch 1 */
+        28%       { transform: translate(1px, -1.5px) scale(0.98, 1.03); }  /* bounce 1 up */
+        32%       { transform: translate(1px, -0.5px) scale(1, 1); }        /* land */
+        36%       { transform: translate(1px, 0px) scale(1.02, 0.97); }     /* crouch 2 */
+        40%       { transform: translate(1px, -2px) scale(0.98, 1.03); }    /* bounce 2 max */
+        44%, 60%  { transform: translate(1px, -2px) scale(1, 1); }          /* hold at peak */
+        68%       { transform: translate(0, 0) scale(1, 1); }               /* return */
+      }
+
+      /* Normal eyes: visible at rest, hidden during star phase */
+      @keyframes eyes-normal-vis {
+        0%, 18%   { opacity: 1; }
+        20%, 72%  { opacity: 0; }
+        74%, 100% { opacity: 1; }
+      }
+
+      /* Star eyes: visible during wow, big pulse at peak hold */
+      @keyframes star-vis {
+        0%, 22%   { opacity: 0; }
+        24%, 64%  { opacity: 1; }
+        66%, 100% { opacity: 0; }
+      }
+
+      /* Star pulse: regular twinkle + big burst at 50% (peak hold moment) */
+      @keyframes star-pulse {
+        0%, 100% { transform: scale(1); }
+        25% { transform: scale(1.2); }
+        50% { transform: scale(1.5); }
+        75% { transform: scale(1.2); }
+      }
+
+      /* Sparkles only visible during star phase */
+      @keyframes sparkle-vis {
+        0%, 24%   { opacity: 0; }
+        28%, 62%  { opacity: 1; }
+        66%, 100% { opacity: 0; }
+      }
+
+      /* Sparkle pop and float */
+      @keyframes sparkle-pop {
+        0% { transform: scale(0.3) translateY(0); }
+        15% { transform: scale(1) translateY(0); }
+        60% { transform: scale(0.8) translateY(-2px); }
+        100% { transform: scale(0.3) translateY(-4px); }
+      }
+
+      /* Left arm: sides → front-clasped → sides */
+      @keyframes arm-l-wow {
+        0%, 18%   { transform: translate(0, 0); }
+        24%       { transform: translate(5px, 1px); }
+        64%       { transform: translate(5px, 1px); }
+        72%, 100% { transform: translate(0, 0); }
+      }
+
+      /* Right arm: mirror */
+      @keyframes arm-r-wow {
+        0%, 18%   { transform: translate(0, 0); }
+        24%       { transform: translate(-5px, 1px); }
+        64%       { transform: translate(-5px, 1px); }
+        72%, 100% { transform: translate(0, 0); }
+      }
+
+      @keyframes shadow-wow {
+        0%, 20%, 76%, 100% { transform: scaleX(1); opacity: 0.5; }
+        28% { transform: scaleX(1.05); opacity: 0.48; }
+        34% { transform: scaleX(0.92); opacity: 0.4; }
+        56% { transform: scaleX(0.96); opacity: 0.45; }
+      }
+    </style>
+  </defs>
+
+  <!-- Ground Shadow -->
+  <rect class="shadow-anim" x="3" y="15" width="9" height="1" fill="#000000" opacity="0.5"/>
+
+  <!-- Legs (static, extended) -->
+  <g fill="#DE886D">
+    <rect x="3" y="11" width="1" height="4"/>
+    <rect x="5" y="11" width="1" height="4"/>
+    <rect x="9" y="11" width="1" height="4"/>
+    <rect x="11" y="11" width="1" height="4"/>
+  </g>
+
+  <!-- Upper body -->
+  <g class="wow-bounce">
+    <g class="breathe">
+      <!-- Torso -->
+      <rect x="2" y="6" width="11" height="7" fill="#DE886D"/>
+
+      <!-- Normal eyes (visible at rest) -->
+      <g class="eyes-normal" fill="#000000">
+        <rect x="4" y="8" width="1" height="2"/>
+        <rect x="10" y="8" width="1" height="2"/>
+      </g>
+
+      <!-- Star eyes ✨ (visible during wow phase) -->
+      <g class="star-eye-l">
+        <path d="M 4.5,7.5 C 4.65,8.5 5.7,8.8 5.7,9 C 5.7,9.2 4.65,9.5 4.5,10.5 C 4.35,9.5 3.3,9.2 3.3,9 C 3.3,8.8 4.35,8.5 4.5,7.5 Z" fill="#FFD700"/>
+      </g>
+      <g class="star-eye-r">
+        <path d="M 10.5,7.5 C 10.65,8.5 11.7,8.8 11.7,9 C 11.7,9.2 10.65,9.5 10.5,10.5 C 10.35,9.5 9.3,9.2 9.3,9 C 9.3,8.8 10.35,8.5 10.5,7.5 Z" fill="#FFD700"/>
+      </g>
+
+      <!-- Arms (sides → clasped in front during wow) -->
+      <g class="arm-l-wow">
+        <rect x="0.5" y="9.5" width="2" height="2" fill="#000000" opacity="0.25"/>
+        <rect x="0" y="9" width="2" height="2" fill="#DE886D"/>
+      </g>
+      <g class="arm-r-wow">
+        <rect x="13.5" y="9.5" width="2" height="2" fill="#000000" opacity="0.25"/>
+        <rect x="13" y="9" width="2" height="2" fill="#DE886D"/>
+      </g>
+
+      <!-- Sparkle particles (only visible during star phase) -->
+      <rect class="sparkle" x="-1" y="4" width="1" height="1" fill="#FFD700" style="animation-delay: 0s;"/>
+      <rect class="sparkle" x="15" y="3" width="1" height="1" fill="#FFC107" style="animation-delay: 0.5s;"/>
+      <rect class="sparkle" x="7" y="2" width="1" height="1" fill="#FFF59D" style="animation-delay: 1.0s;"/>
+      <rect class="sparkle" x="-3" y="8" width="1" height="1" fill="#FFA000" style="animation-delay: 0.3s;"/>
+      <rect class="sparkle" x="17" y="9" width="1" height="1" fill="#FFD700" style="animation-delay: 0.8s;"/>
+    </g>
+  </g>
+</svg>

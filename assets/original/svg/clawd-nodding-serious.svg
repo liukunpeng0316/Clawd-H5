@@ -1,0 +1,184 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-15 -25 45 45" width="500" height="500">
+  <defs>
+    <style>
+      /* Breathing */
+      .breathe {
+        transform-origin: 7.5px 13px;
+        animation: breathe 3.2s infinite ease-in-out;
+      }
+
+      /* Nodding — 4s cycle */
+      .nod {
+        transform-origin: 7.5px 13px;
+        animation: nod 4.2s infinite ease-in-out;
+      }
+
+      /* Eyes — 4s cycle */
+      .eyes {
+        transform-origin: 7.5px 9px;
+        animation: eyes-nod 4.2s infinite ease-in-out;
+      }
+
+      /* Right arm salute — 4s cycle */
+      .arm-r {
+        animation: arm-salute 4.2s infinite ease-in-out;
+      }
+
+      /* Shadow — 4s cycle */
+      .shadow-anim {
+        transform-origin: 7.5px 15.5px;
+        animation: shadow-nod 4.2s infinite ease-in-out;
+      }
+
+      /* Legs stomp: one step during salute (9-12%) */
+      .legs-outer {
+        animation: legs-outer 4.2s infinite ease-in-out;
+      }
+      .legs-inner {
+        animation: legs-inner 4.2s infinite ease-in-out;
+      }
+
+      /* --- Keyframes --- */
+
+      /* Outer legs lift while inner legs stay grounded — slower stomp */
+      @keyframes legs-outer {
+        0%, 6%    { transform: translateY(0); }
+        8%, 12%   { transform: translateY(-1.5px); }
+        14%, 100% { transform: translateY(0); }
+      }
+      /* Inner legs lift as outer come down */
+      @keyframes legs-inner {
+        0%, 12%   { transform: translateY(0); }
+        14%, 18%  { transform: translateY(-1.5px); }
+        20%, 100% { transform: translateY(0); }
+      }
+
+      @keyframes breathe {
+        0%, 100% { transform: scale(1, 1); }
+        50% { transform: scale(1.02, 0.98) translate(0, 0.3px); }
+      }
+
+      /*
+        Right arm:
+        Salute position: translate(-1px, -1px) → arm at (12, 8)-(14, 10)
+        Right eye at (10, 8)-(11, 10), so arm is to the right, not covering eye
+        Fast raise (8-12%), hold (12-25%), fast lower (25-30%), rest, then nods
+      */
+      @keyframes arm-salute {
+        0%, 5%    { transform: translate(0, 0) rotate(0deg); }
+        7%        { transform: translate(-1px, -1.5px) rotate(-30deg); }   /* fast raise */
+        8%, 30%   { transform: translate(-1px, -1.5px) rotate(-30deg); }   /* long hold salute */
+        35%       { transform: translate(0, 0) rotate(0deg); }             /* lower during nod 1 */
+        100%      { transform: translate(0, 0) rotate(0deg); }
+      }
+
+      /*
+        Sequence: salute hold (8-30%) → nod 1 starts at 32% while hand lowers
+      */
+      @keyframes nod {
+        0%, 30%, 100%  { transform: scale(1, 1) translateY(0); }
+        35%, 38%       { transform: scale(1.03, 0.95) translateY(1px); }   /* nod 1 */
+        43%            { transform: scale(1, 1) translateY(0); }
+        48%, 51%       { transform: scale(1.03, 0.95) translateY(1px); }   /* nod 2 */
+        56%            { transform: scale(1, 1) translateY(0); }
+      }
+
+      /* Eyes: wide open during salute, squint during nods */
+      @keyframes eyes-nod {
+        0%, 5%         { transform: translateY(0) scaleY(1); }            /* normal */
+        7%, 30%        { transform: translateY(0) scaleY(1.1); }          /* wide open for salute — long hold */
+        33%            { transform: translateY(0) scaleY(0.7); }          /* straight to squint */
+        35%, 38%       { transform: translateY(0.8px) scaleY(0.7); }     /* nod 1 */
+        43%            { transform: translateY(-0.2px) scaleY(0.7); }
+        45%            { transform: translateY(0) scaleY(0.7); }
+        48%, 51%       { transform: translateY(0.8px) scaleY(0.7); }     /* nod 2 */
+        55%            { transform: translateY(-0.2px) scaleY(0.7); }
+        58%            { transform: translateY(0) scaleY(1); }            /* open */
+        68%, 100%      { transform: translateY(0) scaleY(1); }
+      }
+
+      /* Salute sparkle particles — burst at 10%, fade by 20% */
+      .salute-sp1 {
+        opacity: 0;
+        animation: sp-salute-1 4.2s infinite ease-out;
+      }
+      .salute-sp2 {
+        opacity: 0;
+        animation: sp-salute-2 4.2s infinite ease-out;
+      }
+      .salute-sp3 {
+        opacity: 0;
+        animation: sp-salute-3 4.2s infinite ease-out;
+      }
+
+      @keyframes sp-salute-1 {
+        0%, 9%  { opacity: 0; transform: translate(0, 0) scale(0.5); }
+        10%     { opacity: 1; transform: translate(0, 0) scale(1); }
+        12%     { opacity: 0.6; transform: translate(4px, -1.5px) scale(0.7); }
+        14%     { opacity: 0; transform: translate(7px, -2px) scale(0.2); }
+        100%    { opacity: 0; }
+      }
+      @keyframes sp-salute-2 {
+        0%, 9.5% { opacity: 0; transform: translate(0, 0) scale(0.5); }
+        10.5%    { opacity: 1; transform: translate(0, 0) scale(1); }
+        12.5%    { opacity: 0.6; transform: translate(5px, 0) scale(0.7); }
+        14.5%    { opacity: 0; transform: translate(8px, 0) scale(0.2); }
+        100%     { opacity: 0; }
+      }
+      @keyframes sp-salute-3 {
+        0%, 10%  { opacity: 0; transform: translate(0, 0) scale(0.5); }
+        11%      { opacity: 1; transform: translate(0, 0) scale(1); }
+        13%      { opacity: 0.6; transform: translate(4px, 1.5px) scale(0.7); }
+        15%      { opacity: 0; transform: translate(7px, 2px) scale(0.2); }
+        100%     { opacity: 0; }
+      }
+
+      /* Shadow widens at nod moments */
+      @keyframes shadow-nod {
+        0%, 35%, 50%, 64%, 100% { transform: scaleX(1); opacity: 0.5; }
+        42%, 46%  { transform: scaleX(1.06); opacity: 0.48; }
+        54%, 58%  { transform: scaleX(1.06); opacity: 0.48; }
+      }
+    </style>
+  </defs>
+
+  <!-- Ground Shadow -->
+  <rect class="shadow-anim" x="3" y="15" width="9" height="1" fill="#000000" opacity="0.5"/>
+
+  <!-- Legs: outer pair and inner pair, stomp during salute -->
+  <g class="legs-outer" fill="#DE886D">
+    <rect x="3" y="11" width="1" height="4"/>
+    <rect x="11" y="11" width="1" height="4"/>
+  </g>
+  <g class="legs-inner" fill="#DE886D">
+    <rect x="5" y="11" width="1" height="4"/>
+    <rect x="9" y="11" width="1" height="4"/>
+  </g>
+
+  <!-- Upper body -->
+  <g class="nod">
+    <g class="breathe">
+      <!-- Torso -->
+      <rect x="2" y="6" width="11" height="7" fill="#DE886D"/>
+
+      <!-- Eyes -->
+      <g class="eyes" fill="#000000">
+        <rect x="4" y="8" width="1" height="2"/>
+        <rect x="10" y="8" width="1" height="2"/>
+      </g>
+
+      <!-- Left arm (static at side) -->
+      <rect x="0" y="9" width="2" height="2" fill="#DE886D"/>
+
+      <!-- Right arm (salute then rest), pivot at shoulder (13, 10) -->
+      <g class="arm-r" style="transform-origin: 13px 10px;">
+        <rect x="13" y="9" width="2" height="2" fill="#DE886D"/>
+      </g>
+
+      <!-- Salute sparkle particles (origin at hand-head contact ~12, 7.5) -->
+      <rect class="salute-sp1" x="12" y="6.5" width="1" height="1" fill="#FFC107"/>
+      <rect class="salute-sp2" x="12" y="7.5" width="1" height="1" fill="#FFD700"/>
+      <rect class="salute-sp3" x="12" y="8.5" width="1" height="1" fill="#FFF59D"/>
+    </g>
+  </g>
+</svg>

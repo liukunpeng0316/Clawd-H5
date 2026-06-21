@@ -1,0 +1,192 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-15 -25 45 45" width="500" height="500">
+  <defs>
+    <style>
+      /* Body: gentle tilt right (curious lean) + soft breathing */
+      .body-curious {
+        transform-origin: 7.5px 15px;
+        animation: curious-tilt 4s infinite ease-in-out;
+      }
+
+      /* Normal eyes: visible when upright */
+      .eyes-normal {
+        transform-box: fill-box;
+        transform-origin: 50% 50%;
+        animation: eyes-norm-vis 4s infinite;
+      }
+      /* Innocent eyes: visible when tilted */
+      .eyes-innocent {
+        transform-box: fill-box;
+        transform-origin: 50% 50%;
+        animation: eyes-inno-vis 4s infinite;
+      }
+
+      /* Arms: relaxed, left arm slightly raised (thinking pose) */
+      .arm-r-curious {
+        transform-origin: 13px 9px;
+        animation: arm-r-raise 4s infinite ease-in-out;
+      }
+
+      /* Bubble: fade in, stay, fade out */
+      .bubble {
+        opacity: 0;
+        transform-origin: 17.5px 1px;
+        animation: bubble-appear 4s infinite ease-in-out;
+      }
+
+      /* Question mark inside bubble: slight bounce */
+      .qmark {
+        transform-box: fill-box;
+        transform-origin: 50% 50%;
+        animation: qmark-bounce 4s infinite ease-in-out;
+      }
+
+      /* Shadow: subtle sync with tilt */
+      .shadow-curious {
+        transform-box: fill-box;
+        transform-origin: 50% 50%;
+        animation: shadow-tilt 4s infinite ease-in-out;
+      }
+
+      /* === Keyframes === */
+
+      /* Body: quick head-cock right, no lateral movement */
+      @keyframes curious-tilt {
+        0%, 12%   { transform: rotate(0deg); }
+        18%       { transform: rotate(5deg); }
+        22%       { transform: rotate(4deg); }
+        70%       { transform: rotate(4deg); }
+        85%, 100% { transform: rotate(0deg); }
+      }
+
+      /* Normal eyes: visible 0-14%, blink out, reappear 76% */
+      @keyframes eyes-norm-vis {
+        0%, 12%   { opacity: 1; transform: scaleY(1); }
+        14%       { opacity: 1; transform: scaleY(0.1); }
+        15%       { opacity: 0; transform: scaleY(0.1); }
+        74%       { opacity: 0; transform: scaleY(0.1); }
+        76%       { opacity: 1; transform: scaleY(0.1); }
+        78%       { opacity: 1; transform: scaleY(1); }
+        100%      { opacity: 1; transform: scaleY(1); }
+      }
+
+      /* Innocent eyes: hidden, blink in at 15%, blink out at 74% */
+      @keyframes eyes-inno-vis {
+        0%, 14%   { opacity: 0; transform: scaleY(0.1); }
+        15%       { opacity: 1; transform: scaleY(0.1); }
+        18%       { opacity: 1; transform: scaleY(1); }
+        70%       { opacity: 1; transform: scaleY(1); }
+        74%       { opacity: 1; transform: scaleY(0.1); }
+        75%       { opacity: 0; transform: scaleY(0.1); }
+        100%      { opacity: 0; transform: scaleY(0.1); }
+      }
+
+      /* Right arm raises: curious hand up */
+      @keyframes arm-r-raise {
+        0%, 12%   { transform: rotate(0deg); }
+        20%       { transform: rotate(-35deg); }
+        68%       { transform: rotate(-30deg); }
+        82%, 100% { transform: rotate(0deg); }
+      }
+
+      /* Bubble: appear at ~20%, stay, fade at ~85% */
+      @keyframes bubble-appear {
+        0%, 15%  { opacity: 0; transform: scale(0.3) translate(0, 2px); }
+        25%      { opacity: 1; transform: scale(1.08) translate(0, 0); }
+        30%      { opacity: 1; transform: scale(1) translate(0, 0); }
+        78%      { opacity: 1; transform: scale(1) translate(0, 0); }
+        88%      { opacity: 0; transform: scale(0.8) translate(0, 1px); }
+        100%     { opacity: 0; }
+      }
+
+      /* Question mark: gentle float-bounce inside bubble */
+      @keyframes qmark-bounce {
+        0%, 20%  { transform: translateY(0); }
+        35%      { transform: translateY(-0.4px); }
+        50%      { transform: translateY(0.2px); }
+        65%      { transform: translateY(-0.3px); }
+        80%      { transform: translateY(0); }
+        100%     { transform: translateY(0); }
+      }
+
+      /* Shadow shifts with tilt */
+      @keyframes shadow-tilt {
+        0%, 10%   { transform: translateX(0) scaleX(1); }
+        50%       { transform: translateX(0.3px) scaleX(1.02); }
+        90%, 100% { transform: translateX(0) scaleX(1); }
+      }
+    </style>
+
+    <!-- Pixel question mark symbol -->
+    <g id="pixel-q">
+      <rect x="1" y="0" width="2" height="1"/>
+      <rect x="0" y="1" width="1" height="1"/>
+      <rect x="3" y="1" width="1" height="2"/>
+      <rect x="2" y="3" width="1" height="1"/>
+      <rect x="1" y="4" width="1" height="1"/>
+      <rect x="1" y="6" width="1" height="1"/>
+    </g>
+  </defs>
+
+  <!-- Ground Shadow -->
+  <rect class="shadow-curious" x="3" y="15" width="9" height="1" fill="#000000" opacity="0.5"/>
+
+  <!-- Legs: static -->
+  <g fill="#DE886D">
+    <rect x="3" y="12" width="1" height="3"/>
+    <rect x="5" y="12" width="1" height="3"/>
+    <rect x="9" y="12" width="1" height="3"/>
+    <rect x="11" y="12" width="1" height="3"/>
+  </g>
+
+  <!-- Upper body: tilts right -->
+  <g class="body-curious">
+
+    <!-- Torso -->
+    <rect x="2" y="6" width="11" height="7" fill="#DE886D"/>
+
+    <!-- Normal eyes: standard rect -->
+    <g class="eyes-normal" fill="#000000">
+      <rect x="4" y="8" width="1" height="2"/>
+      <rect x="10" y="8" width="1" height="2"/>
+    </g>
+
+    <!-- Innocent eyes: same as clawd-innocent-blink (1.4x2.4 rx=0.4 + highlight) -->
+    <g class="eyes-innocent">
+      <g fill="#000000">
+        <rect x="3.8" y="7.8" width="1.4" height="2.4" rx="0.4"/>
+        <rect x="9.8" y="7.8" width="1.4" height="2.4" rx="0.4"/>
+      </g>
+      <rect x="4.1" y="8.1" width="0.4" height="0.5" rx="0.1" fill="#FFFFFF"/>
+      <rect x="10.1" y="8.1" width="0.4" height="0.5" rx="0.1" fill="#FFFFFF"/>
+    </g>
+
+    <!-- Left arm: static -->
+    <rect x="0" y="9" width="2" height="2" fill="#DE886D"/>
+
+    <!-- Right arm: raises up with tilt -->
+    <g class="arm-r-curious">
+      <rect x="13" y="9" width="2" height="2" fill="#DE886D"/>
+    </g>
+  </g>
+
+  <!-- Speech bubble with question mark: top-right -->
+  <g class="bubble">
+    <!-- Bubble body -->
+    <rect x="14" y="-2" width="7" height="6" rx="1.2" fill="#FFFFFF" stroke="#B0BEC5" stroke-width="0.3"/>
+    <!-- Bubble tail pointing down-left toward character -->
+    <polygon points="15,2.5 13.5,4.5 16.5,3" fill="#FFFFFF"/>
+    <line x1="13.5" y1="4.5" x2="15" y2="2.5" stroke="#B0BEC5" stroke-width="0.3"/>
+
+    <!-- Outer: static position/scale. Inner: CSS bounce animation -->
+    <g transform="translate(16.4, -0.9) scale(0.55)">
+      <g class="qmark" fill="#78909C">
+        <rect x="1" y="0" width="2" height="1"/>
+        <rect x="0" y="1" width="1" height="1"/>
+        <rect x="3" y="1" width="1" height="2"/>
+        <rect x="2" y="3" width="1" height="1"/>
+        <rect x="1" y="4" width="1" height="1"/>
+        <rect x="1" y="6" width="1" height="1"/>
+      </g>
+    </g>
+  </g>
+</svg>

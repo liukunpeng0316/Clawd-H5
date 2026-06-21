@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-15 -25 45 45" width="500" height="500">
+  <defs>
+    <style>
+      /* Breathing */
+      .breathe {
+        transform-origin: 7.5px 13px;
+        animation: breathe 3.2s infinite ease-in-out;
+      }
+
+      /* Body sobbing: quick small trembles */
+      .sob {
+        transform-origin: 7.5px 15px;
+        animation: sob 0.3s infinite ease-in-out;
+      }
+
+      /* Sad eyes with occasional blink */
+      .eyes-sad {
+        animation: sad-blink 3s infinite ease-in-out;
+      }
+
+      /* Tear drops */
+      .tear-l {
+        opacity: 0;
+        animation: tear-fall 1.5s infinite ease-in;
+      }
+      .tear-r {
+        opacity: 0;
+        animation: tear-fall 1.5s infinite ease-in;
+        animation-delay: 0.5s;
+      }
+
+      /* Shadow trembles with sob */
+      .shadow-anim {
+        transform-origin: 7.5px 15.5px;
+        animation: shadow-sob 0.3s infinite ease-in-out;
+      }
+
+      /* --- Keyframes --- */
+
+      @keyframes breathe {
+        0%, 100% { transform: scale(1, 1); }
+        50% { transform: scale(1.02, 0.98) translate(0, 0.3px); }
+      }
+
+      /* Quick small vertical trembles */
+      @keyframes sob {
+        0%, 100% { transform: translateY(0); }
+        25% { transform: translateY(-0.4px); }
+        75% { transform: translateY(0.3px); }
+      }
+
+      /* Blink for sad eyes */
+      @keyframes sad-blink {
+        0%, 42%, 50%, 100% { opacity: 1; }
+        45%, 48% { opacity: 0; }
+      }
+
+      /* Tear: appear at eye, fall to ground (y=15), fade before shadow */
+      @keyframes tear-fall {
+        0% { opacity: 0; transform: translateY(0); }
+        10% { opacity: 1; transform: translateY(0); }
+        70% { opacity: 0.6; transform: translateY(2px); }
+        90% { opacity: 0.1; transform: translateY(2.8px); }
+        100% { opacity: 0; transform: translateY(3px); }
+      }
+
+      @keyframes shadow-sob {
+        0%, 100% { transform: scaleX(1); opacity: 0.5; }
+        50% { transform: scaleX(1.02); opacity: 0.48; }
+      }
+    </style>
+  </defs>
+
+  <!-- Ground Shadow -->
+  <rect class="shadow-anim" x="3" y="15" width="9" height="1" fill="#000000" opacity="0.5"/>
+
+  <!-- Legs (static, extended) -->
+  <g fill="#DE886D">
+    <rect x="3" y="11" width="1" height="4"/>
+    <rect x="5" y="11" width="1" height="4"/>
+    <rect x="9" y="11" width="1" height="4"/>
+    <rect x="11" y="11" width="1" height="4"/>
+  </g>
+
+  <!-- Upper body with sobbing -->
+  <g class="sob">
+    <g class="breathe">
+      <!-- Torso -->
+      <rect x="2" y="6" width="11" height="7" fill="#DE886D"/>
+
+      <!-- Sad eyes: downward arcs ⌢⌢ -->
+      <g class="eyes-sad" fill="none" stroke="#000000" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="3.5,8.5 4.5,9.5 5.5,8.5"/>
+        <polyline points="9.5,8.5 10.5,9.5 11.5,8.5"/>
+      </g>
+
+      <!-- Arms (drooping at sides, static) -->
+      <rect x="0" y="9" width="2" height="2" fill="#DE886D"/>
+      <rect x="13" y="9" width="2" height="2" fill="#DE886D"/>
+
+      <!-- Tear drops (centered under eye bottom) -->
+      <rect class="tear-l" x="4.15" y="10" width="0.7" height="1.2" rx="0.3" fill="#4FC3F7"/>
+      <rect class="tear-r" x="10.15" y="10" width="0.7" height="1.2" rx="0.3" fill="#4FC3F7"/>
+
+      <!-- Second wave (same center, different delay) -->
+      <rect class="tear-l" x="4.15" y="10" width="0.7" height="1.2" rx="0.3" fill="#81D4FA" style="animation-delay: 0.75s;"/>
+      <rect class="tear-r" x="10.15" y="10" width="0.7" height="1.2" rx="0.3" fill="#81D4FA" style="animation-delay: 1.25s;"/>
+    </g>
+  </g>
+</svg>
