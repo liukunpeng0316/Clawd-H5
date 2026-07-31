@@ -236,7 +236,7 @@ CURRENT SVG:
 def export_gif(svg_path: Path, gif_path: Path) -> None:
     options = svg_to_gif.ExportOptions(
         size=240,
-        fps=12,
+        fps=15,
         padding=6,
         alpha_threshold=128,
         background="transparent",

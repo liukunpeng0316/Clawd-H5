@@ -118,7 +118,7 @@ class ApiFallbackTests(unittest.TestCase):
 class GifSpeedTests(unittest.TestCase):
     def test_export_caps_frame_count_but_samples_full_cycle(self):
         options = ExportOptions(
-            size=240, fps=12, padding=6, alpha_threshold=128,
+            size=240, fps=15, padding=6, alpha_threshold=128,
             background="transparent", hide_ground_shadow=True,
             workers=1, timeout=25, min_units=20, max_units=33,
             max_duration_ms=2000,
@@ -129,9 +129,9 @@ class GifSpeedTests(unittest.TestCase):
                 SAFE.replace("animation:bob 2s infinite", "animation-duration:4s;"),
                 encoding="utf-8",
             )
-            with patch.object(generator.svg_to_gif.chrome_render, "render_frames", return_value=[object()] * 24) as mocked:
+            with patch.object(generator.svg_to_gif.chrome_render, "render_frames", return_value=[object()] * 30) as mocked:
                 frames = render_frames(path, options, None)
-        self.assertEqual(len(frames), 24)
+        self.assertEqual(len(frames), 30)
         times = mocked.call_args.args[1]
         self.assertGreater(times[-1], 3800)
 
