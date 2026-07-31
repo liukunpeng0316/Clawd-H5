@@ -310,8 +310,8 @@ def export_gif(svg_path: Path, gif_path: Path) -> None:
         hide_ground_shadow=True,
         workers=1,
         timeout=25,
-        min_units=20.0,
-        max_units=33.0,
+        min_units=33.0,
+        max_units=45.0,
         max_duration_ms=2000,
     )
     svg_to_gif.export_svg(svg_path, gif_path, options, chrome_render.find_chrome())

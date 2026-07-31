@@ -7,6 +7,7 @@ import time
 import unittest
 from unittest.mock import AsyncMock, patch
 from pathlib import Path
+from PIL import Image
 
 from starlette.requests import Request
 
@@ -348,6 +349,15 @@ class PromptOptimizationTests(unittest.TestCase):
 
 
 class GifSpeedTests(unittest.TestCase):
+    def test_fixed_33_unit_crop_enlarges_without_per_frame_zoom(self):
+        frame = Image.new("RGBA", (100, 100), (0, 0, 0, 0))
+        frame.paste((222, 136, 109, 255), (45, 45, 55, 55))
+        bounds = generator.svg_to_gif.crop_bounds(
+            [frame], padding=0, alpha_threshold=128,
+            px_per_unit=100 / 45, min_units=33, max_units=45,
+        )
+        self.assertEqual(bounds[2] - bounds[0], round(33 * 100 / 45))
+
     def test_export_caps_frame_count_but_samples_full_cycle(self):
         options = ExportOptions(
             size=240, fps=15, padding=6, alpha_threshold=128,
