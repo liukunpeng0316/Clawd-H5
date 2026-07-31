@@ -10,7 +10,8 @@ services:
       - .env
     environment:
       DATA_DIR: /data
-      GENERATION_CONCURRENCY: "3"
+      GENERATION_CONCURRENCY: "10"
+      EXPORT_CONCURRENCY: "2"
       ENABLE_VISUAL_REVIEW: "false"
       MAX_QUEUE: "100"
       MAX_STORAGE_BYTES: "5368709120"

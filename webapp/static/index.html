@@ -20,9 +20,10 @@
     </section>
     <section class="studio">
       <div class="card">
-        <h2>你想让 Clawd 做什么？</h2>
+        <h2 id="promptHeading">你想让 Clawd 做什么？</h2>
+        <p id="remixNotice" class="remix-notice hidden">正在基于公开作品制作同款，不会修改原作品。</p>
         <textarea id="prompt" maxlength="500" placeholder="例如：小螃蟹抱着一杯咖啡，困得点头又突然惊醒"></textarea>
-        <p class="hint">建议只描述一个角色、一个主要动作。生成通常需要 1–2 分钟。</p>
+        <p id="promptHint" class="hint">建议只描述一个角色、一个主要动作。</p>
         <div class="button-row"><button id="generate">生成动态表情</button></div>
         <p id="error" class="error hidden"></p>
 
@@ -42,10 +43,11 @@
           <div class="empty-crab">🦀</div>
           <p id="statusTitle" class="status-title dots">正在准备</p>
           <p id="statusCopy" class="status-copy">正在读取动画规则</p>
+          <p id="elapsed" class="elapsed">已用时 0 秒</p>
         </div>
         <div id="result" class="hidden">
           <img id="resultGif" alt="生成的 Clawd 动态表情">
-          <div class="button-row result-actions">
+          <div id="resultActions" class="button-row result-actions">
             <a id="downloadGif" class="button" download>下载 GIF</a>
             <a id="downloadSvg" class="button secondary" download>下载 SVG</a>
           </div>

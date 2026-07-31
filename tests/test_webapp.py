@@ -1,13 +1,17 @@
 from __future__ import annotations
 
 import tempfile
+import threading
+import time
 import unittest
-from unittest.mock import patch
+from unittest.mock import AsyncMock, patch
 from pathlib import Path
+
+from starlette.requests import Request
 
 from webapp.security import UnsafeSVG, extract_svg, sanitize_svg
 from webapp.storage import Store
-from webapp import generator
+from webapp import app as app_module, generator
 
 ExportOptions = generator.svg_to_gif.ExportOptions
 render_frames = generator.svg_to_gif.render_frames
@@ -70,6 +74,101 @@ class StoreTests(unittest.TestCase):
                 gif.write_bytes(b"y" * 80)
                 store.complete(work_id, svg, gif)
             self.assertIsNone(store.get("old"))
+
+    def test_restart_marks_export_jobs_failed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            store = Store(root, 1024 * 1024)
+            for work_id, status in (("waiting", "export_queued"), ("running", "exporting")):
+                store.create(work_id, "secret", "127.0.0.1", work_id)
+                store.set_status(work_id, status)
+            restarted = Store(root, 1024 * 1024)
+            self.assertEqual(restarted.get("waiting")["status"], "failed")
+            self.assertEqual(restarted.get("running")["status"], "failed")
+
+
+class RemixTests(unittest.TestCase):
+    @staticmethod
+    def request() -> Request:
+        return Request({"type": "http", "client": ("198.51.100.8", 1234), "headers": []})
+
+    def test_remix_creates_independent_work_from_public_svg(self):
+        import asyncio
+
+        with tempfile.TemporaryDirectory() as tmp:
+            store = Store(Path(tmp), 1024 * 1024)
+            store.create("source", "source-secret", "127.0.0.1", "original")
+            svg, gif = store.paths("source")
+            svg.write_text(SAFE, encoding="utf-8")
+            gif.write_bytes(b"GIF89a")
+            store.complete("source", svg, gif)
+            remix_queue = asyncio.Queue()
+            with (
+                patch.object(app_module, "store", store),
+                patch.object(app_module, "queue", remix_queue),
+                patch.object(app_module, "pending_ips", set()),
+            ):
+                result = asyncio.run(app_module.remix_work(
+                    "source", app_module.CreateRequest(prompt="换成蓝色"), self.request()
+                ))
+                task = remix_queue.get_nowait()
+            self.assertNotEqual(result["id"], "source")
+            self.assertEqual(task.previous_svg, SAFE)
+            self.assertEqual(store.prompts(result["id"]), ["换成蓝色"])
+            self.assertEqual(store.prompts("source"), ["original"])
+
+    def test_download_response_forces_attachment(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            store = Store(Path(tmp), 1024 * 1024)
+            store.create("source", "secret", "127.0.0.1", "original")
+            svg, gif = store.paths("source")
+            svg.write_text(SAFE, encoding="utf-8")
+            gif.write_bytes(b"GIF89a")
+            store.complete("source", svg, gif)
+            with patch.object(app_module, "store", store):
+                response = app_module.files("source", "clawd.gif", download=True)
+            self.assertTrue(response.headers["content-disposition"].startswith("attachment;"))
+
+
+class ExportConcurrencyTests(unittest.TestCase):
+    def test_only_two_gif_exports_run_at_once(self):
+        import asyncio
+
+        async def scenario(root: Path):
+            store = Store(root, 1024 * 1024)
+            tasks = []
+            ips = set()
+            for index in range(6):
+                work_id = f"work-{index}"
+                ip = f"198.51.100.{index}"
+                store.create(work_id, "secret", ip, "test")
+                tasks.append(app_module.Task(work_id, "test", ip))
+                ips.add(ip)
+            counts = {"active": 0, "peak": 0}
+            lock = threading.Lock()
+
+            def fake_export(_svg_path, gif_path):
+                with lock:
+                    counts["active"] += 1
+                    counts["peak"] = max(counts["peak"], counts["active"])
+                time.sleep(0.04)
+                gif_path.write_bytes(b"GIF89a")
+                with lock:
+                    counts["active"] -= 1
+
+            with (
+                patch.object(app_module, "store", store),
+                patch.object(app_module, "pending_ips", ips),
+                patch.object(app_module, "export_slots", asyncio.Semaphore(2)),
+                patch.object(app_module, "generate_svg", AsyncMock(return_value=SAFE)),
+                patch.object(app_module, "export_gif", fake_export),
+            ):
+                await asyncio.gather(*(app_module.process(task) for task in tasks))
+            return counts["peak"]
+
+        with tempfile.TemporaryDirectory() as tmp:
+            peak = asyncio.run(scenario(Path(tmp)))
+        self.assertEqual(peak, 2)
 
 
 class ApiFallbackTests(unittest.TestCase):

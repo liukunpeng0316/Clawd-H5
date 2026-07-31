@@ -29,7 +29,8 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA_ROOT = Path(os.getenv("DATA_DIR", ROOT / "webapp-data")).resolve()
 MAX_STORAGE_BYTES = int(os.getenv("MAX_STORAGE_BYTES", str(5 * 1024**3)))
 MAX_QUEUE = int(os.getenv("MAX_QUEUE", "100"))
-CONCURRENCY = int(os.getenv("GENERATION_CONCURRENCY", "3"))
+CONCURRENCY = int(os.getenv("GENERATION_CONCURRENCY", "10"))
+EXPORT_CONCURRENCY = int(os.getenv("EXPORT_CONCURRENCY", "2"))
 ENABLE_VISUAL_REVIEW = os.getenv("ENABLE_VISUAL_REVIEW", "false").lower() in {"1", "true", "yes"}
 TRUSTED_PROXIES = {item.strip() for item in os.getenv("TRUSTED_PROXIES", "127.0.0.1,::1").split(",")}
 
@@ -37,6 +38,7 @@ store = Store(DATA_ROOT, MAX_STORAGE_BYTES)
 queue: asyncio.Queue["Task"] = asyncio.Queue(maxsize=MAX_QUEUE)
 pending_ips: set[str] = set()
 pending_lock = asyncio.Lock()
+export_slots: asyncio.Semaphore | None = None
 log = logging.getLogger("clawd-workshop")
 
 
@@ -45,7 +47,7 @@ class Task:
     work_id: str
     prompt: str
     client_ip: str
-    revision: bool
+    previous_svg: str | None = None
 
 
 class CreateRequest(BaseModel):
@@ -85,19 +87,20 @@ async def process(task: Task) -> None:
         return
     store.set_status(task.work_id, "processing")
     svg_path, gif_path = store.paths(task.work_id)
-    previous_svg = None
-    if task.revision and svg_path.exists():
-        previous_svg = svg_path.read_text(encoding="utf-8")
     prompts = store.prompts(task.work_id)
     try:
-        svg = await generate_svg(task.prompt, previous_svg, prompts)
+        svg = await generate_svg(task.prompt, task.previous_svg, prompts)
         loop = asyncio.get_running_loop()
         if ENABLE_VISUAL_REVIEW:
             preview = await loop.run_in_executor(None, render_review_image, svg)
             svg = await review_and_maybe_fix(svg, task.prompt, preview)
         svg_path.write_text(svg, encoding="utf-8")
-        store.set_status(task.work_id, "exporting")
-        await loop.run_in_executor(None, export_gif, svg_path, gif_path)
+        store.set_status(task.work_id, "export_queued")
+        if export_slots is None:
+            raise RuntimeError("GIF exporter is not initialized")
+        async with export_slots:
+            store.set_status(task.work_id, "exporting")
+            await loop.run_in_executor(None, export_gif, svg_path, gif_path)
         store.complete(task.work_id, svg_path, gif_path)
     except GenerationError as exc:
         store.set_status(task.work_id, "failed", str(exc)[:800])
@@ -119,6 +122,8 @@ async def worker(worker_id: int) -> None:
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
+    global export_slots
+    export_slots = asyncio.Semaphore(EXPORT_CONCURRENCY)
     workers = [asyncio.create_task(worker(index)) for index in range(CONCURRENCY)]
     yield
     for item in workers:
@@ -160,7 +165,7 @@ async def create_work(body: CreateRequest, request: Request):
     prompt = body.prompt.strip()
     try:
         store.create(work_id, edit_token, ip, prompt)
-        await queue.put(Task(work_id, prompt, ip, False))
+        await queue.put(Task(work_id, prompt, ip))
     except Exception:
         await release_ip(ip)
         raise
@@ -173,13 +178,39 @@ async def revise_work(work_id: str, body: ReviseRequest, request: Request):
     await reserve_ip(ip)
     prompt = body.prompt.strip()
     try:
+        row = store.get(work_id)
+        svg_path = store.files / work_id / "clawd.svg"
+        if not row or row["edit_hash"] != store.token_hash(body.edit_token) or not svg_path.exists():
+            raise HTTPException(403, "修改凭证无效")
+        previous_svg = svg_path.read_text(encoding="utf-8")
         if not store.queue_revision(work_id, body.edit_token, prompt, ip):
             raise HTTPException(403, "修改凭证无效")
-        await queue.put(Task(work_id, prompt, ip, True))
+        await queue.put(Task(work_id, prompt, ip, previous_svg))
     except Exception:
         await release_ip(ip)
         raise
     return {"id": work_id, "status": "queued"}
+
+
+@app.post("/api/works/{source_id}/remix")
+async def remix_work(source_id: str, body: CreateRequest, request: Request):
+    source = store.get(source_id)
+    source_svg_path = store.files / source_id / "clawd.svg"
+    if not source or source["status"] != "ready" or not source_svg_path.exists():
+        raise HTTPException(404, "原作品不存在或已被自动清理")
+    previous_svg = source_svg_path.read_text(encoding="utf-8")
+    ip = client_ip(request)
+    await reserve_ip(ip)
+    work_id = uuid.uuid4().hex
+    edit_token = secrets.token_urlsafe(32)
+    prompt = body.prompt.strip()
+    try:
+        store.create(work_id, edit_token, ip, prompt)
+        await queue.put(Task(work_id, prompt, ip, previous_svg))
+    except Exception:
+        await release_ip(ip)
+        raise
+    return {"id": work_id, "edit_token": edit_token, "status": "queued"}
 
 
 @app.get("/api/works/{work_id}")
@@ -192,7 +223,7 @@ def work_status(work_id: str):
         result["position"] = store.queue_position(work_id)
     if row["status"] == "failed":
         result["error"] = row["error"] or "生成失败"
-    if row["status"] == "exporting":
+    if row["status"] in {"export_queued", "exporting"}:
         result["svg_url"] = f"/files/{work_id}/clawd.svg"
     if row["status"] == "ready":
         result.update({
@@ -216,17 +247,18 @@ def gallery(offset: int = 0, limit: int = 48):
 
 
 @app.get("/files/{work_id}/{filename}")
-def files(work_id: str, filename: str):
+def files(work_id: str, filename: str, download: bool = False):
     if filename not in {"clawd.svg", "clawd.gif"}:
         raise HTTPException(404)
     row = store.get(work_id)
-    if not row or row["status"] not in {"exporting", "ready"}:
+    if not row or row["status"] not in {"export_queued", "exporting", "ready"}:
         raise HTTPException(404)
     path = (store.files / work_id / filename).resolve()
     if store.files not in path.parents or not path.exists():
         raise HTTPException(404)
     media = "image/svg+xml" if filename.endswith(".svg") else "image/gif"
-    headers = {"Content-Disposition": f'inline; filename="{work_id}.{filename.rsplit(".", 1)[-1]}"'}
+    disposition = "attachment" if download else "inline"
+    headers = {"Content-Disposition": f'{disposition}; filename="clawd-{work_id[:8]}.{filename.rsplit(".", 1)[-1]}"'}
     return FileResponse(path, media_type=media, headers=headers)
 
 

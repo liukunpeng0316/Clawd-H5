@@ -57,7 +57,10 @@ class Store:
                 )
                 """
             )
-            conn.execute("UPDATE works SET status='failed', error='服务重启，请重新提交' WHERE status IN ('queued','processing')")
+            conn.execute(
+                "UPDATE works SET status='failed', error='服务重启，请重新提交' "
+                "WHERE status IN ('queued','processing','export_queued','exporting')"
+            )
 
     @staticmethod
     def token_hash(token: str) -> str:
