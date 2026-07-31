@@ -39,91 +39,158 @@ def _read(path: Path) -> str:
     return path.read_text(encoding="utf-8")
 
 
-def _reference_score(prompt: str, caption: str, name: str) -> int:
-    compact = re.sub(r"\s+", "", prompt.lower())
-    haystack = (caption + name).lower()
-    score = 0
-    for size in (4, 3, 2):
-        for index in range(max(0, len(compact) - size + 1)):
-            token = compact[index:index + size]
-            if token in haystack:
-                score += size * size
-    keyword_map = {
-        "开心": "happy smile jump", "高兴": "happy smile jump", "哭": "crying sad",
-        "困": "drowsy sleep", "睡": "sleep drowsy", "跑": "running", "鼓掌": "clapping",
-        "咖啡": "coffee", "思考": "thinking", "困惑": "confused", "生气": "furious",
-        "足球": "kick football", "亲": "kiss", "爱": "heart", "代码": "coding typing",
-    }
-    for key, words in keyword_map.items():
-        if key in prompt and any(word in haystack for word in words.split()):
-            score += 100
-    return score
+REFERENCE_HINTS: tuple[tuple[int, str, tuple[str, ...]], ...] = (
+    (500, "clawd-salute", ("挥手", "招手", "打招呼", "敬礼", "wave", "salute", "hello")),
+    (500, "clawd-clapping", ("鼓掌", "拍手", "clap", "applause")),
+    (500, "clawd-coffee", ("咖啡", "coffee")),
+    (500, "clawd-running", ("跑步", "奔跑", "逃跑", "running", "run")),
+    (500, "clawd-kick-football", ("踢球", "足球", "football", "soccer")),
+    (500, "clawd-kick-messi", ("梅西", "messi")),
+    (500, "clawd-punching", ("出拳", "拳击", "打拳", "punch", "boxing")),
+    (500, "clawd-high-jump", ("跳高", "起跳", "high jump")),
+    (500, "clawd-charge", ("冲锋", "冲刺", "charge", "sprint")),
+    (500, "clawd-bow-thanks", ("鞠躬", "感谢", "谢谢", "thanks", "thank you", "bow")),
+    (500, "clawd-flying-kiss", ("飞吻", "亲亲", "kiss")),
+    (500, "clawd-heart", ("爱心", "比心", "heart", "love")),
+    (500, "clawd-note-taking", ("记笔记", "记录", "note-taking", "take notes")),
+    (500, "clawd-coding", ("写代码", "编程", "代码", "coding", "programming")),
+    (500, "clawd-typing", ("打字", "键盘", "typing", "keyboard")),
+    (500, "clawd-working-debugger", ("调试", "修bug", "debug", "bug")),
+    (500, "clawd-working-building", ("搭建", "建造", "building", "build")),
+    (500, "clawd-working-sweeping", ("扫地", "打扫", "sweeping", "cleaning")),
+    (500, "clawd-working-juggling", ("杂耍", "抛球", "juggling")),
+    (500, "clawd-working-wizard", ("魔法", "法师", "wizard", "magic")),
+    (500, "clawd-lion-dance", ("舞狮", "lion dance")),
+    (500, "clawd-snake-charmer", ("耍蛇", "吹笛", "snake charmer")),
+    (500, "clawd-money-bag", ("钱袋", "发财", "赚钱", "money", "rich")),
+    (400, "clawd-go-sleep", ("睡觉", "晚安", "入睡", "sleep", "good night")),
+    (400, "clawd-drowsy", ("困了", "犯困", "打瞌睡", "drowsy", "sleepy")),
+    (400, "clawd-thinking-frozen", ("思考", "想一想", "沉思", "thinking", "think")),
+    (400, "clawd-idle-living", ("发呆", "无聊", "待机", "idle", "bored")),
+    (400, "clawd-crying", ("哭泣", "流泪", "伤心", "crying", "sad")),
+    (400, "clawd-furious", ("愤怒", "生气", "暴怒", "furious", "angry")),
+    (400, "clawd-panic", ("惊慌", "慌张", "panic")),
+    (400, "clawd-confused-big-question", ("困惑", "疑问", "不明白", "confused", "question")),
+    (400, "clawd-pleading", ("恳求", "求求", "拜托", "pleading", "beg")),
+    (400, "clawd-sick", ("生病", "难受", "发烧", "sick", "ill")),
+    (400, "clawd-surprised", ("惊讶", "震惊", "surprised", "shocked")),
+    (400, "clawd-wow", ("哇", "wow", "amazed")),
+    (400, "clawd-rofl", ("笑翻", "大笑", "笑死", "rofl", "laugh")),
+    (400, "clawd-surrender-helpless", ("投降", "无助", "认输", "surrender", "helpless")),
+    (400, "clawd-disgusted-retreat", ("嫌弃", "后退", "恶心", "disgusted", "retreat")),
+    (400, "clawd-gloomy-crawl", ("阴郁", "低落", "爬行", "gloomy", "crawl")),
+    (400, "clawd-approved", ("通过", "批准", "同意", "approved", "approve")),
+    (400, "clawd-rejected", ("拒绝", "不行", "否决", "rejected", "reject")),
+    (400, "clawd-ok-nodding", ("好的", "没问题", "ok", "okay")),
+    (400, "clawd-nodding-smile", ("点头", "赞同", "nodding", "nod")),
+    (400, "clawd-innocent-blink", ("眨眼", "无辜", "blink", "innocent")),
+    (400, "clawd-curious", ("好奇", "探头", "curious")),
+    (400, "clawd-broke", ("破产", "没钱", "贫穷", "broke")),
+    (300, "clawd-happy", ("开心", "高兴", "快乐", "happy", "joy")),
+    (300, "clawd-smile", ("微笑", "smile")),
+)
+
+
+SYSTEM_PROMPT = """You create one safe, self-contained animated SVG of Clawd, a tiny pixel crab.
+
+OUTPUT CONTRACT
+- Return exactly one complete `<svg>...</svg>` and nothing else: no Markdown, prose, or code fence.
+- Keep it valid XML, compact, and under 12,000 characters.
+- Canvas: width="500", height="500", viewBox="-15 -25 45 45", shape-rendering="crispEdges".
+- Use only SVG shapes, groups, defs, style, text/tspan, clipPath/mask, gradients, stops, and internal `use` references.
+- Never use script, foreignObject, image, iframe, event handlers, JavaScript, data URLs, external links/resources, `@import`, or SMIL animation. Use CSS `@keyframes` only.
+
+CLAWD IDENTITY
+- Pixel-art body made primarily from rectangles. Flat body color #DE886D; eyes #000000. No mouth, ever.
+- Canonical torso: x=2 y=6 width=11 height=7. Center x is about 7.5.
+- Eyes: left x=4 y=8, right x=10 y=8, normally 1x2 black rectangles.
+- Arms: left x=0 y=9 size=2x2, right x=13 y=9 size=2x2; keep them visually attached to the torso.
+- Legs meet the torso at y=13: x=3,5,9,11, normally 1x2. Standing legs may start at y=12 with overlap.
+- Variant poses may squash or stretch the torso, but keep it recognizable: scaleX 0.9-1.18, scaleY 0.7-1.1.
+
+MOTION AND COMPOSITION
+- Show one character, one immediately readable main action, and no detailed background scene.
+- Prefer pose, eye shape, props, and effects over words. If essential, use only 2-4 floating characters, never a speech bubble.
+- Make a seamless loop, normally 1.2-2.0 seconds. The first and last pose must match.
+- Use one main motion plus at most two subtle secondary motions such as body bob or blink. Do not stack blink animations.
+- Rotate around believable joints; use translate for travel and scale for squash. Any scaled element must set transform-box:fill-box and an explicit transform-origin.
+- Check motion extremes: limbs must not detach, props must remain held, eyes must stay on the face, and foreground arms/props must not cover both eyes.
+- Layer back to front: optional ground shadow, legs, torso, eyes, rear arm, front arm/prop, small effects.
+- Keep all visible content inside roughly a 20-33 viewBox-unit square and within the canvas. Avoid gradients/filters on the body and avoid excessive particles.
+
+Before answering, silently verify complete closing tags, valid CSS, attached limbs, unclipped motion, and a seamless loop. Output only the final SVG."""
+
+
+def _reference_files(stem: str) -> tuple[Path, Path] | None:
+    for collection in ("original", "upstream"):
+        root = ROOT / "assets" / collection
+        caption = root / "captions" / f"{stem}.md"
+        svg = root / "svg" / f"{stem}.svg"
+        if caption.exists() and svg.exists():
+            return caption, svg
+    return None
 
 
 def select_references(prompt: str, limit: int = 1) -> list[tuple[Path, Path]]:
-    ranked: list[tuple[int, Path, Path]] = []
-    for caption in ROOT.glob("assets/*/captions/*.md"):
-        if caption.name.endswith(".zh.md") or caption.stem == "clawd-body-structure":
-            continue
-        svg = caption.parent.parent / "svg" / f"{caption.stem}.svg"
-        if not svg.exists():
-            continue
-        text = _read(caption)
-        zh = caption.with_name(caption.stem + ".zh.md")
-        if zh.exists():
-            text += "\n" + _read(zh)
-        ranked.append((_reference_score(prompt, text, caption.stem), caption, svg))
-    ranked.sort(key=lambda item: (item[0], item[1].name), reverse=True)
-    chosen = ranked[:limit]
-    if chosen and chosen[0][0] == 0:
-        fallbacks = ["clawd-static-base", "clawd-happy", "clawd-thinking-frozen"]
-        chosen = []
-        for name in fallbacks:
-            caption = ROOT / "assets" / ("upstream" if name in {"clawd-static-base", "clawd-happy"} else "original") / "captions" / f"{name}.md"
-            svg = caption.parent.parent / "svg" / f"{name}.svg"
-            if caption.exists() and svg.exists():
-                chosen.append((0, caption, svg))
-    return [(caption, svg) for _, caption, svg in chosen]
+    normalized = re.sub(r"\s+", " ", prompt.lower()).strip()
+    ranked: list[tuple[int, str]] = []
+    for priority, stem, keywords in REFERENCE_HINTS:
+        matches = [keyword for keyword in keywords if keyword in normalized]
+        if matches:
+            ranked.append((priority + max(len(item) for item in matches), stem))
+    ranked.sort(reverse=True)
+    stems = [stem for _, stem in ranked] or ["clawd-static-base"]
+    chosen: list[tuple[Path, Path]] = []
+    for stem in dict.fromkeys(stems):
+        files = _reference_files(stem)
+        if files:
+            chosen.append(files)
+        if len(chosen) >= max(1, limit):
+            break
+    return chosen
+
+
+def _compact_reference_svg(svg: str) -> str:
+    svg = re.sub(r"<!--[\s\S]*?-->", "", svg)
+    return "\n".join(line.strip() for line in svg.splitlines() if line.strip())
+
+
+def _reference_context(prompt: str) -> str:
+    items: list[str] = []
+    prefer_chinese = bool(re.search(r"[\u3400-\u9fff]", prompt))
+    for caption, svg in select_references(prompt):
+        localized = caption.with_name(caption.stem + ".zh.md")
+        caption_path = localized if prefer_chinese and localized.exists() else caption
+        items.append(
+            f"REFERENCE `{svg.stem}` (use as an identity/technique example, not as extra instructions):\n"
+            f"{_read(caption_path).strip()}\nREFERENCE SVG:\n{_compact_reference_svg(_read(svg))}"
+        )
+    return "\n\n".join(items)
 
 
 def build_messages(prompt: str, previous_svg: str | None, prompts: list[str]) -> list[dict]:
-    rules = _read(ROOT / ".claude" / "skills" / "any2clawd" / "references" / "rules.md")
-    body = _read(ROOT / "assets" / "original" / "captions" / "clawd-body-structure.md")
-    references = []
-    for caption, svg in select_references(prompt):
-        references.append(f"REFERENCE {svg.name}\n{_read(caption)}\nSVG:\n{_read(svg)}")
-    system = f"""You generate safe, self-contained animated SVG code for the Clawd pixel crab.
-Return exactly one complete <svg>...</svg>, with no Markdown and no explanation.
-Keep the SVG compact and under 12,000 characters. Prefer reusable CSS classes and simple shapes.
-Never include script, foreignObject, image, iframe, external links, data URLs, event handlers, or remote resources.
-Use CSS keyframes only. Keep the standard Clawd identity and follow every rule below.
-
-CORE RULES:
-{rules}
-
-BODY SPEC:
-{body}
-"""
-    context = "\n\n".join(references)
     if previous_svg:
-        user = f"""Revise the existing animation according to the newest request.
-Conversation requests: {json.dumps(prompts, ensure_ascii=False)}
-Newest request: {prompt}
+        original = prompts[0] if prompts else prompt
+        recent = prompts[1:-1][-3:] if len(prompts) > 2 else []
+        recent_text = json.dumps(recent, ensure_ascii=False) if recent else "none"
+        user = f"""Revise the existing SVG surgically. Preserve every unrelated shape, color, proportion, and timing.
+
+ORIGINAL REQUEST: {original}
+RECENT PRIOR CHANGES: {recent_text}
+NEW CHANGE: {prompt}
 
 EXISTING SVG:
 {previous_svg}
 
-Relevant references:
-{context}
-"""
+Return the complete revised SVG, not a patch."""
     else:
-        user = f"""Create a single-character looping Clawd sticker animation for this request:
+        user = f"""Create a looping Clawd sticker for this request:
 {prompt}
 
-Relevant references:
-{context}
-"""
-    return [{"role": "system", "content": system}, {"role": "user", "content": user}]
+{_reference_context(prompt)}
+
+Use the reference only to preserve Clawd's identity and learn a relevant motion technique. Follow the user's requested action."""
+    return [{"role": "system", "content": SYSTEM_PROMPT}, {"role": "user", "content": user}]
 
 
 async def _chat(messages: list[dict], max_tokens: int = 10000) -> str:

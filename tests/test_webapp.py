@@ -115,6 +115,36 @@ class ApiFallbackTests(unittest.TestCase):
         ])
 
 
+class PromptOptimizationTests(unittest.TestCase):
+    def test_action_keyword_beats_emotion_keyword(self):
+        chosen = generator.select_references("一只开心挥手的小龙虾")
+        self.assertEqual(chosen[0][1].stem, "clawd-salute")
+
+    def test_unknown_action_uses_only_static_reference(self):
+        chosen = generator.select_references("量子纠缠")
+        self.assertEqual([svg.stem for _, svg in chosen], ["clawd-static-base"])
+
+    def test_every_reference_hint_resolves(self):
+        for _, stem, _ in generator.REFERENCE_HINTS:
+            with self.subTest(stem=stem):
+                self.assertIsNotNone(generator._reference_files(stem))
+
+    def test_initial_prompt_stays_compact(self):
+        for prompt in ("挥手", "喝咖啡", "发呆", "写代码"):
+            with self.subTest(prompt=prompt):
+                messages = generator.build_messages(prompt, None, [prompt])
+                self.assertLess(sum(len(str(item["content"])) for item in messages), 12_000)
+
+    def test_revision_uses_recent_history_without_reference(self):
+        prompts = ["初始要求"] + [f"修改{i}" for i in range(1, 11)]
+        messages = generator.build_messages(prompts[-1], SAFE, prompts)
+        content = messages[1]["content"]
+        self.assertNotIn("REFERENCE SVG", content)
+        self.assertNotIn("修改1\"", content)
+        self.assertIn("修改9", content)
+        self.assertEqual(content.count("修改10"), 1)
+
+
 class GifSpeedTests(unittest.TestCase):
     def test_export_caps_frame_count_but_samples_full_cycle(self):
         options = ExportOptions(
