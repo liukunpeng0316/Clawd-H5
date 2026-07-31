@@ -13,7 +13,7 @@ from pathlib import Path
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from webapp.generator import (
     GenerationError,
@@ -36,8 +36,9 @@ TRUSTED_PROXIES = {item.strip() for item in os.getenv("TRUSTED_PROXIES", "127.0.
 
 store = Store(DATA_ROOT, MAX_STORAGE_BYTES)
 queue: asyncio.Queue["Task"] = asyncio.Queue(maxsize=MAX_QUEUE)
-pending_ips: set[str] = set()
-pending_lock = asyncio.Lock()
+admission_lock = asyncio.Lock()
+active_work_ids: set[str] = set()
+inflight_work_ids: set[str] = set()
 export_slots: asyncio.Semaphore | None = None
 log = logging.getLogger("clawd-workshop")
 
@@ -51,7 +52,15 @@ class Task:
 
 
 class CreateRequest(BaseModel):
-    prompt: str = Field(min_length=2, max_length=500)
+    prompt: str = Field(max_length=500)
+
+    @field_validator("prompt")
+    @classmethod
+    def clean_prompt(cls, value: str) -> str:
+        value = value.strip()
+        if len(value) < 2:
+            raise ValueError("请至少输入 2 个字")
+        return value
 
 
 class ReviseRequest(CreateRequest):
@@ -67,28 +76,14 @@ def client_ip(request: Request) -> str:
     return direct
 
 
-async def reserve_ip(ip: str) -> None:
-    async with pending_lock:
-        if ip in pending_ips:
-            raise HTTPException(429, "你已有一个任务正在生成或排队，请等待它完成")
-        if queue.full():
-            raise HTTPException(503, "当前排队人数过多，请稍后再试")
-        pending_ips.add(ip)
-
-
-async def release_ip(ip: str) -> None:
-    async with pending_lock:
-        pending_ips.discard(ip)
-
-
 async def process(task: Task) -> None:
-    row = store.get(task.work_id)
-    if not row:
-        return
-    store.set_status(task.work_id, "processing")
-    svg_path, gif_path = store.paths(task.work_id)
-    prompts = store.prompts(task.work_id)
     try:
+        row = store.get(task.work_id)
+        if not row:
+            return
+        store.set_status(task.work_id, "processing")
+        svg_path, gif_path = store.paths(task.work_id)
+        prompts = store.prompts(task.work_id)
         svg = await generate_svg(task.prompt, task.previous_svg, prompts)
         loop = asyncio.get_running_loop()
         if ENABLE_VISUAL_REVIEW:
@@ -103,26 +98,38 @@ async def process(task: Task) -> None:
             await loop.run_in_executor(None, export_gif, svg_path, gif_path)
         store.complete(task.work_id, svg_path, gif_path)
     except GenerationError as exc:
-        store.set_status(task.work_id, "failed", str(exc)[:800])
+        try:
+            store.set_status(task.work_id, "failed", str(exc)[:800])
+        except Exception:
+            log.exception("could not mark work %s failed", task.work_id)
     except Exception as exc:
         log.exception("work %s failed", task.work_id)
-        store.set_status(task.work_id, "failed", "生成失败，请稍后重试")
-    finally:
-        await release_ip(task.client_ip)
+        try:
+            store.set_status(task.work_id, "failed", "生成失败，请稍后重试")
+        except Exception:
+            log.exception("could not mark work %s failed", task.work_id)
 
 
 async def worker(worker_id: int) -> None:
     while True:
         task = await queue.get()
+        active_work_ids.add(task.work_id)
         try:
             await process(task)
+        except asyncio.CancelledError:
+            raise
+        except Exception:
+            log.exception("worker %s recovered after task %s failed", worker_id, task.work_id)
         finally:
+            active_work_ids.discard(task.work_id)
+            inflight_work_ids.discard(task.work_id)
             queue.task_done()
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     global export_slots
+    store.fail_incomplete()
     export_slots = asyncio.Semaphore(EXPORT_CONCURRENCY)
     workers = [asyncio.create_task(worker(index)) for index in range(CONCURRENCY)]
     yield
@@ -153,42 +160,42 @@ async def harden(request: Request, call_next):
 
 @app.get("/health")
 def health():
-    return {"ok": True, "queue": queue.qsize(), "active": len(pending_ips), "model": os.getenv("GENERATION_MODEL", "deepseek-v4-flash")}
+    return {"ok": True, "queue": queue.qsize(), "active": len(active_work_ids), "model": os.getenv("GENERATION_MODEL", "deepseek-v4-flash")}
 
 
 @app.post("/api/works")
 async def create_work(body: CreateRequest, request: Request):
     ip = client_ip(request)
-    await reserve_ip(ip)
     work_id = uuid.uuid4().hex
     edit_token = secrets.token_urlsafe(32)
-    prompt = body.prompt.strip()
-    try:
+    prompt = body.prompt
+    async with admission_lock:
+        if queue.full():
+            raise HTTPException(503, "当前排队人数过多，请稍后再试")
         store.create(work_id, edit_token, ip, prompt)
-        await queue.put(Task(work_id, prompt, ip))
-    except Exception:
-        await release_ip(ip)
-        raise
+        queue.put_nowait(Task(work_id, prompt, ip))
+        inflight_work_ids.add(work_id)
     return {"id": work_id, "edit_token": edit_token, "status": "queued"}
 
 
 @app.post("/api/works/{work_id}/revise")
 async def revise_work(work_id: str, body: ReviseRequest, request: Request):
     ip = client_ip(request)
-    await reserve_ip(ip)
-    prompt = body.prompt.strip()
-    try:
-        row = store.get(work_id)
-        svg_path = store.files / work_id / "clawd.svg"
-        if not row or row["edit_hash"] != store.token_hash(body.edit_token) or not svg_path.exists():
-            raise HTTPException(403, "修改凭证无效")
-        previous_svg = svg_path.read_text(encoding="utf-8")
+    prompt = body.prompt
+    row = store.get(work_id)
+    svg_path = store.files / work_id / "clawd.svg"
+    if not row or row["edit_hash"] != store.token_hash(body.edit_token) or not svg_path.exists():
+        raise HTTPException(403, "修改凭证无效")
+    previous_svg = svg_path.read_text(encoding="utf-8")
+    async with admission_lock:
+        if work_id in inflight_work_ids:
+            raise HTTPException(409, "这个作品正在修改，请等待完成")
+        if queue.full():
+            raise HTTPException(503, "当前排队人数过多，请稍后再试")
         if not store.queue_revision(work_id, body.edit_token, prompt, ip):
             raise HTTPException(403, "修改凭证无效")
-        await queue.put(Task(work_id, prompt, ip, previous_svg))
-    except Exception:
-        await release_ip(ip)
-        raise
+        queue.put_nowait(Task(work_id, prompt, ip, previous_svg))
+        inflight_work_ids.add(work_id)
     return {"id": work_id, "status": "queued"}
 
 
@@ -200,16 +207,15 @@ async def remix_work(source_id: str, body: CreateRequest, request: Request):
         raise HTTPException(404, "原作品不存在或已被自动清理")
     previous_svg = source_svg_path.read_text(encoding="utf-8")
     ip = client_ip(request)
-    await reserve_ip(ip)
     work_id = uuid.uuid4().hex
     edit_token = secrets.token_urlsafe(32)
-    prompt = body.prompt.strip()
-    try:
+    prompt = body.prompt
+    async with admission_lock:
+        if queue.full():
+            raise HTTPException(503, "当前排队人数过多，请稍后再试")
         store.create(work_id, edit_token, ip, prompt)
-        await queue.put(Task(work_id, prompt, ip, previous_svg))
-    except Exception:
-        await release_ip(ip)
-        raise
+        queue.put_nowait(Task(work_id, prompt, ip, previous_svg))
+        inflight_work_ids.add(work_id)
     return {"id": work_id, "edit_token": edit_token, "status": "queued"}
 
 
@@ -244,6 +250,33 @@ def gallery(offset: int = 0, limit: int = 48):
         "updated_at": item["updated_at"],
         "gif_url": f"/files/{item['id']}/clawd.gif?v={item['updated_at']}",
     } for item in items]
+
+
+@app.get("/api/gallery-page")
+def gallery_page_api(
+    limit: int = 48,
+    before_updated_at: str | None = None,
+    before_id: str | None = None,
+):
+    limit = max(1, min(limit, 60))
+    if (before_updated_at is None) != (before_id is None):
+        raise HTTPException(400, "分页游标不完整")
+    rows = store.list_ready_page(limit + 1, before_updated_at, before_id)
+    has_more = len(rows) > limit
+    items = rows[:limit]
+    next_cursor = None
+    if has_more and items:
+        last = items[-1]
+        next_cursor = {"updated_at": last["updated_at"], "id": last["id"]}
+    return {
+        "items": [{
+            "id": item["id"],
+            "created_at": item["created_at"],
+            "updated_at": item["updated_at"],
+            "gif_url": f"/files/{item['id']}/clawd.gif?v={item['updated_at']}",
+        } for item in items],
+        "next_cursor": next_cursor,
+    }
 
 
 @app.get("/files/{work_id}/{filename}")

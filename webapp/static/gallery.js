@@ -1,6 +1,7 @@
 const gallery = document.getElementById('gallery');
 const pageSize = 48;
-let offset = 0;
+let loadedCount = 0;
+let cursor = null;
 let loading = false;
 let finished = false;
 
@@ -41,19 +42,26 @@ async function loadMore() {
   loading = true;
   sentinel.classList.remove('hidden');
   try {
-    const response = await fetch(`/api/gallery?offset=${offset}&limit=${pageSize}`);
+    const params = new URLSearchParams({limit: String(pageSize)});
+    if (cursor) {
+      params.set('before_updated_at', cursor.updated_at);
+      params.set('before_id', cursor.id);
+    }
+    const response = await fetch(`/api/gallery-page?${params}`);
     if (!response.ok) throw new Error();
-    const items = await response.json();
-    if (offset === 0) gallery.replaceChildren();
+    const data = await response.json();
+    const items = data.items;
+    if (loadedCount === 0) gallery.replaceChildren();
     gallery.append(...items.map(workCard));
-    offset += items.length;
-    finished = items.length < pageSize;
-    if (offset === 0) {
+    loadedCount += items.length;
+    cursor = data.next_cursor;
+    finished = !cursor;
+    if (loadedCount === 0) {
       gallery.innerHTML = '<div class="gallery-empty">还没有公开作品。去制作第一个吧 🦀</div>';
       finished = true;
     }
   } catch (_) {
-    if (offset === 0) gallery.innerHTML = '<div class="gallery-empty">作品加载失败，请稍后刷新。</div>';
+    if (loadedCount === 0) gallery.innerHTML = '<div class="gallery-empty">作品加载失败，请稍后刷新。</div>';
     finished = true;
   } finally {
     loading = false;

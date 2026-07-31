@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import tempfile
 import threading
 import time
@@ -75,7 +76,7 @@ class StoreTests(unittest.TestCase):
                 store.complete(work_id, svg, gif)
             self.assertIsNone(store.get("old"))
 
-    def test_restart_marks_export_jobs_failed(self):
+    def test_store_construction_does_not_fail_active_jobs(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             store = Store(root, 1024 * 1024)
@@ -83,8 +84,93 @@ class StoreTests(unittest.TestCase):
                 store.create(work_id, "secret", "127.0.0.1", work_id)
                 store.set_status(work_id, status)
             restarted = Store(root, 1024 * 1024)
+            self.assertEqual(restarted.get("waiting")["status"], "export_queued")
+            self.assertEqual(restarted.get("running")["status"], "exporting")
+            self.assertEqual(restarted.fail_incomplete(), 2)
             self.assertEqual(restarted.get("waiting")["status"], "failed")
             self.assertEqual(restarted.get("running")["status"], "failed")
+
+    def test_cursor_pagination_stays_stable_when_new_work_arrives(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            store = Store(Path(tmp), 1024 * 1024)
+            for index in range(6):
+                work_id = f"work-{index}"
+                store.create(work_id, "secret", "127.0.0.1", work_id)
+                svg, gif = store.paths(work_id)
+                svg.write_text(SAFE, encoding="utf-8")
+                gif.write_bytes(b"GIF89a")
+                store.complete(work_id, svg, gif)
+            first = store.list_ready_page(4)
+            cursor = first[-1]
+            store.create("new-work", "secret", "127.0.0.1", "new")
+            svg, gif = store.paths("new-work")
+            svg.write_text(SAFE, encoding="utf-8")
+            gif.write_bytes(b"GIF89a")
+            store.complete("new-work", svg, gif)
+            second = store.list_ready_page(10, cursor["updated_at"], cursor["id"])
+            combined = [row["id"] for row in first + second]
+            self.assertEqual(len(combined), 6)
+            self.assertEqual(len(set(combined)), 6)
+            self.assertNotIn("new-work", combined)
+
+
+class RequestValidationTests(unittest.TestCase):
+    def test_prompt_is_stripped_before_minimum_length_check(self):
+        with self.assertRaises(ValueError):
+            app_module.CreateRequest(prompt="   ")
+        self.assertEqual(app_module.CreateRequest(prompt="  挥手  ").prompt, "挥手")
+
+    def test_same_ip_can_enqueue_multiple_tasks(self):
+        async def scenario(root: Path):
+            store = Store(root, 1024 * 1024)
+            work_queue = asyncio.Queue(maxsize=100)
+            request = Request({"type": "http", "client": ("198.51.100.8", 1234), "headers": []})
+            with (
+                patch.object(app_module, "store", store),
+                patch.object(app_module, "queue", work_queue),
+                patch.object(app_module, "admission_lock", asyncio.Lock()),
+                patch.object(app_module, "inflight_work_ids", set()),
+            ):
+                first = await app_module.create_work(app_module.CreateRequest(prompt="挥手"), request)
+                second = await app_module.create_work(app_module.CreateRequest(prompt="点头"), request)
+            return first, second, work_queue.qsize()
+
+        with tempfile.TemporaryDirectory() as tmp:
+            first, second, queued = asyncio.run(scenario(Path(tmp)))
+        self.assertNotEqual(first["id"], second["id"])
+        self.assertEqual(queued, 2)
+
+    def test_same_work_cannot_be_revised_concurrently(self):
+        async def scenario(root: Path):
+            store = Store(root, 1024 * 1024)
+            store.create("source", "secret-token-that-is-long-enough", "ip", "original")
+            svg, gif = store.paths("source")
+            svg.write_text(SAFE, encoding="utf-8")
+            gif.write_bytes(b"GIF89a")
+            store.complete("source", svg, gif)
+            work_queue = asyncio.Queue(maxsize=100)
+            request = Request({"type": "http", "client": ("198.51.100.8", 1234), "headers": []})
+            with (
+                patch.object(app_module, "store", store),
+                patch.object(app_module, "queue", work_queue),
+                patch.object(app_module, "admission_lock", asyncio.Lock()),
+                patch.object(app_module, "inflight_work_ids", {"source"}),
+            ):
+                with self.assertRaises(app_module.HTTPException) as raised:
+                    await app_module.revise_work(
+                        "source",
+                        app_module.ReviseRequest(
+                            prompt="换成蓝色", edit_token="secret-token-that-is-long-enough"
+                        ),
+                        request,
+                    )
+            return raised.exception.status_code, work_queue.qsize(), store.get("source")["status"]
+
+        with tempfile.TemporaryDirectory() as tmp:
+            status_code, queued, status = asyncio.run(scenario(Path(tmp)))
+        self.assertEqual(status_code, 409)
+        self.assertEqual(queued, 0)
+        self.assertEqual(status, "ready")
 
 
 class RemixTests(unittest.TestCase):
@@ -93,8 +179,6 @@ class RemixTests(unittest.TestCase):
         return Request({"type": "http", "client": ("198.51.100.8", 1234), "headers": []})
 
     def test_remix_creates_independent_work_from_public_svg(self):
-        import asyncio
-
         with tempfile.TemporaryDirectory() as tmp:
             store = Store(Path(tmp), 1024 * 1024)
             store.create("source", "source-secret", "127.0.0.1", "original")
@@ -106,7 +190,8 @@ class RemixTests(unittest.TestCase):
             with (
                 patch.object(app_module, "store", store),
                 patch.object(app_module, "queue", remix_queue),
-                patch.object(app_module, "pending_ips", set()),
+                patch.object(app_module, "admission_lock", asyncio.Lock()),
+                patch.object(app_module, "inflight_work_ids", set()),
             ):
                 result = asyncio.run(app_module.remix_work(
                     "source", app_module.CreateRequest(prompt="换成蓝色"), self.request()
@@ -132,18 +217,14 @@ class RemixTests(unittest.TestCase):
 
 class ExportConcurrencyTests(unittest.TestCase):
     def test_only_two_gif_exports_run_at_once(self):
-        import asyncio
-
         async def scenario(root: Path):
             store = Store(root, 1024 * 1024)
             tasks = []
-            ips = set()
             for index in range(6):
                 work_id = f"work-{index}"
                 ip = f"198.51.100.{index}"
                 store.create(work_id, "secret", ip, "test")
                 tasks.append(app_module.Task(work_id, "test", ip))
-                ips.add(ip)
             counts = {"active": 0, "peak": 0}
             lock = threading.Lock()
 
@@ -158,7 +239,6 @@ class ExportConcurrencyTests(unittest.TestCase):
 
             with (
                 patch.object(app_module, "store", store),
-                patch.object(app_module, "pending_ips", ips),
                 patch.object(app_module, "export_slots", asyncio.Semaphore(2)),
                 patch.object(app_module, "generate_svg", AsyncMock(return_value=SAFE)),
                 patch.object(app_module, "export_gif", fake_export),
@@ -169,6 +249,29 @@ class ExportConcurrencyTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             peak = asyncio.run(scenario(Path(tmp)))
         self.assertEqual(peak, 2)
+
+
+class WorkerRecoveryTests(unittest.TestCase):
+    def test_worker_continues_after_unexpected_task_error(self):
+        async def scenario():
+            work_queue = asyncio.Queue()
+            await work_queue.put(app_module.Task("broken", "test", "ip"))
+            await work_queue.put(app_module.Task("next", "test", "ip"))
+            fake_process = AsyncMock(side_effect=[RuntimeError("broken"), None])
+            with (
+                patch.object(app_module, "queue", work_queue),
+                patch.object(app_module, "active_work_ids", set()),
+                patch.object(app_module, "inflight_work_ids", set()),
+                patch.object(app_module, "process", fake_process),
+                patch.object(app_module.log, "exception"),
+            ):
+                runner = asyncio.create_task(app_module.worker(0))
+                await asyncio.wait_for(work_queue.join(), timeout=1)
+                runner.cancel()
+                await asyncio.gather(runner, return_exceptions=True)
+            return fake_process.await_count
+
+        self.assertEqual(asyncio.run(scenario()), 2)
 
 
 class ApiFallbackTests(unittest.TestCase):

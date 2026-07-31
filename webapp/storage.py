@@ -57,10 +57,15 @@ class Store:
                 )
                 """
             )
-            conn.execute(
-                "UPDATE works SET status='failed', error='服务重启，请重新提交' "
-                "WHERE status IN ('queued','processing','export_queued','exporting')"
+
+    def fail_incomplete(self) -> int:
+        with self._lock, self._db() as conn:
+            cursor = conn.execute(
+                "UPDATE works SET status='failed', error='服务重启，请重新提交', updated_at=? "
+                "WHERE status IN ('queued','processing','export_queued','exporting')",
+                (utcnow(),),
             )
+        return cursor.rowcount
 
     @staticmethod
     def token_hash(token: str) -> str:
@@ -122,9 +127,27 @@ class Store:
     def list_ready(self, limit: int = 60, offset: int = 0) -> list[dict]:
         with self._db() as conn:
             rows = conn.execute(
-                "SELECT id, created_at, updated_at FROM works WHERE status='ready' ORDER BY updated_at DESC LIMIT ? OFFSET ?",
+                "SELECT id, created_at, updated_at FROM works WHERE status='ready' "
+                "ORDER BY updated_at DESC, id DESC LIMIT ? OFFSET ?",
                 (limit, offset),
             ).fetchall()
+        return [dict(row) for row in rows]
+
+    def list_ready_page(
+        self,
+        limit: int,
+        before_updated_at: str | None = None,
+        before_id: str | None = None,
+    ) -> list[dict]:
+        query = "SELECT id, created_at, updated_at FROM works WHERE status='ready'"
+        params: list[object] = []
+        if before_updated_at is not None and before_id is not None:
+            query += " AND (updated_at < ? OR (updated_at = ? AND id < ?))"
+            params.extend((before_updated_at, before_updated_at, before_id))
+        query += " ORDER BY updated_at DESC, id DESC LIMIT ?"
+        params.append(limit)
+        with self._db() as conn:
+            rows = conn.execute(query, params).fetchall()
         return [dict(row) for row in rows]
 
     def prompts(self, work_id: str) -> list[str]:
