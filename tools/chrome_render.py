@@ -102,6 +102,7 @@ def _render_one(args) -> "Image.Image":
         # --user-data-dir would keep Chrome alive after the screenshot — avoid it.)
         cmd = [
             chrome, "--headless=new", "--disable-gpu", "--hide-scrollbars",
+            "--disable-dev-shm-usage",
             "--no-first-run", "--no-default-browser-check",
             "--force-device-scale-factor=1",
             "--run-all-compositor-stages-before-draw",
@@ -109,6 +110,9 @@ def _render_one(args) -> "Image.Image":
             f"--window-size={viewport},{viewport}",
             f"--screenshot={png_path}", html_path.resolve().as_uri(),
         ]
+        if os.environ.get("CHROME_NO_SANDBOX") == "1":
+            # Intended only inside the already-isolated, non-root Docker container.
+            cmd.insert(1, "--no-sandbox")
         if background != "white":
             cmd.insert(1, "--default-background-color=00000000")
         # Own session/process group + hard timeout: a hung Chrome (and its
