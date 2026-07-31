@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, field_validator
 
@@ -64,6 +64,10 @@ class CreateRequest(BaseModel):
 
 
 class ReviseRequest(CreateRequest):
+    edit_token: str = Field(min_length=32, max_length=128)
+
+
+class DeleteRequest(BaseModel):
     edit_token: str = Field(min_length=32, max_length=128)
 
 
@@ -237,6 +241,21 @@ def work_status(work_id: str):
             "gif_url": f"/files/{work_id}/clawd.gif?v={row['updated_at']}",
         })
     return result
+
+
+@app.delete("/api/works/{work_id}", status_code=204)
+async def delete_work(work_id: str, body: DeleteRequest):
+    async with admission_lock:
+        if work_id in inflight_work_ids:
+            raise HTTPException(409, "作品正在生成或修改，请稍后再删除")
+        result = store.delete_owned(work_id, body.edit_token)
+    if result == "not_found":
+        raise HTTPException(404, "作品不存在或已被自动清理")
+    if result == "forbidden":
+        raise HTTPException(403, "删除凭证无效")
+    if result == "busy":
+        raise HTTPException(409, "作品正在生成或修改，请稍后再删除")
+    return Response(status_code=204)
 
 
 @app.get("/api/gallery")

@@ -4,6 +4,27 @@ let loadedCount = 0;
 let cursor = null;
 let loading = false;
 let finished = false;
+const ownershipKey = 'clawd-work-tokens';
+
+function ownershipTokens() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(ownershipKey));
+    return saved && typeof saved === 'object' && !Array.isArray(saved) ? saved : {};
+  } catch (_) {
+    return {};
+  }
+}
+
+function forgetOwnership(workId) {
+  const tokens = ownershipTokens();
+  delete tokens[workId];
+  if (Object.keys(tokens).length) localStorage.setItem(ownershipKey, JSON.stringify(tokens));
+  else localStorage.removeItem(ownershipKey);
+  try {
+    const current = JSON.parse(localStorage.getItem('clawd-current-work'));
+    if (current?.id === workId) localStorage.removeItem('clawd-current-work');
+  } catch (_) {}
+}
 
 const sentinel = document.createElement('div');
 sentinel.className = 'gallery-sentinel';
@@ -33,8 +54,43 @@ function workCard(item) {
   download.textContent = '下载 GIF';
 
   actions.append(remix, download);
+  const editToken = ownershipTokens()[item.id];
+  if (editToken) {
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.className = 'work-button danger';
+    remove.textContent = '删除我的作品';
+    remove.addEventListener('click', () => deleteOwnedWork(item, editToken, card, remove));
+    actions.append(remove);
+  }
   card.append(image, actions);
   return card;
+}
+
+async function deleteOwnedWork(item, editToken, card, button) {
+  if (!window.confirm('确定删除这个作品吗？删除后无法恢复。')) return;
+  button.disabled = true;
+  button.textContent = '正在删除…';
+  try {
+    const response = await fetch(`/api/works/${encodeURIComponent(item.id)}`, {
+      method: 'DELETE',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({edit_token: editToken}),
+    });
+    const data = response.status === 204 ? {} : await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || '删除失败，请稍后重试');
+    forgetOwnership(item.id);
+    card.remove();
+    loadedCount = Math.max(0, loadedCount - 1);
+    if (!gallery.querySelector('.work')) {
+      if (finished) gallery.innerHTML = '<div class="gallery-empty">还没有公开作品。去制作第一个吧 🦀</div>';
+      else loadMore();
+    }
+  } catch (error) {
+    button.disabled = false;
+    button.textContent = '删除我的作品';
+    window.alert(error.message);
+  }
 }
 
 async function loadMore() {

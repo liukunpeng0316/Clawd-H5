@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import hmac
 import json
 import os
 import sqlite3
@@ -107,6 +108,25 @@ class Store:
                 (utcnow(), str(svg_path), str(gif_path), work_id),
             )
         self.enforce_limit()
+
+    def delete_owned(self, work_id: str, token: str) -> str:
+        with self._lock, self._db() as conn:
+            row = conn.execute("SELECT * FROM works WHERE id=?", (work_id,)).fetchone()
+            if not row:
+                return "not_found"
+            if not hmac.compare_digest(row["edit_hash"], self.token_hash(token)):
+                return "forbidden"
+            if row["status"] not in {"ready", "failed"}:
+                return "busy"
+            folder = self.files / work_id
+            for filename in ("clawd.svg", "clawd.gif"):
+                (folder / filename).unlink(missing_ok=True)
+            try:
+                folder.rmdir()
+            except OSError:
+                pass
+            conn.execute("DELETE FROM works WHERE id=?", (work_id,))
+        return "deleted"
 
     def get(self, work_id: str) -> dict | None:
         with self._db() as conn:

@@ -8,6 +8,23 @@ let pollTimer = null;
 let elapsedTimer = null;
 let elapsedStartedAt = null;
 let remixSource = null;
+const ownershipKey = 'clawd-work-tokens';
+
+function ownershipTokens() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(ownershipKey));
+    return saved && typeof saved === 'object' && !Array.isArray(saved) ? saved : {};
+  } catch (_) {
+    return {};
+  }
+}
+
+function rememberOwnership(work) {
+  if (!work?.id || !work?.edit_token) return;
+  const tokens = ownershipTokens();
+  tokens[work.id] = work.edit_token;
+  localStorage.setItem(ownershipKey, JSON.stringify(tokens));
+}
 
 function renderElapsed() {
   if (!elapsedStartedAt) return;
@@ -58,6 +75,7 @@ function setBusy(busy, status = 'queued', position = null) {
 
 function remember(work) {
   localStorage.setItem('clawd-current-work', JSON.stringify(work));
+  rememberOwnership(work);
 }
 
 function leaveRemixMode() {
@@ -192,6 +210,9 @@ async function loadRemix(sourceId) {
 }
 
 const remixParam = new URLSearchParams(window.location.search).get('remix');
+try {
+  rememberOwnership(JSON.parse(localStorage.getItem('clawd-current-work')));
+} catch (_) {}
 if (remixParam) {
   loadRemix(remixParam);
 } else {
