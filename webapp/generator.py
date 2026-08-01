@@ -115,7 +115,8 @@ MOTION AND COMPOSITION
 - Use one main motion plus at most two subtle secondary motions such as body bob or blink. Do not stack blink animations.
 - Rotate around believable joints; use translate for travel and scale for squash. Any scaled element must set transform-box:fill-box and an explicit transform-origin.
 - Check motion extremes: limbs must not detach, props must remain held, eyes must stay on the face, and foreground arms/props must not cover both eyes.
-- Layer back to front: optional ground shadow, legs, torso, eyes, rear arm, front arm/prop, small effects.
+- Layer back to front: legs, torso, eyes, rear arm, front arm/prop, small effects.
+- Do not add a decorative ground shadow or baseline beneath the character, even if a reference contains one. A platform or floor is allowed only when the user explicitly requests it as part of the action.
 - Keep all visible content inside roughly a 20-33 viewBox-unit square and within the canvas. Avoid gradients/filters on the body and avoid excessive particles.
 
 Before answering, silently verify complete closing tags, valid CSS, attached limbs, unclipped motion, and a seamless loop. Output only the final SVG."""

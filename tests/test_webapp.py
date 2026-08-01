@@ -349,6 +349,31 @@ class PromptOptimizationTests(unittest.TestCase):
 
 
 class GifSpeedTests(unittest.TestCase):
+    def test_shadow_filter_is_conservative_and_not_the_old_exact_selector(self):
+        html = generator.chrome_render._frame_html(
+            SAFE, viewport=180, time_ms=0, background="transparent", hide_shadow=True
+        )
+        self.assertIn("lowerFlat", html)
+        self.assertIn("namedGround", html)
+        self.assertIn("opacity<=0.65", html)
+        self.assertNotIn('rect[y="15"][fill="#000000"]', html)
+
+    @unittest.skipUnless(generator.chrome_render.find_chrome(), "Chrome is not installed")
+    def test_shadow_filter_hides_varied_ground_shadow_but_keeps_black_prop(self):
+        svg = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="-15 -25 45 45">
+        <rect id="keyboard" x="0" y="10" width="10" height="1" fill="#000000"/>
+        <rect class="shadow-dance" x="1" y="14" width="13" height="1.5"
+              fill="#000000" opacity="0.4"/>
+        </svg>"""
+        frame = generator.chrome_render.render_frames(
+            svg, [0], viewport=180, background="transparent", hide_shadow=True,
+            chrome=generator.chrome_render.find_chrome(), workers=1, timeout=25,
+        )[0]
+        # viewBox scale is 4 px/unit: the opaque keyboard remains at y=140,
+        # while the semi-transparent ground shadow around y=158 is removed.
+        self.assertGreater(frame.getpixel((80, 142))[3], 0)
+        self.assertEqual(frame.getpixel((80, 158))[3], 0)
+
     def test_fixed_33_unit_crop_enlarges_without_per_frame_zoom(self):
         frame = Image.new("RGBA", (100, 100), (0, 0, 0, 0))
         frame.paste((222, 136, 109, 255), (45, 45, 55, 55))
