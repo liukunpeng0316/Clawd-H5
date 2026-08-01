@@ -58,7 +58,39 @@ def find_chrome() -> str | None:
 
 def _frame_html(svg_text: str, viewport: int, time_ms: float, background: str, hide_shadow: bool) -> str:
     bg = "#ffffff" if background == "white" else "transparent"
-    shadow_css = 'rect[y="15"][fill="#000000"]{display:none!important}' if hide_shadow else ""
+    shadow_hider = ""
+    if hide_shadow:
+        # Models do not consistently use the canonical y=15 ground-shadow rect.
+        # Detect only flat, dark shapes near the bottom of the SVG so eyes,
+        # limbs, and opaque props such as keyboards remain untouched.
+        shadow_hider = """<script>addEventListener('DOMContentLoaded',function(){
+const svg=document.querySelector('svg');if(!svg)return;
+const canvas=svg.getBoundingClientRect();if(!canvas.width||!canvas.height)return;
+svg.querySelectorAll('rect,ellipse,line,path,polygon,polyline').forEach(function(el){
+  const label=((el.id||'')+' '+(el.getAttribute('class')||'')).toLowerCase();
+  const box=el.getBoundingClientRect();
+  const style=getComputedStyle(el);
+  const fill=(style.fill||'').replace(/\\s+/g,'').toLowerCase();
+  const stroke=(style.stroke||'').replace(/\\s+/g,'').toLowerCase();
+  const black=['#000','#000000','black','rgb(0,0,0)','rgba(0,0,0,1)'];
+  const dark=black.includes(fill)||black.includes(stroke);
+  const ownOpacity=parseFloat(style.opacity||'1');
+  const paintOpacity=Math.min(
+    Number.isFinite(parseFloat(style.fillOpacity))?parseFloat(style.fillOpacity):1,
+    Number.isFinite(parseFloat(style.strokeOpacity))?parseFloat(style.strokeOpacity):1
+  );
+  const opacity=(Number.isFinite(ownOpacity)?ownOpacity:1)*paintOpacity;
+  const relativeTop=(box.top-canvas.top)/canvas.height;
+  const relativeWidth=box.width/canvas.width;
+  const relativeHeight=box.height/canvas.height;
+  const lowerFlat=relativeTop>=0.72&&relativeWidth>=0.12&&relativeHeight<=0.075;
+  const namedGround=label.includes('ground-shadow')||label.includes('ground_shadow');
+  const namedShadow=label.includes('shadow');
+  if(namedGround||(lowerFlat&&dark&&(namedShadow||opacity<=0.65))){
+    el.style.setProperty('display','none','important');
+  }
+});
+});</script>"""
     seek = (
         "<script>addEventListener('DOMContentLoaded',function(){"
         "document.getAnimations().forEach(function(a){a.pause();a.currentTime=__T__;});"
@@ -66,13 +98,14 @@ def _frame_html(svg_text: str, viewport: int, time_ms: float, background: str, h
     ).replace("__T__", repr(float(time_ms)))
     css = (
         "html,body{margin:0;padding:0;overflow:hidden;background:%s}"
-        "svg{width:%dpx;height:%dpx}%s" % (bg, viewport, viewport, shadow_css)
+        "svg{width:%dpx;height:%dpx}" % (bg, viewport, viewport)
     )
     return (
         "<!doctype html><html><head><meta charset='utf-8'><style>"
         + css
         + "</style></head><body>"
         + svg_text
+        + shadow_hider
         + seek
         + "</body></html>"
     )
@@ -102,6 +135,7 @@ def _render_one(args) -> "Image.Image":
         # --user-data-dir would keep Chrome alive after the screenshot — avoid it.)
         cmd = [
             chrome, "--headless=new", "--disable-gpu", "--hide-scrollbars",
+            "--disable-dev-shm-usage",
             "--no-first-run", "--no-default-browser-check",
             "--force-device-scale-factor=1",
             "--run-all-compositor-stages-before-draw",
@@ -109,6 +143,9 @@ def _render_one(args) -> "Image.Image":
             f"--window-size={viewport},{viewport}",
             f"--screenshot={png_path}", html_path.resolve().as_uri(),
         ]
+        if os.environ.get("CHROME_NO_SANDBOX") == "1":
+            # Intended only inside the already-isolated, non-root Docker container.
+            cmd.insert(1, "--no-sandbox")
         if background != "white":
             cmd.insert(1, "--default-background-color=00000000")
         # Own session/process group + hard timeout: a hung Chrome (and its

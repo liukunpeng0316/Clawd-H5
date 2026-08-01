@@ -58,6 +58,7 @@ class ExportOptions:
     timeout: float
     min_units: float
     max_units: float
+    max_duration_ms: int | None = None
 
 
 def parse_viewbox(svg_text: str) -> tuple[float, float, float, float] | None:
@@ -82,7 +83,7 @@ def parse_duration_ms(svg_text: str, fallback_ms: int = DEFAULT_DURATION_MS) -> 
     """Return the longest CSS animation duration in milliseconds."""
     durations: list[float] = []
 
-    for match in re.finditer(r"animation(?:-duration)?\s*:\s*([^;]+);", svg_text):
+    for match in re.finditer(r"animation(?:-duration)?\s*:\s*([^;}]+)(?:;|})", svg_text):
         value = match.group(1)
         for duration, unit in re.findall(r"([\d.]+)\s*(ms|s)\b", value):
             amount = float(duration)
@@ -111,10 +112,13 @@ def resolve_output_path(svg_path: Path, input_path: Path, output_path: Path | No
 
 def render_frames(svg_path: Path, options: ExportOptions, chrome: str | None) -> list[Image.Image]:
     svg_text = svg_path.read_text(encoding="utf-8")
-    duration_ms = parse_duration_ms(svg_text)
-    frame_count = max(1, round(duration_ms * options.fps / 1000))
-    frame_interval_ms = 1000 / options.fps
-    times_ms = [i * frame_interval_ms for i in range(frame_count)]
+    source_duration_ms = parse_duration_ms(svg_text)
+    output_duration_ms = source_duration_ms
+    if options.max_duration_ms:
+        output_duration_ms = min(output_duration_ms, options.max_duration_ms)
+    frame_count = max(1, round(output_duration_ms * options.fps / 1000))
+    # Sample the complete source cycle even when compressing it to a shorter GIF.
+    times_ms = [i * source_duration_ms / frame_count for i in range(frame_count)]
 
     mode = "serial" if options.workers <= 1 else f"{options.workers} workers"
 

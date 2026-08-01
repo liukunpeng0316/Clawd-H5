@@ -1,0 +1,41 @@
+services:
+  clawd-workshop:
+    build: .
+    container_name: clawd-workshop
+    restart: unless-stopped
+    init: true
+    ports:
+      - "8088:8080"
+    env_file:
+      - .env
+    environment:
+      DATA_DIR: /data
+      GENERATION_CONCURRENCY: "10"
+      EXPORT_CONCURRENCY: "2"
+      ENABLE_VISUAL_REVIEW: "false"
+      MAX_QUEUE: "100"
+      MAX_STORAGE_BYTES: "5368709120"
+      GENERATION_MODEL: deepseek-v4-flash
+      GENERATION_BASE_URL: https://api.deepseek.com
+      STEPFUN_MODEL: step-3.7-flash
+      STEPFUN_BASE_URL: https://api.stepfun.com/step_plan/v1
+      STEPFUN_FALLBACK_BASE_URL: https://api.stepfun.com/v1
+      TRUSTED_PROXIES: 127.0.0.1,::1
+    volumes:
+      - clawd-data:/data
+    tmpfs:
+      - /tmp:size=768m,mode=1777
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    pids_limit: 512
+    mem_limit: 3200m
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  clawd-data:

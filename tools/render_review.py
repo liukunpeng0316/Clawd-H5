@@ -96,10 +96,13 @@ def render_one(chrome: str, svg_path: Path, out_png: Path, pause: float | None) 
     html_path.write_text(wrap_html(svg_path.read_text(encoding="utf-8"), pause), encoding="utf-8")
     cmd = [
         chrome, "--headless=new", "--disable-gpu", "--hide-scrollbars",
+        "--disable-dev-shm-usage",
         "--no-first-run", "--no-default-browser-check",
         "--force-device-scale-factor=2", f"--window-size={TILE},{TILE}",
         f"--screenshot={out_png}", html_path.resolve().as_uri(),
     ]
+    if os.environ.get("CHROME_NO_SANDBOX") == "1":
+        cmd.insert(1, "--no-sandbox")
     # Own process group + hard timeout so a hung Chrome can't stall the review.
     proc = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
                             start_new_session=True)

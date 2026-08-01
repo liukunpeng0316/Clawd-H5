@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="用一句话制作属于你的 Clawd 动态表情。">
+  <title>Clawd 表情工坊</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <a class="brand" href="/">Clawd 表情工坊</a>
+    <div class="links"><a class="active" href="/">制作</a><a href="/gallery">大家的作品</a></div>
+  </nav>
+  <main class="wrap">
+    <section class="hero">
+      <span class="eyebrow">一句话 · 一个动态表情</span>
+      <h1>让小螃蟹动起来</h1>
+      <p>描述动作、情绪或小道具，AI 会画出可循环播放的像素动画，并导出成聊天软件可用的 GIF。</p>
+    </section>
+    <section class="studio">
+      <div class="card">
+        <h2 id="promptHeading">你想让 Clawd 做什么？</h2>
+        <p id="remixNotice" class="remix-notice hidden">正在基于公开作品制作同款，不会修改原作品。</p>
+        <textarea id="prompt" maxlength="500" placeholder="例如：小螃蟹抱着一杯咖啡，困得点头又突然惊醒"></textarea>
+        <p id="promptHint" class="hint">建议只描述一个角色、一个主要动作。</p>
+        <div class="button-row"><button id="generate">生成动态表情</button></div>
+        <p id="error" class="error hidden"></p>
+
+        <div id="revision" class="revision hidden">
+          <h2>继续调整</h2>
+          <textarea id="revisionPrompt" maxlength="500" placeholder="例如：动作快一点，咖啡杯换成蓝色"></textarea>
+          <div class="button-row"><button id="revise">修改这个表情</button></div>
+        </div>
+      </div>
+      <aside class="card preview">
+        <div id="placeholder">
+          <div class="empty-crab">🦀</div>
+          <p class="status-title">等待你的创意</p>
+          <p class="status-copy">生成结果会出现在这里</p>
+        </div>
+        <div id="progress" class="hidden">
+          <div class="empty-crab">🦀</div>
+          <p id="statusTitle" class="status-title dots">正在准备</p>
+          <p id="statusCopy" class="status-copy">正在读取动画规则</p>
+          <p id="elapsed" class="elapsed">已用时 0 秒</p>
+        </div>
+        <div id="result" class="hidden">
+          <img id="resultGif" alt="生成的 Clawd 动态表情">
+          <div id="resultActions" class="button-row result-actions">
+            <a id="downloadGif" class="button" download>下载 GIF</a>
+            <a id="downloadSvg" class="button secondary" download>下载 SVG</a>
+          </div>
+        </div>
+      </aside>
+    </section>
+    <section class="examples">
+      <h2>先看看它能做什么</h2>
+      <div class="strip">
+        <div class="sample"><img src="/examples/clawd-coffee.gif" alt="喝咖啡"></div>
+        <div class="sample"><img src="/examples/clawd-clapping.gif" alt="鼓掌"></div>
+        <div class="sample"><img src="/examples/clawd-thinking-frozen.gif" alt="思考"></div>
+        <div class="sample"><img src="/examples/clawd-running.gif" alt="奔跑"></div>
+        <div class="sample"><img src="/examples/clawd-flying-kiss.gif" alt="飞吻"></div>
+        <div class="sample"><img src="/examples/clawd-coding.gif" alt="写代码"></div>
+      </div>
+    </section>
+  </main>
+  <footer>基于 <a href="https://github.com/Yuriceee/Any2Clawd" rel="noreferrer">Any2Clawd</a> 开源项目制作 · Clawd 为 Anthropic 吉祥物 · 本网站是非官方、非商业体验站</footer>
+  <script src="/static/app.js" defer></script>
+</body>
+</html>

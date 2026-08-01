@@ -13,6 +13,8 @@ __pycache__/
 /.github/
 # Per-checkout collection name chosen at init
 /.collection
+/.env
+/webapp-data/
 # Local scratch / downstream development workspace
 workspace/*
 !workspace/.gitkeep
